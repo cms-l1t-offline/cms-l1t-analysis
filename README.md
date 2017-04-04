@@ -60,3 +60,19 @@ gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB8
 source ~/.rvm/scripts/rvmsource ~/.rvm/scripts/rvm
 gem install github_changelog_generator
 ```
+
+### Implementing and running an analysis script
+"Analyzers" are the parts of the code that receive events from the input tuples, extracts the relevant data and puts this into the histograms. 
+
+You can see an example of an analyzer at: `cmsl1t/analyzers/demo_analyzer.py`.  
+To implement your own analyzer, all you need to do is make a new class in a file under `cmsl1t/analyzers/` which inherits from `cmsl1t.analyzers.BaseAnalyzer.BaseAnalyzer`.  You then need to implement two or three methods: `prepare_for_event`, ` fill_histograms`, `write_histograms`, and `make_plots`.  See the BaseAnalyzer class and the demo_analyzer for examples and documentation of these methods. 
+
+Once you have implemented an analyzer, you can run it with `bin/analyze` command:
+```
+python bin/analyze -a demo_analyzer -i 'data/L1Ntuple_*.root' -n 1000
+```
+
+Get help on the command line options by doing:
+```
+python bin/analyze -h
+```
