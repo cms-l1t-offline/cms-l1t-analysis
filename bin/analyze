@@ -3,7 +3,7 @@ from __future__ import print_function
 import ROOT
 import os
 from datetime import datetime
-from cmsl1t.utils.timers import timerfunc
+from cmsl1t.utils.timers import timerfunc_log_to
 
 import logging
 logger = logging.getLogger(__name__)
@@ -79,7 +79,7 @@ def clean_args(args):
     return args
 
 
-@timerfunc(logger.info)
+@timerfunc_log_to(logger.info)
 def process_tuples(args, analyzer):
     # Open the data files
     print(section.format("Loading data"))
