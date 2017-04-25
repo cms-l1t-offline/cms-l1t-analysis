@@ -3,14 +3,11 @@ import time
 import functools
 
 
-def timerfunc(func, printer=print):
-    """
-    A timer decorator
-    """
+def __timerfunc(func, printer=None):
     @functools.wraps(func)
-    def function_timer(*args, **kwargs):
+    def wrapper(*args, **kwargs):
         """
-        A nested function for timing other functions
+        A function for timing other functions
         """
         start = time.time()
         value = func(*args, **kwargs)
@@ -20,5 +17,21 @@ def timerfunc(func, printer=print):
         printer(msg.format(func=func.__name__,
                            time=runtime))
         return value
-    function_timer.__wrapped__ = func
+    wrapper.__wrapped__ = func
+    return wrapper
+
+
+def timerfunc(func):
+    """
+    A timer decorator that prints to stdout
+    """
+    function_timer = functools.partial(__timerfunc, printer=print)(func)
+    return function_timer
+
+
+def timerfunc_log_to(printer):
+    """
+    A timer decorator that prints to a specific print function or logger
+    """
+    function_timer = functools.partial(__timerfunc, printer=printer)
     return function_timer
