@@ -59,6 +59,22 @@ class Binning(BinningBase):
         return [found_bin]
 
 
+class BinningGreaterThan(BinningBase):
+    def __init__(self, bins, label=None):
+        BinningBase.__init__(self, label)
+        self.bins = bins
+        self.n_bins = len(self.bins)
+
+    def find_bins(self, value):
+        contained_in = []
+        for i, threshold in enumerate(self.bins):
+            if value >= threshold:
+                contained_in.append(i)
+        if len(contained_in) == 0:
+            contained_in = [self.overflow]
+        return contained_in
+
+
 class BinningOverlapped(BinningBase):
     def __init__(self, bins, label=None):
         BinningBase.__init__(self, label)
