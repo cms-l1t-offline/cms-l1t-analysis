@@ -1,14 +1,14 @@
 from __future__ import print_function
 from nose.tools import assert_equal
 import cmsl1t.hist.hist_collection as hist
-import cmsl1t.hist.binning as bn
+import cmsl1t.hist.binning as binning
 import numpy as np
 from cmsl1t.hist.factory import HistFactory
 
 
-pileup = bn.Binning([0, 10, 15, 20, 30, 999], "pileup")
-multi = bn.BinningOverlapped([(0, 10), (100, 110), (5, 15)], "multi")
-regions = bn.BinningEtaRegions()
+pileup = binning.Sorted([0, 10, 15, 20, 30, 999], "pileup")
+multi = binning.Overlapped([(0, 10), (100, 110), (5, 15)], "multi")
+regions = binning.EtaRegions()
 
 
 class dummy_factory():
@@ -28,18 +28,18 @@ class dummy_factory():
 
 
 def test_dimension_sorted():
-    assert_equal(pileup.find_bins(-19), [bn.BinningBase.underflow])
+    assert_equal(pileup.find_bins(-19), [binning.Base.underflow])
     assert_equal(pileup.find_bins(9), [0])
     assert_equal(pileup.find_bins(19), [2])
     assert_equal(pileup.find_bins(39), [4])
-    assert_equal(pileup.find_bins(9999), [bn.BinningBase.overflow])
+    assert_equal(pileup.find_bins(9999), [binning.Base.overflow])
 
 
 def test_dimension_multi():
     assert_equal(multi.find_bins(3), [0])
     assert_equal(multi.find_bins(7), [0, 2])
     assert_equal(multi.find_bins(105), [1])
-    assert_equal(multi.find_bins(70), [bn.BinningBase.overflow])
+    assert_equal(multi.find_bins(70), [binning.Base.overflow])
 
 
 def test_dimension_region():
@@ -60,10 +60,10 @@ def test_flatten_bin_list():
 def test_find_bins():
     coll = hist.HistogramCollection(dimensions=[pileup],
                                     histogram_factory=dummy_factory)
-    assert_equal(coll._find_bins(-20), [(bn.BinningBase.underflow, )])
+    assert_equal(coll._find_bins(-20), [(binning.Base.underflow, )])
     assert_equal(coll._find_bins(13), [(1, )])
     assert_equal(coll._find_bins(47), [(4, )])
-    assert_equal(coll._find_bins(9999), [(bn.BinningBase.overflow, )])
+    assert_equal(coll._find_bins(9999), [(binning.Base.overflow, )])
 
 
 def test_collection_1D():

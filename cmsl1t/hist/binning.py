@@ -7,7 +7,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class BinningBase():
+class Base():
     overflow = "overflow"
     underflow = "underflow"
 
@@ -39,11 +39,11 @@ class BinningBase():
             yield i
 
 
-class Binning(BinningBase):
+class Sorted(Base):
     import bisect
 
     def __init__(self, bin_edges, label=None):
-        BinningBase.__init__(self, label)
+        Base.__init__(self, label)
         self.bins = sorted(bin_edges)
         self.n_bins = len(self.bins)
 
@@ -57,9 +57,9 @@ class Binning(BinningBase):
         return [found_bin]
 
 
-class BinningGreaterThan(BinningBase):
+class GreaterThan(Base):
     def __init__(self, bins, label=None):
-        BinningBase.__init__(self, label)
+        Base.__init__(self, label)
         self.bins = bins
         self.n_bins = len(self.bins)
 
@@ -73,9 +73,9 @@ class BinningGreaterThan(BinningBase):
         return contained_in
 
 
-class BinningOverlapped(BinningBase):
+class Overlapped(Base):
     def __init__(self, bins, label=None):
-        BinningBase.__init__(self, label)
+        Base.__init__(self, label)
         self.bins = bins
         self.n_bins = len(self.bins)
 
@@ -89,11 +89,11 @@ class BinningOverlapped(BinningBase):
         return contained_in
 
 
-class BinningEtaRegions(BinningBase):
+class EtaRegions(Base):
     from cmsl1t.geometry import eta_regions
 
     def __init__(self, label=None):
-        BinningBase.__init__(self, label)
+        Base.__init__(self, label)
         self.n_bins = len(self.eta_regions)
 
     def find_bins(self, value):
@@ -102,3 +102,19 @@ class BinningEtaRegions(BinningBase):
             if is_contained(value):
                 regions.append(region)
         return regions
+
+
+class WithAll(Base):
+    def __init__(self, bins, label=None):
+        Base.__init__(self, label)
+        self.bins = bins
+        self.n_bins = len(self.bins)
+
+    def find_bins(self, value):
+        contained_in = []
+        for i, (bin_low, bin_high) in enumerate(self.bins):
+            if value >= bin_low and value < bin_high:
+                contained_in.append(i)
+        if len(contained_in) == 0:
+            contained_in = [self.overflow]
+        return contained_in

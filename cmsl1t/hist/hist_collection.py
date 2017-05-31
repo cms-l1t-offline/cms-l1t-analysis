@@ -4,7 +4,7 @@ from exceptions import RuntimeError, KeyError, NotImplementedError
 from copy import deepcopy
 import logging
 from cmsl1t.hist.factory import HistFactory
-from cmsl1t.hist.binning import BinningBase
+from cmsl1t.hist.binning import Base as BinningBase
 
 
 __all__ = ["HistCollectionView", "HistogramCollection"]
