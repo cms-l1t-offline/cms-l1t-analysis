@@ -7,6 +7,9 @@ from cmsl1t.hist.factory import HistFactory
 from cmsl1t.hist.binning import BinningBase
 
 
+__all__ = ["HistCollectionView", "HistogramCollection"]
+
+
 logger = logging.getLogger(__name__)
 
 
