@@ -1,6 +1,7 @@
 from cmsl1t.hist import BaseHistogram
 import logging
 import rootpy.plotting.hist as rootpy_hists
+import rootpy.ROOT as ROOT
 from exceptions import RuntimeError
 
 
@@ -24,6 +25,8 @@ class HistFactory():
                 histograms.append(hist)
         if hasattr(rootpy_hists, self.hist_type):
             histograms.append(getattr(rootpy_hists, self.hist_type))
+        elif hasattr(ROOT, self.hist_type):
+            histograms.append(getattr(ROOT, self.hist_type))
         if len(histograms) == 0:
             msg = "No valid histogram type called: '{0}'"
             msg = msg.format(self.hist_type)

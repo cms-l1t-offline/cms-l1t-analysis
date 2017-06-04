@@ -10,13 +10,16 @@ logger = logging.getLogger(__name__)
 class Base():
     overflow = "overflow"
     underflow = "underflow"
+    everything = "everything"
 
     def __init__(self, label):
         self.label = label
 
     def set_contained_obj(self, contains):
         self.values = {}
-        for i in range(self.n_bins) + [self.overflow, self.underflow]:
+        for i in range(self.n_bins):
+            self.values[i] = deepcopy(contains)
+        for i in [self.overflow, self.underflow, self.everything]:
             self.values[i] = deepcopy(contains)
 
     def __len__(self):
@@ -36,6 +39,10 @@ class Base():
 
     def __iter__(self):
         for i in range(self.n_bins):
+            yield i
+
+    def iter_all(self):
+        for i in self.values:
             yield i
 
 
@@ -102,19 +109,3 @@ class EtaRegions(Base):
             if is_contained(value):
                 regions.append(region)
         return regions
-
-
-class WithAll(Base):
-    def __init__(self, bins, label=None):
-        Base.__init__(self, label)
-        self.bins = bins
-        self.n_bins = len(self.bins)
-
-    def find_bins(self, value):
-        contained_in = []
-        for i, (bin_low, bin_high) in enumerate(self.bins):
-            if value >= bin_low and value < bin_high:
-                contained_in.append(i)
-        if len(contained_in) == 0:
-            contained_in = [self.overflow]
-        return contained_in
