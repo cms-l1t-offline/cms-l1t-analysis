@@ -121,12 +121,9 @@ def analyze(config_file, nevents, reload_histograms):
 
 
 def load_analyzer(analyzer):
-    module = None
-    try:
-        module = import_module(analyzer)
-    except ImportError:
-        msg = "Cannot find module, '{}', from the analyzers directory"
-        logger.error(msg.format(analyzer))
+    logger.info("Try loading analyzer:"+ analyzer)
+    module = import_module(analyzer)
+    logger.info("Successfully loaded analyzer:"+ analyzer)
     return module.Analyzer
 
 if __name__ == '__main__':
