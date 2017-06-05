@@ -35,7 +35,7 @@ class Analyzer(BaseAnalyzer):
 
         offlineMetBE = event.sums.caloMetBE
 
-        onlineMet = recalc.l1MetNot28(event.caloTowers[0]).mag
+        onlineMet = recalc.l1MetNot28(event.caloTowers).mag
         self.eff_fullMet.fill(pileup, offlineMetBE, onlineMet)
 
         return True
