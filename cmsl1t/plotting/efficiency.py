@@ -18,6 +18,13 @@ class EfficiencyPlot():
         self.thresholds = bn.GreaterThan(thresholds, use_everything_bin=True)
         self.yields = HistogramCollection([self.pileup_bins, self.thresholds],
                                           "Hist1D", n_bins, low, high)
+        filename= ["eff", online_label, offline_label,
+                   "thresh_{thresh}", "pu_{pileup}"]
+        self.filename_format = "{outdir}/"+"-".join(filename)+".{fmt}"
+
+    def set_plot_output_cfg(self, outdir, fmt):
+        self.output_dir = outdir
+        self.output_format = fmt
 
     def reload(self):
         """ Reload histograms from existing files on disk """
@@ -36,7 +43,7 @@ class EfficiencyPlot():
         hists = [all_pileup_effs.get_bin_contents(key)
                  for key in all_pileup_effs.iter_all()
                  if isinstance(key, int)]
-        self.__make_overlay("all_thresholds", hists)
+        self.__make_overlay("all", "all", hists)
 
         # Overlay individual pile-up bins for each threshold
 
@@ -60,7 +67,7 @@ class EfficiencyPlot():
         self.turnons = HistogramCollection([self.pileup_bins, self.thresholds],
                                            make_eff)
 
-    def __make_overlay(self, file_kernel, hists):
+    def __make_overlay(self, pileup, threshold, hists):
         # Need a canvas
         canvas = Canvas()
 
@@ -69,9 +76,19 @@ class EfficiencyPlot():
 
         # Add labels
         # Add a legend
+        legend = Legend(len(hists))
+        for hist in hists:
+            legend.AddEntry(hist)
+        legend.Draw()
 
         # Save canvas to file
-        canvas.SaveAs(file_kernel + ".png")
+        filename = self.filename_format
+        filename = filename.format(outdir = self.output_dir,
+                                   pileup = pileup,
+                                   thresh = threshold,
+                                   fmt = "png"
+                                  )
+        canvas.SaveAs(filename)
 
     def __summarize_fits(self):
         pass

@@ -44,6 +44,12 @@ class ConfigParser(object):
     def get(self, section, option):
         return self.config[section][option]
 
+    def try_get(self, section, option, default=None):
+        if section in self.config:
+            if option in self.config[section]:
+                return self.config[section][option]
+        return default
+
     def is_valid(self):
         return validate_sections(ConfigParser.SECTIONS, self.config)
 

@@ -29,7 +29,8 @@ class CachedIndexedTree(object):
     def __iter__(self):
         indices = getattr(self._tree, self._indexName)
         for i in range(indices):
-            yield self.__getitem__(i)
+            item = self.__getitem__(i)
+            yield item
 
     def __len__(self):
         indices = getattr(self._tree, self._indexName)
