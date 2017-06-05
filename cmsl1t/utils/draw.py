@@ -1,8 +1,9 @@
 from rootpy.plotting.utils import draw as r_draw
 from rootpy.plotting.hist import Efficiency
+from rootpy.plotting import Style, Canvas
 from rootpy.context import preserve_current_style
+from rootpy.ROOT import gStyle, TLatex
 import rootpy.ROOT as ROOT
-from rootpy.ROOT import gStyle
 from exceptions import RuntimeError
 
 
@@ -49,28 +50,57 @@ def __apply_colour_map(hists, colourmap, colour_values, change_colour):
     # Clean change_colour
     change_colour = [ c.lower() for c in change_colour ]
 
-    # Resolve the requested pallette if it's not a function
-    if isinstance(colourmap, str):
-        if colourmap in __known_root_pallettes:
-            gStyle.SetPalette(getattr(ROOT, "k"+colourmap))
-            colourmap=root_palette
-        else:
-            raise RuntimeError("Unknown palette requested: "+colourmap)
+    with preserve_current_style():
+        # Resolve the requested pallette if it's not a function
+        if isinstance(colourmap, str):
+            if colourmap in __known_root_pallettes:
+                gStyle.SetPalette(getattr(ROOT, "k"+colourmap))
+                colourmap=root_palette
+            else:
+                raise RuntimeError("Unknown palette requested: "+colourmap)
 
-    # Set the colour of each hist
-    max = len(hists)
-    for value, hist in enumerate(hists):
-        if colour_values:
-            value, max = colour_values(value)
-        colour = colourmap(value, max)
-        if "line" in change_colour:
-            hist.linecolor = colour
-        if "marker" in change_colour:
-            hist.markercolor = colour
+        # Set the colour of each hist
+        max = len(hists)
+        for value, hist in enumerate(hists):
+            if colour_values:
+                value, max = colour_values(value)
+            colour = colourmap(value, max)
+            if "line" in change_colour:
+                hist.linecolor = colour
+            if "marker" in change_colour:
+                hist.markercolor = colour
+
+
+def __prepare_canvas():
+    style = gStyle
+    style.SetOptStat(0)
+
+    canvas = Canvas()
+    canvas.SetGridx(True)
+    canvas.SetGridy(True)
+    return canvas, style
 
 
 def draw(hists, colourmap="RainBow", colour_values=None, change_colour = ("line","marker")):
-    with preserve_current_style():
-        hists = __clean(hists)
-        __apply_colour_map(hists, colourmap, colour_values, change_colour)
-        r_draw(hists)
+    canvas, style = __prepare_canvas()
+    hists = __clean(hists)
+    __apply_colour_map(hists, colourmap, colour_values, change_colour)
+    r_draw(hists, canvas)
+    return canvas
+
+
+def label_canvas(sample_title =None, run = None, isData = False):
+    latex = TLatex()
+    latex.SetNDC()
+    latex.SetTextFont(42)
+
+    cms = "#bf{CMS} #it{Preliminary}"
+    if sample_title:
+        cms += sample_title
+    latex.DrawLatex(0.15, 0.92, cms)
+
+    run_summary = "(13 TeV)"
+    if run:
+        run_summary += run
+    latex.SetTextAlign(31)
+    latex.DrawLatex(0.92, 0.92, run_summary)

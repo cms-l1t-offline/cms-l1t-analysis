@@ -3,8 +3,9 @@ from cmsl1t.hist.hist_collection import HistogramCollection
 from cmsl1t.hist.factory import HistFactory
 import cmsl1t.hist.binning as bn
 
-from rootpy.plotting import Canvas, Legend, HistStack
-from cmsl1t.utils.draw import draw
+from rootpy.plotting import Legend, HistStack
+from rootpy.context import preserve_current_style
+from cmsl1t.utils.draw import draw, label_canvas
 
 
 class EfficiencyPlot():
@@ -68,27 +69,27 @@ class EfficiencyPlot():
                                            make_eff)
 
     def __make_overlay(self, pileup, threshold, hists):
-        # Need a canvas
-        canvas = Canvas()
+        with preserve_current_style():
+            # Draw each turnon (with fit)
+            canvas = draw(hists)
 
-        # Draw each turnon (with fit)
-        draw(hists)
+            # Add labels
+            label_canvas()
 
-        # Add labels
-        # Add a legend
-        legend = Legend(len(hists))
-        for hist in hists:
-            legend.AddEntry(hist)
-        legend.Draw()
+            # Add a legend
+            legend = Legend(len(hists))
+            for hist in hists:
+                legend.AddEntry(hist)
+            legend.Draw()
 
-        # Save canvas to file
-        filename = self.filename_format
-        filename = filename.format(outdir = self.output_dir,
-                                   pileup = pileup,
-                                   thresh = threshold,
-                                   fmt = "png"
-                                  )
-        canvas.SaveAs(filename)
+            # Save canvas to file
+            filename = self.filename_format
+            filename = filename.format(outdir = self.output_dir,
+                                       pileup = pileup,
+                                       thresh = threshold,
+                                       fmt = "png"
+                                      )
+            canvas.SaveAs(filename)
 
     def __summarize_fits(self):
         pass
