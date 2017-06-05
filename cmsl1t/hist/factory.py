@@ -52,7 +52,11 @@ class HistFactory():
                     new_attr = self.kwargs[attr].format(*vargs, **kwargs)
                     self.kwargs[attr] =  new_attr
 
-        hist = self.hist_class(*self.vargs, **self.kwargs)
+        if self.vargs:
+            vargs = self.vargs
+        if self.kwargs:
+            kwargs = self.kwargs
+        hist = self.hist_class(*vargs, **kwargs)
         return hist
 
     def __call__(self, *vargs, **kwargs):

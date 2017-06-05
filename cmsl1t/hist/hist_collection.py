@@ -74,6 +74,7 @@ class HistogramCollection(object):
                 else:
                     vargs = bin_labels + [bin]
                     kwargs = {}
+                    # TODO: Should fill proper bin labels here and pass through
                     hist = histogram_factory(*vargs, **kwargs)
                     this_dim.set_value(bin, hist)
             return this_dim
@@ -105,7 +106,7 @@ class HistogramCollection(object):
         # Check every dimension if it contains these values
         bins = []
         for key, dimension in zip(keys, self.__dimensions[:n_keys]):
-            bins.append(dimension.find_bins(key))
+            bins.append(dimension.find_all_bins(key))
 
         # Some dimensions might return multiple values, flatten returned arrays
         bins = self._flatten_bins(bins)
