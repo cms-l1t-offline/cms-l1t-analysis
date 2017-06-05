@@ -64,7 +64,7 @@ class Sorted(Base):
     import bisect
 
     def __init__(self, bin_edges, label=None, use_everything_bin=False):
-        Base.__init__(self, label, len(bin_edges), 
+        Base.__init__(self, label, len(bin_edges),
                       use_everything_bin=use_everything_bin)
         self.bins = sorted(bin_edges)
 
@@ -80,7 +80,7 @@ class Sorted(Base):
 
 class GreaterThan(Base):
     def __init__(self, bins, label=None, use_everything_bin=False):
-        Base.__init__(self, label, len(bins),  
+        Base.__init__(self, label, len(bins),
                       use_everything_bin=use_everything_bin)
         self.bins = bins
 
@@ -96,7 +96,7 @@ class GreaterThan(Base):
 
 class Overlapped(Base):
     def __init__(self, bins, label=None, use_everything_bin=False):
-        Base.__init__(self, label, len(bins),  
+        Base.__init__(self, label, len(bins),
                       use_everything_bin=use_everything_bin)
         self.bins = bins
 
@@ -114,7 +114,7 @@ class EtaRegions(Base):
     from cmsl1t.geometry import eta_regions
 
     def __init__(self, label=None, use_everything_bin=False):
-        Base.__init__(self, label, len(self.eta_regions),  
+        Base.__init__(self, label, len(self.eta_regions),
                       use_everything_bin=use_everything_bin)
 
     def find_bins(self, value):

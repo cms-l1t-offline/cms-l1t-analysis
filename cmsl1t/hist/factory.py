@@ -50,7 +50,7 @@ class HistFactory():
             for attr in ["title", "name"]:
                 if attr in self.kwargs:
                     new_attr = self.kwargs[attr].format(*vargs, **kwargs)
-                    self.kwargs[attr] =  new_attr
+                    self.kwargs[attr] = new_attr
 
         if self.vargs:
             vargs = self.vargs

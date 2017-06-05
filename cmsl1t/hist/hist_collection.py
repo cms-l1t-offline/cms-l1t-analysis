@@ -52,24 +52,24 @@ class HistogramCollection(object):
             if not isinstance(dim, BinningBase):
                 raise RuntimeError("non-Dimension object given to histogram")
         self.__dimensions = dimensions
-        self.shape = tuple([ len(dim) for dim in dimensions ])
+        self.shape = tuple([len(dim) for dim in dimensions])
 
         if isinstance(histogram_factory, str):
-            histogram_factory = HistFactory(histogram_factory, 
-                                            *vargs, 
+            histogram_factory = HistFactory(histogram_factory,
+                                            *vargs,
                                             **kwargs)
         self.values = self._prepare_collection(dimensions, histogram_factory)
 
-    def _prepare_collection(self, dimensions, histogram_factory,  bin_labels=[], depth=0):
+    def _prepare_collection(self, dimensions, histogram_factory,
+                            bin_labels=[], depth=0):
             this_dim = deepcopy(dimensions[0])
             remaining_dims = dimensions[1:]
             for bin in this_dim.iter_all():
                 if remaining_dims:
-                    value = self._prepare_collection(
-                            remaining_dims,
-                            histogram_factory,
-                            bin_labels + [bin] ,
-                            depth + 1)
+                    value = self._prepare_collection(remaining_dims,
+                                                     histogram_factory,
+                                                     bin_labels + [bin],
+                                                     depth + 1)
                     this_dim.set_value(bin, value)
                 else:
                     vargs = bin_labels + [bin]
@@ -116,7 +116,6 @@ class HistogramCollection(object):
     def get_bin_contents(self, bin_list):
         if isinstance(bin_list, (str, int)):
             bin_list = [bin_list]
-        #value = self.__dimensions[0]
         value = self.values
         for index in bin_list:
             value = value.get_bin_contents(index)

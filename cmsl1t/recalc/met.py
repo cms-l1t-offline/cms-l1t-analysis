@@ -1,24 +1,26 @@
 import math
 import numpy as np
 
+
 class met(object):
     def __init__(self, metx, mety):
         self.metx = metx
         self.mety = mety
 
     def __getitem__(self, index):
-        if index == 0: 
+        if index == 0:
             return self.metx
-        elif index == 1: 
+        elif index == 1:
             return self.mety
         else:
             msg = """"Met object can only be indexed with '0' (x),
-                      or '1' (y), not """+str(index)
+                      or '1' (y), not """ + str(index)
             raise KeyError(msg)
 
     @property
     def mag(self):
         return np.linalg.norm([self.metx, self.mety])
+
 
 def recalcMET(caloTowers, exclude=None):
     metx = []
