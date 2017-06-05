@@ -14,10 +14,11 @@ regions = binning.EtaRegions()
 class dummy_factory():
     instance_count = 0
 
-    def __init__(self):
+    def __init__(self, *vargs):
         dummy_factory.instance_count += 1
         self.count = 0
         self.value = 0
+        self.bin_labels = vargs
 
     def __call__(self):
         print("making histogram:", dummy_factory.instance_count, self.count)

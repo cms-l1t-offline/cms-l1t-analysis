@@ -42,17 +42,18 @@ class HistFactory():
 
         self.hist_class = histograms[0]
 
-    def build(self, **kwargs):
+    def build(self, *vargs, **kwargs):
         if self.can_build is not True:
             raise RuntimeError(self.can_build)
 
         if len(kwargs) > 0:
             for attr in ["title", "name"]:
                 if attr in self.kwargs:
-                    self.kwargs[attr] = self.kwargs[attr].format(**kwargs)
+                    new_attr = self.kwargs[attr].format(*vargs, **kwargs)
+                    self.kwargs[attr] =  new_attr
 
         hist = self.hist_class(*self.vargs, **self.kwargs)
         return hist
 
-    def __call__(self, **kwargs):
-        return self.build(**kwargs)
+    def __call__(self, *vargs, **kwargs):
+        return self.build(*vargs, **kwargs)

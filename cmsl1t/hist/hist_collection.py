@@ -42,7 +42,8 @@ class HistogramCollection(object):
      - needs to know how to create new histograms
     '''
 
-    def __init__(self, dimensions, histogram_factory, *vargs, **kwargs):
+    def __init__(self, dimensions, histogram_factory, args_function = None,
+                 *vargs, **kwargs):
         '''
             Should dimensions include or exclude histogram names?
         '''
@@ -54,21 +55,55 @@ class HistogramCollection(object):
         self._dimensions = dimensions
 
         if isinstance(histogram_factory, str):
-            histogram_factory = HistFactory(histogram_factory,
-                                            *vargs, **kwargs)
+            histogram_factory = HistFactory(histogram_factory, 
+                                            *vargs, 
+                                            **kwargs)
+        self._prepare_collection(histogram_factory, args_function)
 
-        last_dim = None
+    def _prepare_collection(self, histogram_factory, args_function):
         # Build the linked list of dimension bins objects
+        last_dim = None
         for dimension in reversed(self._dimensions):
-            if last_dim is None:
-                # I would like to have the histogram factory passed bin labels
-                # which we reformat the names and titles of the histograms with
-                # Will add this in in the near future, by passing something
-                # into this method
-                dimension.set_contained_obj(histogram_factory())
-            else:
-                dimension.set_contained_obj(last_dim)
+            if not last_dim is None:
+                dimension.set_all_values(deepcopy(last_dim))
             last_dim = dimension
+        #self._dimensions[0] = deepcopy(last_dim)
+	for i, dim in enumerate(self._dimensions):
+		print("BEK dimensions:",i, dim)
+
+        # Now recurse over all dimensions and create the actual histograms
+        self._recurse_build_hists( self._dimensions,
+                histogram_factory, args_function=args_function)
+
+    def _recurse_build_hists(self, 
+                             dimensions,
+                             histogram_factory,
+                             args_function=None,
+                             bin_labels=[],
+                             depth=0
+                             ):
+        print("BEK: depth", depth)
+        print("BEK: dimensions", dimensions)
+        this_dim = dimensions[0]
+        if len(dimensions) == 1:
+            for bin in this_dim.iter_all():
+                vargs = bin_labels + [bin]
+                print("BEK: _recurse_build_hists bin", bin,this_dim.values[bin])
+                print("BEK: _recurse_build_hists vargs", vargs)
+                kwargs = {}
+                if args_function:
+                    vargs, kwargs = args_function(bin_labels)
+                hist = histogram_factory(*vargs, **kwargs)
+                this_dim.set_value(bin, hist)
+        else:
+            remaining_dims = dimensions[1:]
+            for bin in this_dim.iter_all():
+                print("BEK: _recurse_build_hists recursing: bin", bin,this_dim.values[bin])
+                passed_bin_labels =  bin_labels + [bin]
+                self._recurse_build_hists(
+                        remaining_dims, histogram_factory,
+                        args_function, passed_bin_labels,depth+1)
+
 
     @classmethod
     def _flatten_bins(self, bins):
@@ -108,7 +143,9 @@ class HistogramCollection(object):
         if isinstance(bin_list, int):
             bin_list = [bin_list]
         value = self._dimensions[0]
+	print("BEK len(bin_list)",len(bin_list), bin_list)
         for index in bin_list:
+            print("BEK value",value)
             value = value.get_bin_contents(index)
         return value
 
@@ -120,6 +157,7 @@ class HistogramCollection(object):
                 coll[x, y, z]
         '''
         bin_indices = self._find_bins(keys)
+        print("BEK bin_indices:",bin_indices)
         objects = [self.get_bin_contents(bins) for bins in bin_indices]
         return HistCollectionView(objects)
 
@@ -134,4 +172,10 @@ class HistogramCollection(object):
         # # In python >3.3 we should do
         # yield from self._dimensions[0]
         for bin in self._dimensions[0]:
+            yield bin
+
+    def iter_all(self):
+        # # In python >3.3 we should do
+        # yield from self._dimensions[0]
+        for bin in self._dimensions[0].iter_all():
             yield bin

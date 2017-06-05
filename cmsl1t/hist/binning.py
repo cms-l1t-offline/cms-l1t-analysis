@@ -12,22 +12,28 @@ class Base():
     underflow = "underflow"
     everything = "everything"
 
-    def __init__(self, label):
+    def __init__(self, label, n_bins):
         self.label = label
-
-    def set_contained_obj(self, contains):
-        self.values = {}
-        for i in range(self.n_bins):
-            self.values[i] = deepcopy(contains)
+        self.n_bins = n_bins
+        self.values = { i:None for i in range(self.n_bins) }
         for i in [self.overflow, self.underflow, self.everything]:
-            self.values[i] = deepcopy(contains)
+            self.values[i]=None
+
+    def set_all_values(self, value):
+        for i in range(self.n_bins):
+            self.values[i] = deepcopy(value)
+        for i in [self.overflow, self.underflow, self.everything]:
+            self.values[i] = deepcopy(value)
+
+    def set_value(self,bin, value):
+        self.values[bin] = value
 
     def __len__(self):
         return self.n_bins
 
     def get_bin_contents(self, bin_index):
-        contents = self.values.get(bin_index, None)
-        if contents is None:
+        contents = self.values.get(bin_index, "DoesntExist")
+        if contents is "DoesntExist":
             msg = "Cannot find bin for index, {0}, for binning called '{1}'"
             logger.error(msg.format(bin_index, self.label))
             raise KeyError(bin_index)
@@ -50,9 +56,8 @@ class Sorted(Base):
     import bisect
 
     def __init__(self, bin_edges, label=None):
-        Base.__init__(self, label)
+        Base.__init__(self, label, len(bin_edges))
         self.bins = sorted(bin_edges)
-        self.n_bins = len(self.bins)
 
     def find_bins(self, value):
         if value < self.bins[0]:
@@ -66,9 +71,8 @@ class Sorted(Base):
 
 class GreaterThan(Base):
     def __init__(self, bins, label=None):
-        Base.__init__(self, label)
+        Base.__init__(self, label, len(bins))
         self.bins = bins
-        self.n_bins = len(self.bins)
 
     def find_bins(self, value):
         contained_in = []
@@ -82,9 +86,8 @@ class GreaterThan(Base):
 
 class Overlapped(Base):
     def __init__(self, bins, label=None):
-        Base.__init__(self, label)
+        Base.__init__(self, label, len(bins))
         self.bins = bins
-        self.n_bins = len(self.bins)
 
     def find_bins(self, value):
         contained_in = []
@@ -100,8 +103,7 @@ class EtaRegions(Base):
     from cmsl1t.geometry import eta_regions
 
     def __init__(self, label=None):
-        Base.__init__(self, label)
-        self.n_bins = len(self.eta_regions)
+        Base.__init__(self, label, len(self.eta_regions))
 
     def find_bins(self, value):
         regions = []
