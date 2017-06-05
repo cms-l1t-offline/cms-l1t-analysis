@@ -23,7 +23,6 @@ class met(object):
 
 
 def recalcMET(caloTowers, exclude=None):
-    metx = []
     ets = []
     phis = []
     for tower in caloTowers:

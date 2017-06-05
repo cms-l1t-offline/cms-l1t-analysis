@@ -46,12 +46,12 @@ class EfficiencyPlot():
 
     def __fill_turnons(self, with_fits):
         # Boiler plate to convert a given distribution to a turnon
-        Eff_factory = HistFactory("Efficiency")
 
         def make_eff(pileup_bin, threshold_bin):
             total = self.yields.get_bin_contents([pileup_bin, bn.Base.everything])
             passed = self.yields.get_bin_contents([pileup_bin, threshold_bin])
-            turnon = Eff_factory.build(passed, total)
+            turnon = passed.Clone(passed.name + "turnon")
+            turnon.Divide(total)
             if with_fits:
                 self.__fit_one_turnon(pileup_bin, threshold_bin, turnon)
             return turnon
