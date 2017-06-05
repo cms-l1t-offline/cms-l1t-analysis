@@ -3,7 +3,7 @@ from cmsl1t.hist.hist_collection import HistogramCollection
 from cmsl1t.hist.factory import HistFactory
 import cmsl1t.hist.binning as bn
 
-from rootpy.plotting import Canvas, Legend
+from rootpy.plotting import Canvas, Legend, HistStack
 from rootpy.plotting.utils import draw
 
 
@@ -31,9 +31,10 @@ class EfficiencyPlot():
         self.__fill_turnons(with_fits)
 
         # Overlay the "all" pile-up bin for each threshold
-        all_pileup_effs = self.turnons.get_bin_contents([bn.everything])
+        all_pileup_effs = self.turnons.get_bin_contents([bn.Base.everything])
         # Really need a better way to do this
-        hists = [hist for hist, key in all_pileup_effs.iteritems()
+        hists = [all_pileup_effs.get_bin_contents(key).graph
+                 for key in all_pileup_effs.iter_all()
                  if isinstance(key, int)]
         self.__make_overlay("all_thresholds", hists)
 
@@ -50,10 +51,9 @@ class EfficiencyPlot():
         def make_eff(pileup_bin, threshold_bin):
             total = self.yields.get_bin_contents([pileup_bin, bn.Base.everything])
             passed = self.yields.get_bin_contents([pileup_bin, threshold_bin])
-            print("BEK make_eff", total.Integral(), passed.Integral())
             turnon = Eff_factory.build(passed, total)
             if with_fits:
-                __fit_one_turnon(pileup_bin, threshold_bin, turnon)
+                self.__fit_one_turnon(pileup_bin, threshold_bin, turnon)
             return turnon
 
         # Actually make the turnons
@@ -70,11 +70,11 @@ class EfficiencyPlot():
         # Add labels
         # Add a legend
         # Save canvas to file
-        canvas.SaveAs(file_kernel)
+        canvas.SaveAs(file_kernel+".png")
 
     def __summarize_fits(self):
         pass
 
 
-def __fit_one_turnon(turnon):
-    pass
+    def __fit_one_turnon(self, pileup_bin, threshold_bin, turnon):
+        pass
