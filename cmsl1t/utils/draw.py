@@ -63,7 +63,6 @@ def __apply_colour_map(hists, colourmap, colour_values, change_colour):
         if colour_values:
             value, max = colour_values(value)
         colour = colourmap(value, max)
-        print("BEK: colour",colour, max)
         if "line" in change_colour:
             hist.linecolor = colour
         if "marker" in change_colour:
