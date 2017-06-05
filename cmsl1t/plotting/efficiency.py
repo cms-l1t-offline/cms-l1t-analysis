@@ -4,7 +4,7 @@ from cmsl1t.hist.factory import HistFactory
 import cmsl1t.hist.binning as bn
 
 from rootpy.plotting import Canvas, Legend, HistStack
-from rootpy.plotting.utils import draw
+from cmsl1t.utils.draw import draw
 
 
 class EfficiencyPlot():
@@ -33,7 +33,7 @@ class EfficiencyPlot():
         # Overlay the "all" pile-up bin for each threshold
         all_pileup_effs = self.turnons.get_bin_contents([bn.Base.everything])
         # Really need a better way to do this
-        hists = [all_pileup_effs.get_bin_contents(key).graph
+        hists = [all_pileup_effs.get_bin_contents(key)
                  for key in all_pileup_effs.iter_all()
                  if isinstance(key, int)]
         self.__make_overlay("all_thresholds", hists)
@@ -69,8 +69,9 @@ class EfficiencyPlot():
 
         # Add labels
         # Add a legend
+
         # Save canvas to file
-        canvas.SaveAs(file_kernel+".png")
+        canvas.SaveAs(file_kernel + ".png")
 
     def __summarize_fits(self):
         pass
