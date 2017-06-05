@@ -7,29 +7,37 @@ import rootpy.ROOT as ROOT
 from exceptions import RuntimeError
 
 
-__known_root_pallettes = set([
-  "DeepSea",          "GreyScale",    "DarkBodyRadiator",
-  "BlueYellow",      "RainBow",      "InvertedDarkBodyRadiator",
-  "Bird",             "Cubehelix",    "GreenRedViolet",
-  "BlueRedYellow",    "Ocean",        "ColorPrintableOnGrey",
-  "Alpine",           "Aquamarine",   "Army",
-  "Atlantic",         "Aurora",       "Avocado",
-  "Beach",            "BlackBody",    "BlueGreenYellow",
-  "BrownCyan",        "CMYK",         "Candy",
-  "Cherry",           "Coffee",       "DarkRainBow",
-  "DarkTerrain",      "Fall",         "FruitPunch",
-  "Fuchsia",          "GreyYellow",   "GreenBrownTerrain",
-  "GreenPink",        "Island",       "Lake",
-  "LightTemperature", "LightTerrain", "Mint",
-  "Neon",             "Pastel",       "Pearl",
-  "Pigeon",           "Plum",         "RedBlue",
-  "Rose",             "Rust",         "SandyTerrain",
-  "Sienna",           "Solar",       "SouthWest",
-  "StarryNight",     "Sunset",      "TemperatureMap",
-  "Thermometer",     "Valentine",   "VisibleSpectrum",
-  "WaterMelon",      "Cool",        "Copper",
-  "GistEarth",       "Viridis"
-])
+__known_root_pallettes = set(["DeepSea", "GreyScale",
+                              "DarkBodyRadiator", "BlueYellow",
+                              "RainBow", "InvertedDarkBodyRadiator",
+                              "Bird", "Cubehelix",
+                              "GreenRedViolet", "BlueRedYellow",
+                              "Ocean", "ColorPrintableOnGrey",
+                              "Alpine", "Aquamarine",
+                              "Army", "Atlantic",
+                              "Aurora", "Avocado",
+                              "Beach", "BlackBody",
+                              "BlueGreenYellow", "BrownCyan",
+                              "CMYK", "Candy",
+                              "Cherry", "Coffee",
+                              "DarkRainBow", "DarkTerrain",
+                              "Fall", "FruitPunch",
+                              "Fuchsia", "GreyYellow",
+                              "GreenBrownTerrain", "GreenPink",
+                              "Island", "Lake",
+                              "LightTemperature", "LightTerrain",
+                              "Mint", "Neon",
+                              "Pastel", "Pearl",
+                              "Pigeon", "Plum",
+                              "RedBlue", "Rose",
+                              "Rust", "SandyTerrain",
+                              "Sienna", "Solar",
+                              "SouthWest", "StarryNight",
+                              "Sunset", "TemperatureMap",
+                              "Thermometer", "Valentine",
+                              "VisibleSpectrum", "WaterMelon",
+                              "Cool", "Copper",
+                              "GistEarth", "Viridis"])
 
 
 def root_palette(value, max, min=0):
@@ -48,16 +56,16 @@ def __clean(hists):
 
 def __apply_colour_map(hists, colourmap, colour_values, change_colour):
     # Clean change_colour
-    change_colour = [ c.lower() for c in change_colour ]
+    change_colour = [c.lower() for c in change_colour]
 
     with preserve_current_style():
         # Resolve the requested pallette if it's not a function
         if isinstance(colourmap, str):
             if colourmap in __known_root_pallettes:
-                gStyle.SetPalette(getattr(ROOT, "k"+colourmap))
-                colourmap=root_palette
+                gStyle.SetPalette(getattr(ROOT, "k" + colourmap))
+                colourmap = root_palette
             else:
-                raise RuntimeError("Unknown palette requested: "+colourmap)
+                raise RuntimeError("Unknown palette requested: " + colourmap)
 
         # Set the colour of each hist
         max = len(hists)
@@ -81,7 +89,8 @@ def __prepare_canvas():
     return canvas, style
 
 
-def draw(hists, colourmap="RainBow", colour_values=None, change_colour = ("line","marker")):
+def draw(hists, colourmap="RainBow", colour_values=None,
+         change_colour=("line", "marker")):
     canvas, style = __prepare_canvas()
     hists = __clean(hists)
     __apply_colour_map(hists, colourmap, colour_values, change_colour)
@@ -89,7 +98,7 @@ def draw(hists, colourmap="RainBow", colour_values=None, change_colour = ("line"
     return canvas
 
 
-def label_canvas(sample_title =None, run = None, isData = False):
+def label_canvas(sample_title=None, run=None, isData=False):
     latex = TLatex()
     latex.SetNDC()
     latex.SetTextFont(42)

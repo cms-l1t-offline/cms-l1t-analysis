@@ -19,9 +19,9 @@ class EfficiencyPlot():
         self.thresholds = bn.GreaterThan(thresholds, use_everything_bin=True)
         self.yields = HistogramCollection([self.pileup_bins, self.thresholds],
                                           "Hist1D", n_bins, low, high)
-        filename= ["eff", online_label, offline_label,
-                   "thresh_{thresh}", "pu_{pileup}"]
-        self.filename_format = "{outdir}/"+"-".join(filename)+".{fmt}"
+        filename = ["eff", online_label, offline_label,
+                    "thresh_{thresh}", "pu_{pileup}"]
+        self.filename_format = "{outdir}/" + "-".join(filename) + ".{fmt}"
 
     def set_plot_output_cfg(self, outdir, fmt):
         self.output_dir = outdir
@@ -84,16 +84,14 @@ class EfficiencyPlot():
 
             # Save canvas to file
             filename = self.filename_format
-            filename = filename.format(outdir = self.output_dir,
-                                       pileup = pileup,
-                                       thresh = threshold,
-                                       fmt = "png"
-                                      )
+            filename = filename.format(outdir=self.output_dir,
+                                       pileup=pileup,
+                                       thresh=threshold,
+                                       fmt="png")
             canvas.SaveAs(filename)
 
     def __summarize_fits(self):
         pass
-
 
     def __fit_one_turnon(self, pileup_bin, threshold_bin, turnon):
         pass

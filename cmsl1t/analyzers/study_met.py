@@ -15,10 +15,10 @@ class Analyzer(BaseAnalyzer):
 
         self.eff_fullMet = EfficiencyPlot()
         self.eff_fullMet_wTowers = EfficiencyPlot()
-        self.all_plots = [ self.eff_fullMet_wTowers, self.eff_fullMet ]
+        self.all_plots = [self.eff_fullMet_wTowers, self.eff_fullMet]
 
-        out_dir = config.get('output','folder')
-        file_format = config.try_get('output','plot_format',"png")
+        out_dir = config.get('output', 'folder')
+        file_format = config.try_get('output', 'plot_format', "png")
         for hist in self.all_plots:
             hist.set_plot_output_cfg(out_dir, file_format)
 
@@ -29,7 +29,7 @@ class Analyzer(BaseAnalyzer):
         self.eff_fullMet.build("MET", "PF_MET",
                                puBins, thresholds, 50, 0, 300)
         self.eff_fullMet_wTowers.build("MET-with-towers", "PF_MET",
-                               puBins, thresholds, 50, 0, 300)
+                                       puBins, thresholds, 50, 0, 300)
 
         return True
 
@@ -47,7 +47,7 @@ class Analyzer(BaseAnalyzer):
         len_calo = len(event.caloTowers)
         onlineMet = recalc.l1MetNot28(event.caloTowers).mag
         self.eff_fullMet.fill(pileup, offlineMetBE, onlineMet)
-        if len_calo >0:
+        if len_calo > 0:
             self.eff_fullMet_wTowers.fill(pileup, offlineMetBE, onlineMet)
 
         return True
