@@ -17,10 +17,9 @@ class Analyzer(BaseAnalyzer):
         self.eff_fullMet_wTowers = EfficiencyPlot()
         self.all_plots = [self.eff_fullMet_wTowers, self.eff_fullMet]
 
-        out_dir = config.get('output', 'folder')
         file_format = config.try_get('output', 'plot_format', "png")
         for hist in self.all_plots:
-            hist.set_plot_output_cfg(out_dir, file_format)
+            hist.set_plot_output_cfg(self.output_folder, file_format)
 
     def prepare_for_events(self, reader):
         puBins = range(0, 50, 10) + [999]
@@ -53,7 +52,8 @@ class Analyzer(BaseAnalyzer):
         return True
 
     def write_histograms(self):
-        # self.eff_fullMet.to_root(self.get_histogram_filename())
+        for hist in self.all_plots:
+            hist.to_root(self.get_histogram_filename())
         return True
 
     def make_plots(self):

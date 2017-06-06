@@ -2,10 +2,11 @@ from __future__ import print_function
 from cmsl1t.hist.hist_collection import HistogramCollection
 from cmsl1t.hist.factory import HistFactory
 import cmsl1t.hist.binning as bn
+from cmsl1t.utils.draw import draw, label_canvas
+from cmsl1t.io import to_root
 
 from rootpy.plotting import Legend, HistStack
 from rootpy.context import preserve_current_style
-from cmsl1t.utils.draw import draw, label_canvas
 
 
 class EfficiencyPlot():
@@ -27,9 +28,16 @@ class EfficiencyPlot():
         self.output_dir = outdir
         self.output_format = fmt
 
-    def reload(self):
+    def from_root(self, filename):
         """ Reload histograms from existing files on disk """
         pass
+
+    def to_root(self, filename):
+        """ Write histograms to disk """
+	to_write = [self, self.yields]
+	if hasattr(self,"turnons"):
+		to_write += [self.turnons]
+        to_root(to_write, filename)
 
     def fill(self, pileup, online, offline):
         self.yields[pileup, online].fill(offline)
