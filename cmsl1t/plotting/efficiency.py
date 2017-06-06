@@ -79,7 +79,8 @@ class EfficiencyPlot():
     def __make_overlay(self, pileup, threshold, hists):
         with preserve_current_style():
             # Draw each turnon (with fit)
-            canvas = draw(hists)
+            canvas = draw(hists, draw_args={"xtitle":self.offline_label,
+			                    "ytitle":self.online_label})
 
             # Add labels
             label_canvas()

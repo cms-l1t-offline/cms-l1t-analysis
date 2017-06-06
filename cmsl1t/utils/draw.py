@@ -79,22 +79,24 @@ def __apply_colour_map(hists, colourmap, colour_values, change_colour):
                 hist.markercolor = colour
 
 
-def __prepare_canvas():
+def __prepare_canvas(canvas_args):
     style = gStyle
     style.SetOptStat(0)
 
-    canvas = Canvas()
+    canvas = Canvas(**canvas_args)
     canvas.SetGridx(True)
     canvas.SetGridy(True)
     return canvas, style
 
 
 def draw(hists, colourmap="RainBow", colour_values=None,
-         change_colour=("line", "marker")):
-    canvas, style = __prepare_canvas()
+         change_colour=("line", "marker"), canvas_args={}, draw_args={}):
+    canvas, style = __prepare_canvas(canvas_args)
     hists = __clean(hists)
     __apply_colour_map(hists, colourmap, colour_values, change_colour)
-    r_draw(hists, canvas)
+    xaxis = hists[0].axis(0)
+    yaxis = hists[0].axis(1)
+    r_draw(hists, canvas, same=True, xaxis=xaxis, yaxis=yaxis,  **draw_args)
     return canvas
 
 
