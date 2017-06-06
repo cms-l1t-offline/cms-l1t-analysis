@@ -96,7 +96,7 @@ def draw(hists, colourmap="RainBow", colour_values=None,
     __apply_colour_map(hists, colourmap, colour_values, change_colour)
     xaxis = hists[0].axis(0)
     yaxis = hists[0].axis(1)
-    r_draw(hists, canvas, same=True, xaxis=xaxis, yaxis=yaxis,  **draw_args)
+    r_draw(hists, canvas, same=True, xaxis=xaxis, yaxis=yaxis, **draw_args)
     return canvas
 
 

@@ -35,7 +35,7 @@ class EfficiencyPlot():
     def to_root(self, filename):
         """ Write histograms to disk """
         to_write = [self, self.yields]
-        if hasattr(self,"turnons"):
+        if hasattr(self, "turnons"):
             to_write += [self.turnons]
         to_root(to_write, filename)
 
@@ -83,8 +83,8 @@ class EfficiencyPlot():
     def __make_overlay(self, pileup, threshold, hists):
         with preserve_current_style():
             # Draw each turnon (with fit)
-            canvas = draw(hists, draw_args={"xtitle":self.offline_label,
-                                            "ytitle":self.online_label})
+            canvas = draw(hists, draw_args={"xtitle": self.offline_label,
+                                            "ytitle": self.online_label})
 
             # Add labels
             label_canvas()
