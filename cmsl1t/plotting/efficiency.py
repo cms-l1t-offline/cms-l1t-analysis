@@ -34,9 +34,9 @@ class EfficiencyPlot():
 
     def to_root(self, filename):
         """ Write histograms to disk """
-	to_write = [self, self.yields]
-	if hasattr(self,"turnons"):
-		to_write += [self.turnons]
+        to_write = [self, self.yields]
+        if hasattr(self,"turnons"):
+            to_write += [self.turnons]
         to_root(to_write, filename)
 
     def fill(self, pileup, online, offline):
@@ -48,21 +48,25 @@ class EfficiencyPlot():
 
         # Overlay the "all" pile-up bin for each threshold
         all_pileup_effs = self.turnons.get_bin_contents([bn.Base.everything])
-        # Really need a better way to do this
         hists = [all_pileup_effs.get_bin_contents(key)
                  for key in all_pileup_effs.iter_all()
                  if isinstance(key, int)]
         self.__make_overlay("all", "all", hists)
 
         # Overlay individual pile-up bins for each threshold
+        for threshold in self.thresholds:
+            hists = []
+            for pileup in self.pileup_bins:
+                hists.append(self.turnons.get_bin_contents([pileup, threshold]))
+            self.__make_overlay(pileup, threshold, hists)
 
         # Produce the fit summary plot
         if with_fits:
             self.__summarize_fits()
 
     def __fill_turnons(self, with_fits):
-        # Boiler plate to convert a given distribution to a turnon
 
+        # Boiler plate to convert a given distribution to a turnon
         def make_eff(pileup_bin, threshold_bin):
             total = self.yields.get_bin_contents([pileup_bin, bn.Base.everything])
             passed = self.yields.get_bin_contents([pileup_bin, threshold_bin])
@@ -80,7 +84,7 @@ class EfficiencyPlot():
         with preserve_current_style():
             # Draw each turnon (with fit)
             canvas = draw(hists, draw_args={"xtitle":self.offline_label,
-			                    "ytitle":self.online_label})
+                                            "ytitle":self.online_label})
 
             # Add labels
             label_canvas()
