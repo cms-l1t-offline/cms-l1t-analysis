@@ -10,7 +10,7 @@ from rootpy.context import preserve_current_style
 
 
 class EfficiencyPlot():
-    def build(self, 
+    def build(self,
               online_name, offline_name,
               online_title, offline_title,
               pileup_bins, thresholds, n_bins, low, high):
@@ -20,15 +20,15 @@ class EfficiencyPlot():
         self.offline_name = offline_name
         self.online_title = online_title
         self.offline_title = offline_title
-        self.pileup_bins = bn.Sorted(pileup_bins, "pileup", 
+        self.pileup_bins = bn.Sorted(pileup_bins, "pileup",
                                      use_everything_bin=True)
-        self.thresholds = bn.GreaterThan(thresholds,"threshold",
+        self.thresholds = bn.GreaterThan(thresholds, "threshold",
                                          use_everything_bin=True)
 
         name = [online_name, offline_name,
                 "thresh_{threshold}", "pu_{pileup}"]
         name = "__".join(name)
-        title = " ".join([online_name," in PU bin: {pileup}",
+        title = " ".join([online_name, " in PU bin: {pileup}",
                           "and passing threshold: {threshold}"])
         self.yields = HistogramCollection([self.pileup_bins, self.thresholds],
                                           "Hist1D", n_bins, low, high,
@@ -90,7 +90,7 @@ class EfficiencyPlot():
             threshold_bin = labels["threshold"]
             total = self.yields.get_bin_contents([pileup_bin, bn.Base.everything])
             passed = self.yields.get_bin_contents([pileup_bin, threshold_bin])
-            turnon = passed.Clone(passed.name.replace("yield","turnon"))
+            turnon = passed.Clone(passed.name.replace("yield", "turnon"))
             turnon.Divide(total)
             if with_fits:
                 self.__fit_one_turnon(pileup_bin, threshold_bin, turnon)

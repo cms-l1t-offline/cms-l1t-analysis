@@ -73,8 +73,8 @@ class HistogramCollection(object):
                     this_dim.set_value(bin, value)
                 else:
                     indices = bin_indices + [bin]
-                    labels = { d.label: index 
-                               for d, index in zip(self.__dimensions, indices)}
+                    labels = {d.label: index for d, index in
+                              zip(self.__dimensions, indices)}
                     # TODO: Should fill proper bin labels here and pass through
                     hist = histogram_factory(labels=labels)
                     this_dim.set_value(bin, hist)
