@@ -14,7 +14,7 @@ regions = binning.EtaRegions()
 class dummy_factory():
     instance_count = 0
 
-    def __init__(self, *vargs):
+    def __init__(self, *vargs, **kwargs):
         dummy_factory.instance_count += 1
         self.count = 0
         self.value = 0

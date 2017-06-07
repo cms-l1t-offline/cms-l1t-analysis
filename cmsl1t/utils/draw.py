@@ -45,6 +45,17 @@ def root_palette(value, max, min=0):
     return gStyle.GetColorPalette(int(colour_index))
 
 
+def __prepare_canvas(canvas_args):
+    style = gStyle
+    style.SetOptStat(0)
+
+    canvas = Canvas(**canvas_args)
+    canvas.SetGridx(True)
+    canvas.SetGridy(True)
+    canvas.title = ""
+    return canvas, style
+
+
 def __clean(hists):
     cleaned_hists = []
     for hist in hists:
@@ -79,16 +90,6 @@ def __apply_colour_map(hists, colourmap, colour_values, change_colour):
                 hist.markercolor = colour
 
 
-def __prepare_canvas(canvas_args):
-    style = gStyle
-    style.SetOptStat(0)
-
-    canvas = Canvas(**canvas_args)
-    canvas.SetGridx(True)
-    canvas.SetGridy(True)
-    return canvas, style
-
-
 def draw(hists, colourmap="RainBow", colour_values=None,
          change_colour=("line", "marker"), canvas_args={}, draw_args={}):
     canvas, style = __prepare_canvas(canvas_args)
@@ -96,6 +97,7 @@ def draw(hists, colourmap="RainBow", colour_values=None,
     __apply_colour_map(hists, colourmap, colour_values, change_colour)
     xaxis = hists[0].axis(0)
     yaxis = hists[0].axis(1)
+    hists[0].title = ""
     r_draw(hists, canvas, same=True, xaxis=xaxis, yaxis=yaxis, **draw_args)
     return canvas
 
