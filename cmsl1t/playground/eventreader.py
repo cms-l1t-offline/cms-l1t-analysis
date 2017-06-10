@@ -9,6 +9,8 @@ from cmsl1t.playground.cache import CachedIndexedTree
 import ROOT
 from collections import namedtuple
 from exceptions import RuntimeError
+import logging
+logger = logging.getLogger(__name__)
 
 if 'L1TAnalysisDataformats.so' not in ROOT.gSystem.GetLibraries():
     ROOT.gSystem.Load('build/L1TAnalysisDataformats.so')
@@ -22,15 +24,16 @@ Mex = namedtuple('Mex', ['ex'])
 Mey = namedtuple('Mey', ['ey'])
 
 ALL_TREE = {
-    "caloTowers" : 'l1CaloTowerTree/L1CaloTowerTree',
-    "emuCaloTower" : 'l1CaloTowerEmuTree/L1CaloTowerTree',
-    "jetReco" : 'l1JetRecoTree/JetRecoTree',
-    "metFilterReco" : 'l1MetFilterRecoTree/MetFilterRecoTree',
-    "muonReco" : 'l1MuonRecoTree/Muon2RecoTree',
-    "recoTree" : 'l1RecoTree/RecoTree',
-    "upgrade" : 'l1UpgradeTree/L1UpgradeTree',
-    "emuUpgrade" : 'l1UpgradeEmuTree/L1UpgradeTree',
+    "caloTowers": 'l1CaloTowerTree/L1CaloTowerTree',
+    "emuCaloTower": 'l1CaloTowerEmuTree/L1CaloTowerTree',
+    "jetReco": 'l1JetRecoTree/JetRecoTree',
+    "metFilterReco": 'l1MetFilterRecoTree/MetFilterRecoTree',
+    "muonReco": 'l1MuonRecoTree/Muon2RecoTree',
+    "recoTree": 'l1RecoTree/RecoTree',
+    "upgrade": 'l1UpgradeTree/L1UpgradeTree',
+    "emuUpgrade": 'l1UpgradeEmuTree/L1UpgradeTree',
 }
+
 
 class Event(object):
 
@@ -49,7 +52,7 @@ class Event(object):
     def __init__(self, tree_names, trees):
         self._trees = trees
         for name, tree in zip(tree_names, trees):
-            setattr(self, "_"+name, tree)
+            setattr(self, "_" + name, tree)
         self._l1Sums = {}
 
         if "caloTowers" in tree_names:
@@ -255,7 +258,8 @@ class EventReader(object):
         for name, path in ALL_TREE.iteritems():
             try:
                 chain = TreeChain(path, input_files, cache=True, events=events)
-            except RuntimeError as e:
+            except RuntimeError:
+                logger.warn("Cannot find tree: {0} in input file".format(path))
                 continue
             self._names.append(name)
             self._trees.append(chain)
