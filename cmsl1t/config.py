@@ -264,6 +264,9 @@ class ConfigParser(object):
             if key in modules:
                 modules = modules[key]
             else:
+                msg = "Cannot find required config section: " 
+                msg += "::".join(config_keys)
+                self.config_errors.append(msg)
                 return False
         msg = []
         results = []
