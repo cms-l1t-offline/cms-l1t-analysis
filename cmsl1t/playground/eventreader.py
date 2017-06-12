@@ -265,7 +265,7 @@ class EventReader(object):
             self._trees.append(chain)
 
     def __iter__(self):
-        for i, trees in enumerate(six.moves.zip(*self._trees)):
+        for trees in six.moves.zip(*self._trees):
             yield Event(self._names, trees)
 
 
