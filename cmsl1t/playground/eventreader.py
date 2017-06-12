@@ -8,6 +8,9 @@ from jetfilters import defaultJetFilter
 from cmsl1t.playground.cache import CachedIndexedTree
 import ROOT
 from collections import namedtuple
+from exceptions import RuntimeError
+import logging
+logger = logging.getLogger(__name__)
 
 if 'L1TAnalysisDataformats.so' not in ROOT.gSystem.GetLibraries():
     ROOT.gSystem.Load('build/L1TAnalysisDataformats.so')
@@ -20,16 +23,16 @@ Met = namedtuple('Met', ['et', 'phi'])
 Mex = namedtuple('Mex', ['ex'])
 Mey = namedtuple('Mey', ['ey'])
 
-TREE_NAMES = [
-    'l1CaloTowerTree/L1CaloTowerTree',
-    'l1CaloTowerEmuTree/L1CaloTowerTree',
-    'l1JetRecoTree/JetRecoTree',
-    'l1MetFilterRecoTree/MetFilterRecoTree',
-    'l1MuonRecoTree/Muon2RecoTree',
-    'l1RecoTree/RecoTree',
-    'l1UpgradeTree/L1UpgradeTree',
-    'l1UpgradeEmuTree/L1UpgradeTree',
-]
+ALL_TREE = {
+    "caloTowers": 'l1CaloTowerTree/L1CaloTowerTree',
+    "emuCaloTower": 'l1CaloTowerEmuTree/L1CaloTowerTree',
+    "jetReco": 'l1JetRecoTree/JetRecoTree',
+    "metFilterReco": 'l1MetFilterRecoTree/MetFilterRecoTree',
+    "muonReco": 'l1MuonRecoTree/Muon2RecoTree',
+    "recoTree": 'l1RecoTree/RecoTree',
+    "upgrade": 'l1UpgradeTree/L1UpgradeTree',
+    "emuUpgrade": 'l1UpgradeEmuTree/L1UpgradeTree',
+}
 
 
 class Event(object):
@@ -46,37 +49,41 @@ class Event(object):
         sumTypes.kTotalEty: {'name': 'Mey', 'type': Mey},
     }
 
-    def __init__(self, trees):
+    def __init__(self, tree_names, trees):
         self._trees = trees
-        # add names, aliases?
-        # lets assume fixed for now:
-        self._caloTowers, self._emuCaloTower, self._jetReco,\
-            self._metFilterReco, self._muonReco, self._recoTree,\
-            self._upgrade, self._emuUpgrade = self._trees
-
-        self._caloTowers = CachedIndexedTree(
-            self._caloTowers.L1CaloTower, 'nTower')
-        self._emuCaloTower = CachedIndexedTree(
-            self._emuCaloTower.L1CaloTower, 'nTower')
-        self.muons = CachedIndexedTree(
-            self._muonReco.Muon, 'nMuons'
-        )
-        self._upgrade = self._upgrade.L1Upgrade
-        self._emuUpgrade = self._emuUpgrade.L1Upgrade
-
-        self._jets = []
-        for i in range(self._jetReco.Jet.nJets):
-            self._jets.append(Jet(self._jetReco.Jet, i))
-
-        self._l1Jets = [L1Jet(self._upgrade, i)
-                        for i in range(self._upgrade.nJets)]
-
-        self._l1EmuJets = [L1Jet(self._emuUpgrade, i)
-                           for i in range(self._emuUpgrade.nJets)]
-
+        for name, tree in zip(tree_names, trees):
+            setattr(self, "_" + name, tree)
         self._l1Sums = {}
-        self._readUpgradeSums()
-        self._readEmuUpgradeSums()
+
+        if "caloTowers" in tree_names:
+            self._caloTowers = CachedIndexedTree(
+                self._caloTowers.L1CaloTower, 'nTower')
+
+        if "emuCaloTowers" in tree_names:
+            self._emuCaloTower = CachedIndexedTree(
+                self._emuCaloTower.L1CaloTower, 'nTower')
+
+        if "muonReco" in tree_names:
+            self.muons = CachedIndexedTree(
+                self._muonReco.Muon, 'nMuons'
+            )
+
+        if "upgrade" in tree_names:
+            self._upgrade = self._upgrade.L1Upgrade
+            self._l1Jets = [L1Jet(self._upgrade, i)
+                            for i in range(self._upgrade.nJets)]
+            self._readUpgradeSums()
+
+        if "emuUpgrade" in tree_names:
+            self._emuUpgrade = self._emuUpgrade.L1Upgrade
+            self._l1EmuJets = [L1Jet(self._emuUpgrade, i)
+                               for i in range(self._emuUpgrade.nJets)]
+            self._readEmuUpgradeSums()
+
+        if "jetReco" in tree_names:
+            self._jets = []
+            for i in range(self._jetReco.Jet.nJets):
+                self._jets.append(Jet(self._jetReco.Jet, i))
 
     def _readUpgradeSums(self):
         self._readSums(self._upgrade, prefix='L1')
@@ -246,12 +253,20 @@ class EventReader(object):
             else:
                 input_files.append(f)
         # this is not efficient
-        self._trees = [TreeChain(name, input_files, cache=True, events=events)
-                       for name in TREE_NAMES]
+        self._trees = []
+        self._names = []
+        for name, path in ALL_TREE.iteritems():
+            try:
+                chain = TreeChain(path, input_files, cache=True, events=events)
+            except RuntimeError:
+                logger.warn("Cannot find tree: {0} in input file".format(path))
+                continue
+            self._names.append(name)
+            self._trees.append(chain)
 
     def __iter__(self):
-        for trees in six.moves.zip(*self._trees):
-            yield Event(trees)
+        for i, trees in enumerate(six.moves.zip(*self._trees)):
+            yield Event(self._names, trees)
 
 
 if __name__ == '__main__':
