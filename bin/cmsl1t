@@ -23,7 +23,7 @@ section = '\n'.join(section)
 
 
 @timerfunc_log_to(logger.info)
-def process_tuples(config, nevents, analyzers):
+def process_tuples(config, nevents, analyzers, puBins):
     # Open the data files
     logger.info(section.format("Loading data"))
 
@@ -42,7 +42,7 @@ def process_tuples(config, nevents, analyzers):
     from cmsl1t.playground.eventreader import EventReader
     reader = EventReader(input_files, events=nevents)
 
-    results = [analyzer.prepare_for_events(reader) for analyzer in analyzers]
+    results = [analyzer.prepare_for_events(reader, puBins) for analyzer in analyzers]
     check(results, analyzers, 'prepare_for_events')
 
     logger.info(section.format("Processing events"))
@@ -106,6 +106,7 @@ def run(config, nevents, reload_histograms):
     results = [False]
     # Fetch the analyzer
     analyzers = config.get('analysis', 'analyzers')
+    puBins = config.get('analysis', 'pu_bins')
     analyzers = [load_analyzer(analyzer, config) for analyzer in analyzers]
 
     if not reload_histograms:
@@ -113,7 +114,7 @@ def run(config, nevents, reload_histograms):
         if analysis_mode == 'legacy':
             process_legacy(config, nevents, analyzers)
         else:
-            process_tuples(config, nevents, analyzers)
+            process_tuples(config, nevents, analyzers, puBins)
     else:
         process_histogram_files(config, analyzers)
 

@@ -54,6 +54,7 @@ class ResolutionPlot(BasePlotter):
                 label = "~ {:.0f}".format(self.pileup_bins.get_bin_center(pile_up))
             else:
                 continue
+            hist.SetMarkerSize(0.5)
             hists.append(hist)
             labels.append(label)
             # if with_fits:
@@ -81,6 +82,7 @@ class ResolutionPlot(BasePlotter):
                             topmargin=0.35, entryheight=0.035)
             for hist, label in zip(hists, labels):
                 legend.AddEntry(hist, label)
+            legend.SetBorderSize(0)
             legend.Draw()
 
             # Save canvas to file

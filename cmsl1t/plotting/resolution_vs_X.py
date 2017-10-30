@@ -9,6 +9,7 @@ from cmsl1t.recalc.resolution import get_resolution_function
 from rootpy.context import preserve_current_style
 from rootpy.plotting import Legend
 from rootpy import asrootpy
+from math import sqrt
 
 
 class ResolutionVsXPlot(BasePlotter):
@@ -30,6 +31,8 @@ class ResolutionVsXPlot(BasePlotter):
         self.online_title = online_title
         self.offline_title = offline_title
         self.versus_title = versus_title
+        self.ymin = res_low
+        self.ymax = res_high
         self.pileup_bins = bn.Sorted(pileup_bins, "pileup",
                                      use_everything_bin=True)
 
@@ -45,18 +48,36 @@ class ResolutionVsXPlot(BasePlotter):
         self.filename_format = name
 
     def fill(self, pileup, versus, offline, online):
-        difference = self.resolution_method(online, offline)
+        difference = self.resolution_method(online, offline) + 1.
         self.plots[pileup].fill(versus, difference)
 
     def draw(self, with_fits=True):
         for (pileup, ), hist in self.plots.flat_items_all():
             self.__do_draw(pileup, hist)
-            self.__do_draw(pileup, asrootpy(hist.ProfileX()), "_profile")
+            hist2=hist.ProfileX()
+            hist3=hist.ProjectionX()
+            hist4=hist.ProjectionX()
+            for i in range(hist.GetNbinsX()):
+                if hist2.GetBinContent(i)==0:
+                    hist3.SetBinContent(i, 0.)
+                    continue
+                hist3.SetBinContent(i, sqrt(hist4.GetBinContent(i))*hist2.GetBinError(i)/hist2.GetBinContent(i))
+                hist3.SetBinError(i, 0.)
+                hist2.SetBinError(i, hist4.GetBinContent(i)*hist2.GetBinError(i))
+            if hist3.GetMaximum() > 3.:
+                hist3.GetYaxis().SetRangeUser(0., 2.)
+            self.__do_draw(pileup, hist2, "_profile2")
+            self.__do_draw(pileup, hist3, "_profile")
 
     def __do_draw(self, pileup, hist, suffix=""):
         with preserve_current_style():
             # Draw each efficiency (with fit)
-            ytitle = self.resolution_method.label.format(on=self.online_title, off=self.offline_title)
+            if suffix=="":
+                ytitle = "Online Jet Energy / Offline Jet Energy"
+            elif suffix=="_profile":
+                ytitle = "RMS/Mean (Online Jet Energy/Offline Jet Energy)"
+            else:
+                ytitle = self.resolution_method.label.format(on=self.online_title, off=self.offline_title)
             canvas = draw2D(hist, draw_args={"xtitle": self.versus_title, "ytitle": ytitle})
 
             # Add labels

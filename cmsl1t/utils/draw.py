@@ -86,6 +86,7 @@ def __clean(hists):
             new = asrootpy(hist.CreateGraph("e0"))
             new.decorate(hist)
             hist = new
+            hist.SetMarkerSize(0.5)
         cleaned_hists.append(hist)
 
     axis_hist = cleaned_hists[0]
@@ -141,11 +142,14 @@ def draw(hists, colourmap="RainBow", colour_values=None,
     yaxis = axis_hist.axis(1)
     axis_hist.title = ""
 
+    canvas.SetGridx()
+    canvas.Update()
+
     r_draw(hists, canvas, xaxis=xaxis, yaxis=yaxis, **draw_args)
     return canvas
 
 
-def draw2D(hist2d, colourmap="RainBow", canvas_args={}, draw_args={}):
+def draw2D(hist2d, colourmap="Bird", canvas_args={}, draw_args={}):
     canvas, style = __prepare_canvas(canvas_args)
     if isinstance(colourmap, str):
         colourmap = set_palette(colourmap)

@@ -1,5 +1,5 @@
 """
-Make plots for weekly checks
+Make plots for offline met studies
 """
 
 from BaseAnalyzer import BaseAnalyzer
@@ -16,8 +16,8 @@ from collections import namedtuple
 import numpy as np
 
 
-sum_types = ["HTT", "HTT_Emu", "MET_HF", "MET", "MET_PF", "MET_PF_NoMu", "MET_PF_HF", "MET_PF_NoMu_HF",
-              "MET_HF_Emu", "MET_Emu", "MET_PF_Emu", "MET_PF_NoMu_Emu", "MET_PF_HF_Emu", "MET_PF_NoMu_HF_Emu"]
+sum_types = ["HTT", "HTT_Emu", "MHT", "MET_HF", "MET", "MET_PF", "MET_PF_NoMu", "MET_PF_HF", "MET_PF_NoMu_HF",
+              "MHT_Emu", "MET_HF_Emu", "MET_Emu", "MET_PF_Emu", "MET_PF_NoMu_Emu", "MET_PF_HF_Emu", "MET_PF_NoMu_HF_Emu"]
 jet_types = ["jetET_B", "jetET_E", "jetET_BE", "jetET_HF", "jetET_B_Emu", "jetET_E_Emu", "jetET_BE_Emu", "jetET_HF_Emu"]
 Sums = namedtuple("Sums", sum_types)
 
@@ -62,7 +62,7 @@ def ExtractSums(event):
 
 class Analyzer(BaseAnalyzer):
     def __init__(self, config, **kwargs):
-        super(Analyzer, self).__init__("weekly_analyzer", config)
+        super(Analyzer, self).__init__("offline_met_analyzer", config)
 
         for name in sum_types:
             eff_plot = EfficiencyPlot("L1", "offline_" + name)
@@ -115,7 +115,7 @@ class Analyzer(BaseAnalyzer):
     def prepare_for_events(self, reader, puBins=[0,10,20,30,40,999]):
         # TODO: Get these from a common place, and / or the config file
         #puBins = range(0, 50, 10) + [999]
-        puBins_HR = [0,999]
+        puBins_HR = [0, 999]
         tmpbins0 = range(0, 100, 5)
         tmpbins1 = range(100, 400, 10)
         tmpbins2 = range(400, 800, 50)
@@ -235,14 +235,14 @@ class Analyzer(BaseAnalyzer):
 
         
 
-        cfgs = [HTT_cfg, MET_HF_cfg, MET_cfg, MET_PF_cfg, MET_PF_NoMu_cfg, MET_PF_HF_cfg, MET_PF_NoMu_HF_cfg,
+        cfgs = [HTT_cfg, MHT_cfg, MET_HF_cfg, MET_cfg, MET_PF_cfg, MET_PF_NoMu_cfg, MET_PF_HF_cfg, MET_PF_NoMu_HF_cfg,
                   jetET_Barrel_cfg, jetET_Endcap_cfg, jetET_Central_cfg, jetET_HF_cfg,
-                  HTT_Emu_cfg, MET_HF_Emu_cfg, MET_Emu_cfg, MET_PF_Emu_cfg, MET_PF_NoMu_Emu_cfg, MET_PF_HF_Emu_cfg, MET_PF_NoMu_HF_Emu_cfg,
+                  HTT_Emu_cfg, MHT_Emu_cfg, MET_HF_Emu_cfg, MET_Emu_cfg, MET_PF_Emu_cfg, MET_PF_NoMu_Emu_cfg, MET_PF_HF_Emu_cfg, MET_PF_NoMu_HF_Emu_cfg,
                   jetET_Barrel_Emu_cfg, jetET_Endcap_Emu_cfg, jetET_Central_Emu_cfg, jetET_HF_Emu_cfg,]
 
-        cfgs2 = [HTT_cfg_HR, MET_HF_cfg_HR, MET_cfg_HR, MET_PF_cfg_HR, MET_PF_NoMu_cfg_HR, MET_PF_HF_cfg_HR, MET_PF_NoMu_HF_cfg_HR,
+        cfgs2 = [HTT_cfg_HR, MHT_cfg_HR, MET_HF_cfg_HR, MET_cfg_HR, MET_PF_cfg_HR, MET_PF_NoMu_cfg_HR, MET_PF_HF_cfg_HR, MET_PF_NoMu_HF_cfg_HR,
                   jetET_Barrel_cfg_HR, jetET_Endcap_cfg_HR, jetET_Central_cfg_HR, jetET_HF_cfg_HR,
-                  HTT_Emu_cfg_HR, MET_HF_Emu_cfg_HR, MET_Emu_cfg_HR, MET_PF_Emu_cfg_HR, MET_PF_NoMu_Emu_cfg_HR, MET_PF_HF_Emu_cfg_HR, MET_PF_NoMu_HF_Emu_cfg_HR,
+                  HTT_Emu_cfg_HR, MHT_Emu_cfg_HR, MET_HF_Emu_cfg_HR, MET_Emu_cfg_HR, MET_PF_Emu_cfg_HR, MET_PF_NoMu_Emu_cfg_HR, MET_PF_HF_Emu_cfg_HR, MET_PF_NoMu_HF_Emu_cfg_HR,
                   jetET_Barrel_Emu_cfg_HR, jetET_Endcap_Emu_cfg_HR, jetET_Central_Emu_cfg_HR, jetET_HF_Emu_cfg_HR]
 
         for cfg in cfgs:

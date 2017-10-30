@@ -20,7 +20,7 @@ class BaseAnalyzer(object):
             os.makedirs(self.plots_folder)
         self.all_plots = []
 
-    def prepare_for_events(self, reader):
+    def prepare_for_events(self, reader, puBins=[0,10,20,30,40,999]):
         """
         Can be overloaded in the derived class.
         Called once, after the input trees have been prepared.
@@ -120,7 +120,7 @@ class BaseAnalyzer(object):
         """
         Register a plotter with this analyzer, and set up it's outputs
         """
-        file_format = self.config.try_get('output', 'plot_format', "png")
+        file_format = self.config.try_get('output', 'plot_format', "pdf")
         plotter.set_plot_output_cfg(self.plots_folder, file_format)
         self.all_plots.append(plotter)
 

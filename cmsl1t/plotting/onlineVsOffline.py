@@ -8,6 +8,7 @@ from cmsl1t.io import to_root
 
 from rootpy.plotting import Legend, HistStack
 from rootpy.context import preserve_current_style
+import numpy as np
 
 
 class OnlineVsOffline(BasePlotter):
@@ -19,7 +20,7 @@ class OnlineVsOffline(BasePlotter):
 
     def create_histograms(self,
                           online_title, offline_title,
-                          pileup_bins, n_bins, low, high):
+                          pileup_bins, n_bins, low, high=400.):
         """ This is not in an init function so that we can by-pass this in the
         case where we reload things from disk """
         self.online_title = online_title
@@ -31,7 +32,12 @@ class OnlineVsOffline(BasePlotter):
         name = "__".join(name)
         title = " ".join([self.online_name, "vs.", self.offline_name, "in PU bin: {pileup}"])
         title = ";".join([title, self.offline_title, self.online_title])
-        self.plots = HistogramCollection([self.pileup_bins],
+        if isinstance(low, np.ndarray):
+            self.plots = HistogramCollection([self.pileup_bins],
+                                         "Hist2D", low, low,
+                                         name=name, title=title)
+        else:
+            self.plots = HistogramCollection([self.pileup_bins],
                                          "Hist2D", n_bins, low, high, n_bins, low, high,
                                          name=name, title=title)
         self.filename_format = name
