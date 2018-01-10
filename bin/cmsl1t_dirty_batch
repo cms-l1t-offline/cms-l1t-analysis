@@ -94,7 +94,7 @@ class cmsl1t_batch_job_bsub(object):
 
     def _submit_one(self, config, group=None):
         # Prepare the args
-        args = ["bsub", "-q", "8nm"]
+        args = ["bsub", "-q", "1nh"]
         if group:
             args += ["-g", group]
         if not self.debug:

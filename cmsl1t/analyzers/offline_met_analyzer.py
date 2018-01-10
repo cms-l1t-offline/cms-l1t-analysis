@@ -4,6 +4,7 @@ from cmsl1t.collections import EfficiencyCollection
 from cmsl1t.plotting.onlineVsOffline import OnlineVsOffline
 from cmsl1t.plotting.resolution import ResolutionPlot
 from cmsl1t.plotting.resolution_vs_X import ResolutionVsXPlot
+from cmsl1t.playground.metfilters import pfMetFilter
 import cmsl1t.recalc.met as recalc
 from cmsl1t.playground.eventreader import Met, Sum
 from math import pi
@@ -266,16 +267,14 @@ class Analyzer(BaseAnalyzer):
             )
 
     def fill_histograms(self, entry, event):
-        if not event.passesMETFilter():
-            return True
 
         offline, online = ExtractSums(event)
         pileup = event.nVertex
 
         for name in sum_types:
-            on = online[name]
-            if on.et == 0:
+            if 'MET' in name and not pfMetFilter(event):
                 continue
+            on = online[name]
             off = offline[name]
             for suffix in ['_eff', '_res', '_2D', '_eff_HR', '_2D_HR']:
                 getattr(self, name + suffix).fill(pileup, off.et, on.et)
