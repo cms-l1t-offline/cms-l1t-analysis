@@ -4,7 +4,7 @@ import six
 import os
 import math
 
-from jetfilters import defaultJetFilter
+from jetfilters import pfJetFilter
 from metfilters import pfMetFilter
 from cmsl1t.playground.cache import CachedIndexedTree
 import ROOT

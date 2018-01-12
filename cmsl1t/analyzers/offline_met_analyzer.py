@@ -4,6 +4,7 @@ from cmsl1t.collections import EfficiencyCollection
 from cmsl1t.plotting.onlineVsOffline import OnlineVsOffline
 from cmsl1t.plotting.resolution import ResolutionPlot
 from cmsl1t.plotting.resolution_vs_X import ResolutionVsXPlot
+from cmsl1t.playground.jetfilters import pfJetFilter
 from cmsl1t.playground.metfilters import pfMetFilter
 import cmsl1t.recalc.met as recalc
 from cmsl1t.playground.eventreader import Met, Sum
