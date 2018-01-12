@@ -225,8 +225,8 @@ class Jet(object):
     def __init__(self, jets, index):
         # this could be simplified with a list of attributes
         read_attributes = [
-            'etCorr', 'muMult', 'eta', 'phi', 'nhef', 'pef', 'mef', 'chMult',
-            'elMult', 'nhMult', 'phMult', 'chef', 'eef'
+            'etCorr', 'muMult', 'eta', 'phi', 'nhef', 'pef', 'mef', 'chMult', 'elMult', 
+            'nhMult', 'phMult', 'chef', 'eef', 'nemef', 'cMult', 'nMult', 'cemef'
         ]
         for attr in read_attributes:
             setattr(self, attr, getattr(jets, attr)[index])
