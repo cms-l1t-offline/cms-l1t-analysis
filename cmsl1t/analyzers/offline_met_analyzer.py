@@ -330,6 +330,20 @@ class Analyzer(BaseAnalyzer):
         getattr(self, 'jetET_BE_Emu_eff').draw()
         getattr(self, 'jetET_HF_Emu_eff').draw()
 
+        getattr(self, 'HTT_eff_HiRange').draw()
+        getattr(self, 'MET_eff_HiRange').draw()
+        getattr(self, 'MET_HF_eff_HiRange').draw()
+        getattr(self, 'MET_PF_NoMu_HF_eff_HiRange').draw()
+        getattr(self, 'jetET_BE_eff_HiRange').draw()
+        getattr(self, 'jetET_HF_eff_HiRange').draw()
+
+        getattr(self, 'HTT_Emu_eff_HiRange').draw()
+        getattr(self, 'MET_Emu_eff_HiRange').draw()
+        getattr(self, 'MET_HF_Emu_eff_HiRange').draw()
+        getattr(self, 'MET_PF_NoMu_HF_Emu_eff_HiRange').draw()
+        getattr(self, 'jetET_BE_Emu_eff_HiRange').draw()
+        getattr(self, 'jetET_HF_Emu_eff_HiRange').draw()
+
 
         getattr(self, 'HTT_eff').overlay_with_emu(getattr(self, 'HTT_Emu_eff'))
         getattr(self, 'MET_eff').overlay_with_emu(getattr(self, 'MET_Emu_eff'))

@@ -22,8 +22,8 @@ input:
 
 analysis:
   do_fit: True
-  pu_type: 0PU12,13PU19,20PU
-  pu_bins: [0,999]
+  pu_type: 0PU24,25PU49,50PU
+  pu_bins: [0,25,50,999]
   thresholds:
     HTT: [160, 220, 280, 340, 400]
     MHT: [40, 60, 80, 100, 120]
