@@ -117,22 +117,22 @@ class EfficiencyPlot(BasePlotter):
         )
 
         # Overlay individual pile-up bins for each threshold
-        for threshold in self.thresholds:
-            hists = []
-            labels = []
-            fits = []
-            for pileup in self.pileup_bins:
-                if not isinstance(pileup, int):
-                    continue
-                hist = self.efficiencies.get_bin_contents([pileup, threshold])
-                hist.drawstyle = "P"
-                hists.append(hist)
-                if with_fits:
-                    fits.append(self.fits.get_bin_contents(
-                        [pileup, threshold]))
-                labels.append(str(self.pileup_bins.bins[pileup]))
-            self.__make_overlay(pileup, threshold, hists,
-                                fits, labels, "PU bin")
+        #for threshold in self.thresholds:
+        #    hists = []
+        #    labels = []
+        #    fits = []
+        #    for pileup in self.pileup_bins:
+        #        if not isinstance(pileup, int):
+        #            continue
+        #        hist = self.efficiencies.get_bin_contents([pileup, threshold])
+        #        hist.drawstyle = "P"
+        #        hists.append(hist)
+        #        if with_fits:
+        #            fits.append(self.fits.get_bin_contents(
+        #                [pileup, threshold]))
+        #        labels.append(str(self.pileup_bins.bins[pileup]))
+        #    self.__make_overlay(pileup, threshold, hists,
+        #                        fits, labels, "PU bin")
 
         # Produce the fit summary plot
         if with_fits:

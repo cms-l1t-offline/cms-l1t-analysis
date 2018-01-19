@@ -15,12 +15,12 @@ import numpy as np
 
 
 sum_types = [
-    "HTT", "MHT", "MET_HF", "MET", "MET_PF", "MET_PF_NoMu", "MET_PF_HF",
-    "MET_PF_NoMu_HF",
+    "HTT", "MET_HF", "MET", "MET_PF_NoMu_HF",
 ]
 sum_types += [t + '_Emu' for t in sum_types]
 jet_types = [
-    "jetET_B", "jetET_E", "jetET_BE", "jetET_HF",
+#    "jetET_B", "jetET_E",
+    "jetET_BE", "jetET_HF",
 ]
 jet_types += [t + '_Emu' for t in jet_types]
 
@@ -30,12 +30,8 @@ Sums = namedtuple("Sums", sum_types)
 # efficiency plots.
 ETA_RANGES = dict(
     HTT="|\\eta| < 2.5",
-    MHT="|\\eta| < 2.5",
     MET_HF="|\\eta| < 5.0",
     MET="|\\eta| < 3.0",
-    MET_PF="|\\eta| < 3.0",
-    MET_PF_NoMu="|\\eta| < 3.0",
-    MET_PF_HF="|\\eta| < 5.0",
     MET_PF_NoMu_HF="|\\eta| < 5.0",
     jetET_B="|\\eta| < 1.479",
     jetET_E="1.479 < |\\eta| < 3.0",
@@ -45,9 +41,13 @@ ETA_RANGES = dict(
 
 THRESHOLDS = dict(
     HTT=[160, 220, 280, 340, 400],
-    MHT=[40, 60, 80, 100, 120],
     MET=[40, 60, 80, 100, 120],
+    MET_HF=[40, 60, 80, 100, 120],
+    MET_PF_NoMu_HF=[40, 60, 80, 100, 120],
     jetET_B=[35, 60, 90, 140, 180],
+    jetET_E=[35, 60, 90, 140, 180],
+    jetET_BE=[35, 60, 90, 140, 180],
+    jetET_HF=[35, 60, 90, 140, 180],
 )
 
 HIGH_RANGE_BINS = list(range(0, 100, 5)) + list(range(100, 400, 10))
@@ -55,47 +55,26 @@ HIGH_RANGE_BINS += list(range(400, 800, 50)) + list(range(800, 1000, 200))
 HIGH_RANGE_BINS += list(range(1000, 2100, 500))
 HIGH_RANGE_BINS = np.asarray(HIGH_RANGE_BINS, 'd')
 
-for i in ['HF', 'PF', 'PF_NoMu', 'PF_HF', 'PF_NoMu_HF']:
-    THRESHOLDS['MET_' + i] = THRESHOLDS['MET']
-for i in ['E', 'BE', 'HF']:
-    THRESHOLDS['jetET_' + i] = THRESHOLDS['jetET_B']
-
 
 def ExtractSums(event):
     offline = dict(
         HTT=Sum(event.sums.caloHt),
-        MHT=Met(event.sums.mHt, event.sums.mHtPhi),
         MET_HF=Met(event.sums.caloMet, event.sums.caloMetPhi),
         MET=Met(event.sums.caloMetBE, event.sums.caloMetPhiBE),
-        MET_PF=Met(event.sums.met, event.sums.metPhi),
-        MET_PF_NoMu=Met(event.sums.pfMetNoMu, event.sums.pfMetNoMuPhi),
-        MET_PF_HF=Met(event.sums.met, event.sums.metPhi),
         MET_PF_NoMu_HF=Met(event.sums.pfMetNoMu, event.sums.pfMetNoMuPhi),
         HTT_Emu=Sum(event.sums.caloHt),
-        MHT_Emu=Met(event.sums.mHt, event.sums.mHtPhi),
         MET_HF_Emu=Met(event.sums.caloMet, event.sums.caloMetPhi),
         MET_Emu=Met(event.sums.caloMetBE, event.sums.caloMetPhiBE),
-        MET_PF_Emu=Met(event.sums.met, event.sums.metPhi),
-        MET_PF_NoMu_Emu=Met(event.sums.pfMetNoMu, event.sums.pfMetNoMuPhi),
-        MET_PF_HF_Emu=Met(event.sums.met, event.sums.metPhi),
         MET_PF_NoMu_HF_Emu=Met(event.sums.pfMetNoMu, event.sums.pfMetNoMuPhi)
     )
     online = dict(
         HTT=event.l1Sums["L1Htt"],
-        MHT=event.l1Sums["L1Mht"],
         MET_HF=event.l1Sums["L1MetHF"],
         MET=event.l1Sums["L1Met"],
-        MET_PF=event.l1Sums["L1Met"],
-        MET_PF_NoMu=event.l1Sums["L1Met"],
-        MET_PF_HF=event.l1Sums["L1MetHF"],
         MET_PF_NoMu_HF=event.l1Sums["L1MetHF"],
         HTT_Emu=event.l1Sums["L1EmuHtt"],
-        MHT_Emu=event.l1Sums["L1EmuMht"],
         MET_HF_Emu=event.l1Sums["L1EmuMetHF"],
         MET_Emu=event.l1Sums["L1EmuMet"],
-        MET_PF_Emu=event.l1Sums["L1EmuMet"],
-        MET_PF_NoMu_Emu=event.l1Sums["L1EmuMet"],
-        MET_PF_HF_Emu=event.l1Sums["L1EmuMetHF"],
         MET_PF_NoMu_HF_Emu=event.l1Sums["L1EmuMetHF"]
     )
     return online, offline
@@ -169,27 +148,21 @@ class Analyzer(BaseAnalyzer):
         )
         cfgs = [
             Config("HTT", "Offline HTT", "L1 HTT", 30, 600),
-            Config("MHT", "Offline MHT", "L1 MHT", 0, 400),
             Config("MET_HF", "Offline MET with HF", "L1 MET", 0, 400),
             Config("MET", "Offline MET no HF", "L1 MET", 0, 400),
-            Config("MET_PF", "Offline PF MET", "L1 MET", 0, 400),
-            Config("MET_PF_NoMu", "Offline PF MET without Muons",
-                   "L1 MET", 0, 400),
-            Config(
-                "MET_PF_HF", "Offline PF MET with HF", "L1 MET", 0, 400,
-            ),
             Config(
                 "MET_PF_NoMu_HF", "Offline PF MET with HF without Muons",
                 "L1 MET", 0, 400,
             ),
-            Config(
-                "jetET_B", "Offline Jet ET in Barrel Region",
-                "L1 Jet ET", 0, 400,
-            ),
-            Config(
-                "jetET_E", "Offline Jet ET in Endcap Region",
-                "L1 Jet ET", 0, 400,
-            ),
+            #Config(
+            #    "jetET_B", "Offline Jet ET in Barrel Region",
+            #    "L1 Jet ET", 0, 400,
+            #),
+            #Config(
+            #    "jetET_E", "Offline Jet ET in Endcap Region",
+            #    "L1 Jet ET", 0, 400,
+            #),
+
             Config(
                 "jetET_BE", "Offline Jet ET in Central Region",
                 "L1 Jet ET", 0, 400,
@@ -304,10 +277,14 @@ class Analyzer(BaseAnalyzer):
             l1EmuJetEt = 0.
 
         fillRegions = []
-        if abs(leadingRecoJet.eta) < 1.479:
-            fillRegions = ['B', 'BE']
-        elif abs(leadingRecoJet.eta) < 3.0:
-            fillRegions = ['E', 'BE']
+
+        #if abs(leadingRecoJet.eta) < 1.479:
+        #    fillRegions = ['B', 'BE']
+        #elif abs(leadingRecoJet.eta) < 3.0:
+        #    fillRegions = ['E', 'BE']
+
+        if abs(leadingRecoJet.eta) < 3.0:
+            fillRegions = ['BE']
         else:
             fillRegions = ['HF']
         for region in fillRegions:
@@ -336,25 +313,35 @@ class Analyzer(BaseAnalyzer):
         """
         Custom version, does what the normal one does but also overlays whatever you like.
         """
-        for plot in self.all_plots:
-            plot.draw()
+        #for plot in self.all_plots:
+        #    plot.draw()
+
+        getattr(self, 'HTT_eff').draw()
+        getattr(self, 'MET_eff').draw()
+        getattr(self, 'MET_HF_eff').draw()
+        getattr(self, 'MET_PF_NoMu_HF_eff').draw()
+        getattr(self, 'jetET_BE_eff').draw()
+        getattr(self, 'jetET_HF_eff').draw()
+
+        getattr(self, 'HTT_Emu_eff').draw()
+        getattr(self, 'MET_Emu_eff').draw()
+        getattr(self, 'MET_HF_Emu_eff').draw()
+        getattr(self, 'MET_PF_NoMu_HF_Emu_eff').draw()
+        getattr(self, 'jetET_BE_Emu_eff').draw()
+        getattr(self, 'jetET_HF_Emu_eff').draw()
+
+
         getattr(self, 'HTT_eff').overlay_with_emu(getattr(self, 'HTT_Emu_eff'))
         getattr(self, 'MET_eff').overlay_with_emu(getattr(self, 'MET_Emu_eff'))
         getattr(self, 'MET_HF_eff').overlay_with_emu(getattr(self, 'MET_HF_Emu_eff'))
-        getattr(self, 'MET_PF_eff').overlay_with_emu(getattr(self, 'MET_PF_Emu_eff'))
-        getattr(self, 'MET_PF_NoMu_eff').overlay_with_emu(getattr(self, 'MET_PF_NoMu_Emu_eff'))
-        getattr(self, 'jetET_B_eff').overlay_with_emu(getattr(self, 'jetET_B_Emu_eff'))
-        getattr(self, 'jetET_E_eff').overlay_with_emu(getattr(self, 'jetET_E_Emu_eff'))
+        getattr(self, 'MET_PF_NoMu_HF_eff').overlay_with_emu(getattr(self, 'MET_PF_NoMu_HF_Emu_eff'))
         getattr(self, 'jetET_BE_eff').overlay_with_emu(getattr(self, 'jetET_BE_Emu_eff'))
         getattr(self, 'jetET_HF_eff').overlay_with_emu(getattr(self, 'jetET_HF_Emu_eff'))
 
         getattr(self, 'HTT_res').overlay_with_emu(getattr(self, 'HTT_Emu_res'))
         getattr(self, 'MET_res').overlay_with_emu(getattr(self, 'MET_Emu_res'))
         getattr(self, 'MET_HF_res').overlay_with_emu(getattr(self, 'MET_HF_Emu_res'))
-        getattr(self, 'MET_PF_res').overlay_with_emu(getattr(self, 'MET_PF_Emu_res'))
-        getattr(self, 'MET_PF_NoMu_res').overlay_with_emu(getattr(self, 'MET_PF_NoMu_Emu_res'))
-        getattr(self, 'jetET_B_res').overlay_with_emu(getattr(self, 'jetET_B_Emu_res'))
-        getattr(self, 'jetET_E_res').overlay_with_emu(getattr(self, 'jetET_E_Emu_res'))
+        getattr(self, 'MET_PF_NoMu_HF_res').overlay_with_emu(getattr(self, 'MET_PF_NoMu_HF_Emu_res'))
         getattr(self, 'jetET_BE_res').overlay_with_emu(getattr(self, 'jetET_BE_Emu_res'))
         getattr(self, 'jetET_HF_res').overlay_with_emu(getattr(self, 'jetET_HF_Emu_res'))
 
