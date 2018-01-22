@@ -171,19 +171,19 @@ class Analyzer(BaseAnalyzer):
                 "L1 MET", 0, 400,
             ),
             Config(
-                "singlel1JetEt", "Offline Jet ET in for Single Jet",
+                "singlel1JetEt", "Offline Leading Jet ET (L1 Single Jet)",
                 "L1 Jet ET", 0, 400,
             ),
             Config(
-                "doublel1JetEt", "Offline Jet ET for Double Jet",
+                "doublel1JetEt", "Offline Leading Jet ET (L1 Double Jet)",
                 "L1 Jet ET", 0, 400,
             ),
             Config(
-                "triplel1JetEt", "Offline Jet ET for Triple Jet",
+                "triplel1JetEt", "Offline Leading Jet ET (L1 Triple Jet)",
                 "L1 Jet ET", 0, 400,
             ),
             Config(
-                "quadl1JetEt", "Offline Jet ET for Quad Jet",
+                "quadl1JetEt",   "Offline Leading Jet ET (L1 Quad Jet)",
                 "L1 Jet ET", 0, 400,
             ),
 
@@ -351,8 +351,7 @@ class Analyzer(BaseAnalyzer):
         getattr(self, 'HTT_eff').overlay_with_emu(getattr(self, 'HTT_Emu_eff'))
         getattr(self, 'MET_eff').overlay_with_emu(getattr(self, 'MET_Emu_eff'))
         getattr(self, 'MET_HF_eff').overlay_with_emu(getattr(self, 'MET_HF_Emu_eff'))
-        getattr(self, 'MET_PF_eff').overlay_with_emu(getattr(self, 'MET_PF_Emu_eff'))
-        getattr(self, 'MET_PF_NoMu_eff').overlay_with_emu(getattr(self, 'MET_PF_NoMu_Emu_eff'))
+        getattr(self, 'MET_PF_NoMu_HF_eff').overlay_with_emu(getattr(self, 'MET_PF_NoMu_HF_Emu_eff'))
         getattr(self, 'singlel1JetEt_eff').overlay_with_emu(getattr(self, 'singlel1JetEt_Emu_eff'))
         getattr(self, 'doublel1JetEt_eff').overlay_with_emu(getattr(self, 'doublel1JetEt_Emu_eff'))
         getattr(self, 'triplel1JetEt_eff').overlay_with_emu(getattr(self, 'triplel1JetEt_Emu_eff'))
