@@ -78,13 +78,15 @@ class Event(object):
         if "upgrade" in tree_names:
             self._upgrade = self._upgrade.L1Upgrade
             self._l1Jets = [L1Jet(self._upgrade, i)
-                            for i in range(self._upgrade.nJets)]
+                            for i in range(self._upgrade.nJets)
+                            if self._upgrade.jetBx[i]==0]
             self._readUpgradeSums()
 
         if "emuUpgrade" in tree_names:
             self._emuUpgrade = self._emuUpgrade.L1Upgrade
             self._l1EmuJets = [L1Jet(self._emuUpgrade, i)
-                               for i in range(self._emuUpgrade.nJets)]
+                               for i in range(self._emuUpgrade.nJets)
+                               if self._emuUpgrade.jetBx[i]==0]
             self._readEmuUpgradeSums()
 
         if "jetReco" in tree_names:
@@ -187,8 +189,6 @@ class Event(object):
         minDeltaR = 0.3
         closestJet = None
         for l1Jet in l1Jets:
-            if l1Jet.bx != 0:
-                continue
             dEta = recoJet.eta - l1Jet.eta
             dPhi = recoJet.phi - l1Jet.phi
             dR = math.sqrt(dEta**2 + dPhi**2)
