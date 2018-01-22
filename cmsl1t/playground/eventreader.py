@@ -187,6 +187,8 @@ class Event(object):
         minDeltaR = 0.3
         closestJet = None
         for l1Jet in l1Jets:
+            if l1Jet.bx != 0:
+                continue
             dEta = recoJet.eta - l1Jet.eta
             dPhi = recoJet.phi - l1Jet.phi
             dR = math.sqrt(dEta**2 + dPhi**2)
@@ -255,6 +257,7 @@ class L1Jet(object):
         self.et = l1Jets.jetEt[index]
         self.eta = l1Jets.jetEta[index]
         self.phi = l1Jets.jetPhi[index]
+        self.bx = l1Jets.jetBx[index]
 
 
 class EventReader(object):
