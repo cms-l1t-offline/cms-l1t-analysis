@@ -267,13 +267,14 @@ class Analyzer(BaseAnalyzer):
 
         for name in sum_types:
             if 'MET' in name and not pfMetFilter(event):
-                on = online[name]
-                off = offline[name]
-                for suffix in ['_eff', '_res', '_2D', '_eff_HR', '_2D_HR']:
-                    getattr(self, name + suffix).fill(pileup, off.et, on.et)
-                if hasattr(self, name + "_phi_res"):
-                    getattr(self, name + "_phi_res").fill(pileup, off.phi, on.phi)
-                    getattr(self, name + "_phi_2D").fill(pileup, off.phi, on.phi)
+                continue
+            on = online[name]
+            off = offline[name]
+            for suffix in ['_eff', '_res', '_2D', '_eff_HR', '_2D_HR']:
+                getattr(self, name + suffix).fill(pileup, off.et, on.et)
+            if hasattr(self, name + "_phi_res"):
+                getattr(self, name + "_phi_res").fill(pileup, off.phi, on.phi)
+                getattr(self, name + "_phi_2D").fill(pileup, off.phi, on.phi)
 
         goodJets = event.goodJets(jetFilter=pfJetFilter)
 
