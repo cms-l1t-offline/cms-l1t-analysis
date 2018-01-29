@@ -59,7 +59,7 @@ class EfficiencyPlot(BasePlotter):
                 eff = asrootpy(
                     ROOT.TEfficiency(this_name, this_title, n_bins, low)
                 )
-                self.x_max = 1700
+                self.x_max = 2000
             else:
                 eff = asrootpy(
                     ROOT.TEfficiency(this_name, this_title, n_bins, low, high)
@@ -266,7 +266,7 @@ class EfficiencyPlot(BasePlotter):
                 line.SetLineColor(15)
                 line.Draw()
 
-            for val in range(150, xmax, 150):
+            for val in range(200, xmax, 200):
                 line = ROOT.TLine(val, 0., val, 1.)
                 line.SetLineStyle("dashed")
                 line.SetLineColor(15)

@@ -42,10 +42,10 @@ ETA_RANGES = dict(
     jetET_HF="3.0 < |\\eta| < 5.0",
 )
 
-
-HIGH_RANGE_BINS = list(range(0, 100, 5)) + list(range(100, 400, 10))
-HIGH_RANGE_BINS += list(range(400, 800, 50)) + list(range(800, 1000, 200))
-HIGH_RANGE_BINS += list(range(1000, 2100, 500))
+HIGH_RANGE_BINS = list(range(0, 100, 5)) + list(range(100, 300, 10))
+HIGH_RANGE_BINS += list(range(300, 600, 20)) + list(range(600, 1000, 50))
+HIGH_RANGE_BINS += list(range(1000, 1500, 200))
+HIGH_RANGE_BINS += list(range(1500, 2100, 500))
 HIGH_RANGE_BINS = np.asarray(HIGH_RANGE_BINS, 'd')
 
 
@@ -172,19 +172,19 @@ class Analyzer(BaseAnalyzer):
             ),
             Config(
                 "singlel1JetEt", "Offline Leading Jet ET (L1 Single Jet)",
-                "L1 Jet ET", 0, 400,
+                "L1 Jet ET", 10, 400,
             ),
             Config(
                 "doublel1JetEt", "Offline Leading Jet ET (L1 Double Jet)",
-                "L1 Jet ET", 0, 400,
+                "L1 Jet ET", 10, 400,
             ),
             Config(
                 "triplel1JetEt", "Offline Leading Jet ET (L1 Triple Jet)",
-                "L1 Jet ET", 0, 400,
+                "L1 Jet ET", 10, 400,
             ),
             Config(
                 "quadl1JetEt",   "Offline Leading Jet ET (L1 Quad Jet)",
-                "L1 Jet ET", 0, 400,
+                "L1 Jet ET", 10, 400,
             ),
 
         ]
