@@ -58,11 +58,11 @@ HIGH_RANGE_BINS = np.asarray(HIGH_RANGE_BINS, 'd')
 
 def ExtractSums(event):
     offline = dict(
-        HTT=Sum(event.sums.caloHt),
+        HTT=Sum(event.sums.Ht),
         MET_HF=Met(event.sums.caloMet, event.sums.caloMetPhi),
         MET=Met(event.sums.caloMetBE, event.sums.caloMetPhiBE),
         MET_PF_NoMu_HF=Met(event.sums.pfMetNoMu, event.sums.pfMetNoMuPhi),
-        HTT_Emu=Sum(event.sums.caloHt),
+        HTT_Emu=Sum(event.sums.Ht),
         MET_HF_Emu=Met(event.sums.caloMet, event.sums.caloMetPhi),
         MET_Emu=Met(event.sums.caloMetBE, event.sums.caloMetPhiBE),
         MET_PF_NoMu_HF_Emu=Met(event.sums.pfMetNoMu, event.sums.pfMetNoMuPhi)

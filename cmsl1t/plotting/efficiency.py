@@ -72,7 +72,7 @@ class EfficiencyPlot(BasePlotter):
             make_efficiency
         )
 
-    def fill(self, pileup, online, offline):
+    def fill(self, pileup, offline, online):
         efficiencies = {(pu, thresh): eff
                         for (pu,), thresholds in self.efficiencies[pileup].items()
                         for thresh, eff in thresholds.items()}
