@@ -1,6 +1,19 @@
 #!/bin/bash
+resize_term() {
+  old=$(stty -g)
+  stty raw -echo min 0 time 5
+
+  printf '\033[18t' > /dev/tty
+  IFS=';t' read -r _ rows cols _ < /dev/tty
+
+  stty "$old"
+
+  stty cols "$cols" rows "$rows"
+}
+
+
 cd /code
 export NO_CVMFS=1
 source bin/env.sh
-stty rows 256 cols 256
+resize_term
 bash
