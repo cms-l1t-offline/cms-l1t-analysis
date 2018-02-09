@@ -96,7 +96,7 @@ class EfficiencyPlot(BasePlotter):
         hists = []
         labels = []
         fits = []
-        label_template = '{online_title} > {threshold} (GeV)'
+        label_template = '{online_title} > {threshold} GeV'
         for threshold in all_pileup_effs.iter_all():
             if not isinstance(threshold, int):
                 continue
@@ -138,7 +138,7 @@ class EfficiencyPlot(BasePlotter):
         if with_fits:
             self.__summarize_fits()
 
-    def overlay_with_emu(self, emu_plotter, with_fits=True):
+    def overlay_with_emu(self, emu_plotter, with_fits=False):
         # Fit the efficiencies if requested
         if with_fits:
             self.__fit_efficiencies()
@@ -151,7 +151,7 @@ class EfficiencyPlot(BasePlotter):
         hists = []
         labels = []
         fits = []
-        label_template = '{online_title} > {threshold} (GeV)'
+        label_template = '{online_title} > {threshold} GeV'
 
         ROOT.gStyle.SetErrorX(0.)
 
@@ -247,11 +247,11 @@ class EfficiencyPlot(BasePlotter):
             legend = Legend(
                 len(hists),
                 header=self.legend_title,
-                topmargin=0.35,
+                topmargin=0.45,
                 rightmargin=0.3,
                 leftmargin=0.7,
-                textsize=0.015,
-                entryheight=0.015,
+                textsize=0.03,
+                entryheight=0.03,
             )
             for hist, label in zip(hists, labels):
                 legend.AddEntry(hist, label)

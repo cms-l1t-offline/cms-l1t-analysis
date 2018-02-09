@@ -153,29 +153,27 @@ class Event(object):
         # for m in members:
         #     print('>' * 6, m[0], ':', m[1])
 
-    def goodJets(self, jetFilter=pfJetFilter):
+    def goodJets(self, jetFilter=pfJetFilter, doCalo=False):
         '''
             filters and ET orders the jet collection
         '''
-        goodJets = self._jets
+        if doCalo:
+            goodJets = self._caloJets
+        else:
+            goodJets = self._jets
         if jetFilter:
-            goodJets = filter(jetFilter, self._jets)
-        sorted_jets = sorted(
-            goodJets, key=lambda jet: jet.etCorr, reverse=True)
+            goodJets = filter(jetFilter, goodJets)
+        sorted_jets = sorted(goodJets, key=lambda jet: jet.etCorr, reverse=True)
         return sorted_jets
 
-    def getLeadingRecoJet(self, jetFilter=pfJetFilter):
-        goodJets = self.goodJets(jetFilter)
+    def getLeadingRecoJet(self, jetFilter=pfJetFilter, doCalo=False):
+        goodJets = self.goodJets(jetFilter,doCalo)
         if not goodJets:
             return None
         leadingRecoJet = goodJets[0]
-        if leadingRecoJet.etCorr > 10.0:
+        if leadingRecoJet.etCorr > 20.0:
             return leadingRecoJet
         return None
-
-    def getLeadingRecoCaloJet(self):
-        leadingRecoCaloJet = self.getLeadingRecoJet(jetFilter=None)
-        return leadingRecoCaloJet
 
     def getMatchedL1Jet(self, recoJet, l1Type='HW'):
         l1Jets = None
@@ -186,7 +184,7 @@ class Event(object):
 
         if not recoJet:
             return None
-        minDeltaR = 0.3
+        minDeltaR = 0.4
         closestJet = None
         for l1Jet in l1Jets:
             dEta = recoJet.eta - l1Jet.eta

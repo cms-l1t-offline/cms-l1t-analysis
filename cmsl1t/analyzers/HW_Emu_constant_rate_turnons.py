@@ -160,7 +160,7 @@ class Analyzer(BaseAnalyzer):
             "name off_title on_title min max",
         )
         cfgs = [
-            Config("HTT", "Offline HTT", "L1 HTT", 30, 600),
+            Config("HTT", "Offline HTT", "L1 HTT", 30, 1000),
             Config("MHT", "Offline MHT", "L1 MHT", 0, 400),
             Config("MET_HF", "Offline MET with HF", "L1 MET", 0, 400),
             Config("MET", "Offline MET no HF", "L1 MET", 0, 400),

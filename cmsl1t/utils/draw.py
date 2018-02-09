@@ -182,13 +182,13 @@ def label_canvas(sample_title=None, run=None, isData=False):
     latex.SetNDC()
     latex.SetTextFont(42)
 
-    cms = "#bf{CMS} #it{Preliminary}"
+    cms = "#bf{CMS} #it{Preliminary}   2017 Data  41.4 fb^{-1}"
     if sample_title:
         cms += sample_title
-    latex.DrawLatex(0.15, 0.92, cms)
+    latex.DrawLatex(0.17, 0.92, cms)
 
     run_summary = "(13 TeV)"
     if run:
         run_summary += run
     latex.SetTextAlign(31)
-    latex.DrawLatex(0.92, 0.92, run_summary)
+    latex.DrawLatex(0.9, 0.92, run_summary)

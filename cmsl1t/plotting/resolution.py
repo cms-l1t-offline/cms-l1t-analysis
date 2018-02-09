@@ -49,27 +49,28 @@ class ResolutionPlot(BasePlotter):
         fits = []
         for (pile_up, ), hist in self.plots.flat_items_all():
             if pile_up == bn.Base.everything:
-                hist.linestyle = "dashed"
-                hist.drawstyle = "hist"
+                #hist.linestyle = "dashed"
+                hist.drawstyle = "P"
                 label = "All PU"
             elif isinstance(pile_up, int):
-                hist.drawstyle = "hist"
-                label = "{:.0f} \\leq PU < {:.0f}".format(self.pileup_bins.get_bin_lower(pile_up), self.pileup_bins.get_bin_upper(pile_up))
+                hist.drawstyle = "P"
+                if self.pileup_bins.get_bin_upper(pile_up) < 500:
+                    label = "{:.0f} \\leq PU < {:.0f}".format(self.pileup_bins.get_bin_lower(pile_up), self.pileup_bins.get_bin_upper(pile_up))
+                else:
+                    label = "{:.0f} < PU".format(self.pileup_bins.get_bin_lower(pile_up))
             else:
                 continue
             hist.SetMarkerSize(0.5)
-            hist.SetLineWidth(2)
+            hist.SetLineWidth(1)
             hists.append(hist)
             labels.append(label)
             # if with_fits:
             #     fits.append(self.fits.get_bin_contents([pile_up]))
-        self.__make_overlay(hists, fits, labels, "Number of events")
+        #self.__make_overlay(hists, fits, labels, "Number of events")
 
         normed_hists = [hist / hist.integral() if hist.integral() != 0 else hist.Clone() for hist in hists]
-        for hist in normed_hists:
-            if hist.integral != 0:
-                hist.GetYaxis().SetRangeUser(-0.1, 1.1)
-        self.__make_overlay(normed_hists, fits, labels, "Fraction of events", "__shapes")
+
+        self.__make_overlay(normed_hists, fits, labels, "a.u.", "__shapes")
 
 
     def overlay_with_emu(self, emu_plotter, with_fits=False):
@@ -79,34 +80,40 @@ class ResolutionPlot(BasePlotter):
         for (pile_up, ), hist in self.plots.flat_items_all():
             if pile_up == bn.Base.everything:
                 hist.SetLineStyle(1)
-                hist.drawstyle = "hist"
+                hist.drawstyle = "P"
                 label = "HW, all PU"
             else:
                 continue
-            hist.SetLineWidth(2)
+            hist.SetMarkerSize(0.5)
+            hist.SetLineWidth(1)
             hists.append(hist)
             labels.append(label)
 
         for (pile_up, ), hist in emu_plotter.plots.flat_items_all():
             if pile_up == bn.Base.everything:
                 hist.SetLineStyle(1)
-                hist.drawstyle = "hist"
+                hist.drawstyle = "P"
                 label = "Emu, all PU"
             else:
                 continue
-            hist.SetLineWidth(2)
+            hist.SetMarkerSize(0.5)
+            hist.SetLineWidth(1)
             hists.append(hist)
             labels.append(label)
 
         self.__make_overlay(hists, fits, labels, "Number of events", "__Overlay_Emu")
 
         normed_hists = [hist / hist.integral() if hist.integral() != 0 else hist.Clone() for hist in hists]
-        self.__make_overlay(normed_hists, fits, labels, "Fraction of events", "__shapes__Overlay_Emu")
+
+        self.__make_overlay(normed_hists, fits, labels, "a.u.", "__shapes__Overlay_Emu")
 
     def __make_overlay(self, hists, fits, labels, ytitle, suffix=""):
         with preserve_current_style():
             # Draw each resolution (with fit)
             xtitle = self.resolution_method.label.format(on=self.online_title, off=self.offline_title)
+            for hist in hists:
+                hist.GetYaxis().SetRangeUser(0,0.1)
+                hist.GetYaxis().SetTitleOffset(1.4)
             canvas = draw(hists, draw_args={"xtitle": xtitle, "ytitle": ytitle})
             if fits:
                 for fit, hist in zip(fits, hists):
@@ -120,11 +127,11 @@ class ResolutionPlot(BasePlotter):
             legend = Legend(
                 len(hists),
                 header=self.legend_title,
-                topmargin=0.35,
-                rightmargin=0.3,
-                leftmargin=0.7,
-                textsize=0.02,
-                entryheight=0.02,
+                topmargin=0.45,
+                rightmargin=0.2,
+                leftmargin=0.8,
+                textsize=0.03,
+                entryheight=0.03,
             )
             for hist, label in zip(hists, labels):
                 legend.AddEntry(hist, label)
@@ -134,7 +141,7 @@ class ResolutionPlot(BasePlotter):
             ymax = 1.2 * hists[-1].GetMaximum()
 
             line = ROOT.TLine(0., 0., 0., ymax)
-            line.SetLineStyle("dashed")
+            #line.SetLineStyle("dashed")
             line.SetLineColor(15)
             #line.Draw()
 
