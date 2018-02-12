@@ -8,10 +8,8 @@ services:
 
 before_install:
   - docker pull hepsw/cvmfs-cms
-
-install:
- - sudo docker build -t cms-l1t-offline/cms-l1t-analysis -f ci/Dockerfile .
+  - docker pull kreczko/cms-l1t-analysis:travis
 
 script:
-  - sudo docker run -t -v $PWD:/analysis --privileged=true cms-l1t-offline/cms-l1t-analysis
+  - sudo docker run -t -v $PWD:/analysis --privileged=true kreczko/cms-l1t-analysis:travis
 cache: apt

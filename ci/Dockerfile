@@ -7,7 +7,7 @@ RUN mkdir -p /cvmfs/grid.cern.ch && mkdir -p /cvmfs/sft.cern.ch && \
     echo "grid.cern.ch /cvmfs/grid.cern.ch cvmfs defaults 0 0" >> /etc/fstab && \
     echo "sft.cern.ch /cvmfs/sft.cern.ch cvmfs defaults 0 0" >> /etc/fstab
 
-RUN yum update -y --exclude=cvmfs* \
+RUN yum update -y -q --exclude=cvmfs* \
  && yum install -y -q wget git \
  &&  rm -fr /var/cache
 #RUN yum install -y -q glibc gcc && yum clean all
