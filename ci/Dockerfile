@@ -19,4 +19,7 @@ WORKDIR /analysis
 # need to execute env.sh and ntp setup in CMD
 # as CVMFS needs 'privileged' rights,
 # but cannot do that when building the container
-CMD ["/bin/bash", "-c", "source bin/env.sh;export PATH=~/.local/bin:$PATH;make test"]
+ENTRYPOINT /usr/bin/cubied && \
+  echo "Starting CMSL1T container" && \
+  tail -f /dev/null
+#CMD ["/bin/bash", "-c", "source bin/env.sh;export PATH=~/.local/bin:$PATH;make test"]
