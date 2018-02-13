@@ -41,6 +41,7 @@ unset envscript
 
 if [[ -z "${NO_CVMFS}" ]]
 then
+  echo "Getting dependencies from CVMFS"
   # this gives you voms-proxy-*, xrdcp and other grid tools
   source /cvmfs/grid.cern.ch/etc/profile.d/setup-cvmfs-ui.sh
   # ROOT 6, voms-proxy-init and other things

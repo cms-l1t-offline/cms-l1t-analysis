@@ -1,7 +1,7 @@
 # travis-ci.org build & test configuration
 sudo: required
 
-language: python
+language: ruby
 
 services:
   - docker
