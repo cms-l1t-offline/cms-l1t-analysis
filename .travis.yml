@@ -14,8 +14,7 @@ before_install:
   - echo "Waiting for CVMFS to start up"
   - sleep 30
 
-script:
-  - docker exec -t cmsl1t_test /bin/bash -c 'source bin/env.sh;export PATH=~/.local/bin:$PATH;make test'
+script: docker exec -t cmsl1t_test /bin/bash -c 'source /ci/test.sh'
 
 after_script:
   - docker stop cmsl1t_test
