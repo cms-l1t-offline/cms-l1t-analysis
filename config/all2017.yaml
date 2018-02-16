@@ -1,0 +1,40 @@
+version: 0.0.1
+name: 'Offline Met Studies'
+
+input:
+  files:
+      # Single Muons
+#      -   root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/treis/l1t-integration-v97p7-CMSSW-940pre3/SingleMuon/crab_l1t-integration-v97p7-CMSSW-940pre3__SingleMuon_Run2017B-17Nov2017-v1/180125_121820/0000/L1Ntuple_*.root
+#      -   root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/treis/l1t-integration-v97p7-CMSSW-940pre3/SingleMuon/crab_l1t-integration-v97p7-CMSSW-940pre3__SingleMuon_Run2017C-17Nov2017-v1/180125_121925/0000/L1Ntuple_*.root
+#      -   root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/treis/l1t-integration-v97p7-CMSSW-940pre3/SingleMuon/crab_l1t-integration-v97p7-CMSSW-940pre3__SingleMuon_Run2017C-17Nov2017-v1/180125_121925/0001/L1Ntuple_*.root
+#      -   root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/treis/l1t-integration-v97p7-CMSSW-940pre3/SingleMuon/crab_l1t-integration-v97p7-CMSSW-940pre3__SingleMuon_Run2017D-17Nov2017-v1/180125_122141/0000/L1Ntuple_*.root
+#      -   root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/treis/l1t-integration-v97p7-CMSSW-940pre3/SingleMuon/crab_l1t-integration-v97p7-CMSSW-940pre3__SingleMuon_Run2017E-17Nov2017-v1/180125_121715/0000/L1Ntuple_*.root
+      -   root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/treis/l1t-integration-v97p7-CMSSW-940pre3/SingleMuon/crab_l1t-integration-v97p7-CMSSW-940pre3__SingleMuon_Run2017E-17Nov2017-v1/180125_121715/0001/L1Ntuple_*.root
+#      -   root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/treis/l1t-integration-v97p7-CMSSW-940pre3/SingleMuon/crab_l1t-integration-v97p7-CMSSW-940pre3__SingleMuon_Run2017F-17Nov2017-v1/180125_122032/0000/L1Ntuple_*.root
+#      -   root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/treis/l1t-integration-v97p7-CMSSW-940pre3/SingleMuon/crab_l1t-integration-v97p7-CMSSW-940pre3__SingleMuon_Run2017F-17Nov2017-v1/180125_122032/0001/L1Ntuple_*.root      
+
+  sample:
+    name: Data
+    title: 2017 Data
+  trigger:
+    name: SM
+    title: Single Muon
+  pileup_file: ""
+  run_number: 2017
+  lumi_json: "https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions17/13TeV/PromptReco/Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON.txt"
+
+analysis:
+  do_emu: False
+  do_fit: False
+  pu_type: 0PU24,25PU49,50PU
+  pu_bins: [25,50,999]
+  analyzers:
+     - cmsl1t.analyzers.offline_met_analyzer
+  modifiers: []
+  progress_bar:
+    report_every: 1000
+
+output:
+  template:
+     - output/offline_met_studies
+     - "{date}_{run_number}_{sample_name}_{trigger_name}"
