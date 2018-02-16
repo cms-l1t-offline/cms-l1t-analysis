@@ -85,7 +85,7 @@ class EfficiencyPlot(BasePlotter):
                 passed = True
             efficiency.fill(passed, offline)
 
-    def draw(self, with_fits=True):
+    def draw(self, with_fits=False):
         # Fit the efficiencies if requested
         if with_fits:
             self.__fit_efficiencies()
@@ -176,7 +176,7 @@ class EfficiencyPlot(BasePlotter):
                 continue
             hist = emu_pileup_effs.get_bin_contents(threshold)
             hist.drawstyle = "P"
-            hist.markerstyle = 4
+            hist.markerstyle = 23
             hists.append(hist)
 
             label = label_template.format(
@@ -231,10 +231,17 @@ class EfficiencyPlot(BasePlotter):
 
     def __make_overlay(self, pileup, threshold, hists, fits, labels, header):
         with preserve_current_style():
+            name = self.filename_format.format(pileup=pileup,
+                                               threshold=threshold)
             # Draw each efficiency (with fit)
-
-            canvas = draw(hists, draw_args={"xtitle": self.offline_title,
-                                            "ytitle": "Efficiency"})
+            if 'Jet' in name and 'HiRange' in name:
+                xlimits = [20,2000]
+                canvas = draw(hists, draw_args={"xtitle": self.offline_title,
+                                                "ytitle": "Efficiency",
+                                                "xlimits": xlimits})
+            else:
+                canvas = draw(hists, draw_args={"xtitle": self.offline_title,
+                                                "ytitle": "Efficiency"})
             if len(fits) > 0:
                 for fit, hist in zip(fits, hists):
                     fit["asymmetric"].linecolor = hist.GetLineColor()
@@ -248,11 +255,12 @@ class EfficiencyPlot(BasePlotter):
                 len(hists),
                 header=self.legend_title,
                 topmargin=0.45,
-                rightmargin=0.3,
-                leftmargin=0.7,
-                textsize=0.03,
-                entryheight=0.03,
+                rightmargin=0.24,
+                leftmargin=0.76,
+                textsize=0.025,
+                entryheight=0.028,
             )
+
             for hist, label in zip(hists, labels):
                 legend.AddEntry(hist, label)
             legend.SetBorderSize(0)
@@ -260,21 +268,33 @@ class EfficiencyPlot(BasePlotter):
 
             xmax = self.x_max
 
+
+            if("HT" in name):
+                xmax = 800
+                xmin = 30
+            if("MET" in name):
+                xmin = 0
+                xmax = 400
+            if("Jet" in name):
+                xmin = 20
+                xmax = 400
+            if("HiRange" in name):
+                xmax=2000
+
+
             for val in [0.25, 0.5, 0.75, 1.]:
-                line = ROOT.TLine(0., val, xmax, val)
+                line = ROOT.TLine(xmin, val, xmax, val)
                 line.SetLineStyle("dashed")
                 line.SetLineColor(15)
                 line.Draw()
 
-            for val in range(200, xmax, 200):
+            for val in range(100, xmax, 100):
                 line = ROOT.TLine(val, 0., val, 1.)
                 line.SetLineStyle("dashed")
                 line.SetLineColor(15)
                 line.Draw()
 
             # Save canvas to file
-            name = self.filename_format.format(pileup=pileup,
-                                               threshold=threshold)
             self.save_canvas(canvas, name)
 
     def __summarize_fits(self):

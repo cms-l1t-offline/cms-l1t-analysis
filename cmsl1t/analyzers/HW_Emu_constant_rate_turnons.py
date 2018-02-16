@@ -165,13 +165,13 @@ class Analyzer(BaseAnalyzer):
             Config("MET_HF", "Offline MET with HF", "L1 MET", 0, 400),
             Config("MET", "Offline MET no HF", "L1 MET", 0, 400),
             Config("MET_PF", "Offline PF MET", "L1 MET", 0, 400),
-            Config("MET_PF_NoMu", "Offline PF MET without Muons",
+            Config("MET_PF_NoMu", "Offline PF MET No Mu",
                    "L1 MET", 0, 400),
             Config(
                 "MET_PF_HF", "Offline PF MET with HF", "L1 MET", 0, 400,
             ),
             Config(
-                "MET_PF_NoMu_HF", "Offline PF MET with HF without Muons",
+                "MET_PF_NoMu_HF", "Offline PF MET with HF No Mu",
                 "L1 MET", 0, 400,
             ),
             Config(
@@ -226,7 +226,7 @@ class Analyzer(BaseAnalyzer):
             thresholds = THRESHOLDS.get(cfg.name + prefix)
             params = [
                 cfg.on_title, cfg.off_title + " (GeV)", puBins, thresholds,
-                50, cfg.min, cfg.max,
+                100, cfg.min, cfg.max,
             ]
             if high_range:
                 if "HT" in cfg.name:

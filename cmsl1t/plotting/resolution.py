@@ -64,8 +64,8 @@ class ResolutionPlot(BasePlotter):
             hist.SetLineWidth(1)
             hists.append(hist)
             labels.append(label)
-            # if with_fits:
-            #     fits.append(self.fits.get_bin_contents([pile_up]))
+            if with_fits:
+                fits.append(self.fits.get_bin_contents([pile_up]))
         #self.__make_overlay(hists, fits, labels, "Number of events")
 
         normed_hists = [hist / hist.integral() if hist.integral() != 0 else hist.Clone() for hist in hists]
@@ -101,7 +101,7 @@ class ResolutionPlot(BasePlotter):
             hists.append(hist)
             labels.append(label)
 
-        self.__make_overlay(hists, fits, labels, "Number of events", "__Overlay_Emu")
+        #self.__make_overlay(hists, fits, labels, "Number of events", "__Overlay_Emu")
 
         normed_hists = [hist / hist.integral() if hist.integral() != 0 else hist.Clone() for hist in hists]
 
@@ -111,10 +111,11 @@ class ResolutionPlot(BasePlotter):
         with preserve_current_style():
             # Draw each resolution (with fit)
             xtitle = self.resolution_method.label.format(on=self.online_title, off=self.offline_title)
+            name = self.filename_format.format(pileup="all")
             for hist in hists:
                 hist.GetYaxis().SetRangeUser(0,0.1)
                 hist.GetYaxis().SetTitleOffset(1.4)
-            canvas = draw(hists, draw_args={"xtitle": xtitle, "ytitle": ytitle})
+                canvas = draw(hists, draw_args={"xtitle": xtitle, "ytitle": ytitle})
             if fits:
                 for fit, hist in zip(fits, hists):
                     fit["asymmetric"].linecolor = hist.GetLineColor()
@@ -146,7 +147,6 @@ class ResolutionPlot(BasePlotter):
             #line.Draw()
 
             # Save canvas to file
-            name = self.filename_format.format(pileup="all")
             self.save_canvas(canvas, name + suffix)
 
     def _is_consistent(self, new):
