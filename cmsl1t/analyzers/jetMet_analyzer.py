@@ -221,7 +221,10 @@ class Analyzer(BaseAnalyzer):
                     thresholds = thresh
                     break
             if 'pfMET' in cfg.name:
-                thresholds = allThresholds.get("METHF")
+                if emulator:
+                    thresholds = allThresholds.get("METHF_Emu")
+                else:
+                    thresholds = allThresholds.get("METHF")
 
             etaRange = ""
             for l1trig, etaRange in ETA_RANGES.items():
@@ -233,7 +236,7 @@ class Analyzer(BaseAnalyzer):
 
             params = [
                 cfg.on_title, cfg.off_title + " (GeV)", puBins, thresholds,
-                200, cfg.min, cfg.max,
+                160, cfg.min, cfg.max,
             ]
             if high_range:
                 params = [
