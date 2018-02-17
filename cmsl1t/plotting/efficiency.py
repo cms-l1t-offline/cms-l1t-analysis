@@ -282,7 +282,7 @@ class EfficiencyPlot(BasePlotter):
                 xmax=2000
 
 
-            for val in [0.25, 0.5, 0.75, 1.]:
+            for val in [0.25, 0.5, 0.75, 0.95, 1.]:
                 line = ROOT.TLine(xmin, val, xmax, val)
                 line.SetLineStyle("dashed")
                 line.SetLineColor(15)

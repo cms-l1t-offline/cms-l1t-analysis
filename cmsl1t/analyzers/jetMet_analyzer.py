@@ -215,9 +215,9 @@ class Analyzer(BaseAnalyzer):
 
             thresholds = []
             for l1trig, thresh in allThresholds.items():
+                if emulator and "Emu" not in l1trig or not emulator and "Emu" in l1trig:
+                    continue
                 if l1trig.replace("_Emu","") in cfg.name:
-                    if emulator and not "Emu" in l1trig:
-                        continue
                     thresholds = thresh
                     break
             if 'pfMET' in cfg.name:
@@ -236,7 +236,7 @@ class Analyzer(BaseAnalyzer):
 
             params = [
                 cfg.on_title, cfg.off_title + " (GeV)", puBins, thresholds,
-                160, cfg.min, cfg.max,
+                50, cfg.min, cfg.max,
             ]
             if high_range:
                 params = [
@@ -390,14 +390,14 @@ class Analyzer(BaseAnalyzer):
                 else:
                     caloL1EmuJetEt = 0.
 
-                    for region in caloFillRegions:
-                        for suffix in ['_eff', '_res', '_2D', '_eff_HR', '_2D_HR']:
-                            if '_res' in suffix and caloL1EmuJetEt == 0:
-                                continue
-                            name = 'caloJetET_{0}_Emu{1}'.format(region, suffix)
-                            getattr(self, name).fill(
-                                pileup, leadingCaloJet.etCorr, caloL1EmuJetEt,
-                            )
+                for region in caloFillRegions:
+                    for suffix in ['_eff', '_res', '_2D', '_eff_HR', '_2D_HR']:
+                        if '_res' in suffix and caloL1EmuJetEt == 0:
+                            continue
+                        name = 'caloJetET_{0}_Emu{1}'.format(region, suffix)
+                        getattr(self, name).fill(
+                            pileup, leadingCaloJet.etCorr, caloL1EmuJetEt,
+                        )
 
             caloL1Jet = event.getMatchedL1Jet(leadingCaloJet, l1Type='HW')
             if caloL1Jet:
