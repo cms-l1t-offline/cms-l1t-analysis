@@ -254,9 +254,9 @@ class EfficiencyPlot(BasePlotter):
             legend = Legend(
                 len(hists),
                 header=self.legend_title,
-                topmargin=0.45,
-                rightmargin=0.24,
-                leftmargin=0.76,
+                topmargin=0.35,
+                rightmargin=0.3,
+                leftmargin=0.7,
                 textsize=0.025,
                 entryheight=0.028,
             )

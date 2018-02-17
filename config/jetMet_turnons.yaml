@@ -1,19 +1,15 @@
 version: 0.0.1
-name: 'Offline Met Studies'
+name: 'Jet MET Studies'
 
 input:
   files:
       # Single Muons
       -   root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/treis/l1t-integration-v97p7-CMSSW-940pre3/SingleMuon/crab_l1t-integration-v97p7-CMSSW-940pre3__SingleMuon_Run2017E-17Nov2017-v1/180125_121715/0001/L1Ntuple_*.root
-      # Zero Bias
-      # -  root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/bundocka/ZeroBias/306125zb_def/180117_161553/0000/L1Ntuple_*.root
 
   sample:
     name: Data
     title: 2017 Data
   trigger:
-    # name: ZeroBias
-    # title: Zero Bias
     name: SM
     title: Single Muon
   pileup_file: ""
@@ -26,7 +22,7 @@ analysis:
   pu_type: 0PU24,25PU49,50PU
   pu_bins: [0,25,50,999]
   analyzers:
-     - cmsl1t.analyzers.offline_met_analyzer
+     - cmsl1t.analyzers.jetMet_analyzer
   modifiers: []
   progress_bar:
     report_every: 1000

@@ -29,7 +29,7 @@ analysis:
   pu_type: 0PU24,25PU49,50PU
   pu_bins: [25,50,999]
   analyzers:
-     - cmsl1t.analyzers.offline_met_analyzer
+     - cmsl1t.analyzers.jetMet_analyzer
   modifiers: []
   progress_bar:
     report_every: 1000

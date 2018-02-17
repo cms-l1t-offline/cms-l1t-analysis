@@ -128,9 +128,9 @@ class ResolutionPlot(BasePlotter):
             legend = Legend(
                 len(hists),
                 header=self.legend_title,
-                topmargin=0.45,
-                rightmargin=0.2,
-                leftmargin=0.8,
+                topmargin=0.35,
+                rightmargin=0.3,
+                leftmargin=0.7,
                 textsize=0.03,
                 entryheight=0.03,
             )

@@ -25,27 +25,18 @@ def types(doEmu):
 # Eta ranges so we can put |\eta| < val as the legend header on the
 # efficiency plots.
 ETA_RANGES = dict(
-    caloHT="|\\eta| < 2.4",
-    pfHT="|\\eta| < 2.4",
-    caloMETHF="|\\eta| < 5.0",
-    caloMETBE="|\\eta| < 3.0",
-    pfMET_NoMu="|\\eta| < 5.0",
-    caloJetET_BE="|\\eta| < 3.0",
-    caloJetET_HF="3.0 < |\\eta| < 5.0",
-    pfJetET_BE="|\\eta| < 3.0",
-    pfJetET_HF="3.0 < |\\eta| < 5.0",
+    HT="|\\eta| < 2.4",
+    METBE="|\\eta| < 3.0",
+    METHF="|\\eta| < 5.0",
+    JetET_BE="|\\eta| < 3.0",
+    JetET_HF="3.0 < |\\eta| < 5.0",
 )
 
-THRESHOLDS = dict(
-    caloHT=[120, 200, 320, 450],
-    pfHT=[120, 200, 320, 450],
-    caloMETBE=[60, 80, 100, 120],
-    caloMETHF=[60, 80, 100, 120],
-    pfMET_NoMu=[60, 80, 100, 120],
-    caloJetET_BE=[35, 90, 120, 180],
-    caloJetET_HF=[35, 90, 120, 180],
-    pfJetET_BE=[35, 90, 120, 180],
-    pfJetET_HF=[35, 90, 120, 180],
+ALL_THRESHOLDS = dict(
+    HT     = [120, 200, 320, 450],
+    METBE  = [80, 100, 120, 150],
+    METHF  = [80, 100, 120, 150],
+    JetET  = [35, 90, 120, 180]
 )
 
 HIGH_RANGE_BINS = list(range(0, 100, 5)) + list(range(100, 300, 10))
@@ -70,7 +61,7 @@ HIGH_RANGE_BINS_HT = np.asarray(HIGH_RANGE_BINS_HT, 'd')
 HIGH_RANGE_BINS_FWD = np.asarray(HIGH_RANGE_BINS_FWD, 'd')
 
 
-def ExtractSums(event, doEmu):
+def extractSums(event, doEmu):
     offline = dict(
         caloHT=Sum(event.sums.caloHt),
         pfHT=Sum(event.sums.Ht),
@@ -87,20 +78,20 @@ def ExtractSums(event, doEmu):
     )
 
     if doEmu:
-        offline += dict(
+        offline.update(dict(
             caloHT_Emu=Sum(event.sums.caloHt),
             pfHT_Emu=Sum(event.sums.Ht),
             caloMETBE_Emu=Met(event.sums.caloMetBE, event.sums.caloMetPhiBE),
             caloMETHF_Emu=Met(event.sums.caloMet, event.sums.caloMetPhi),
             pfMET_NoMu_Emu=Met(event.sums.pfMetNoMu, event.sums.pfMetNoMuPhi),
-        )
-        online += dict(
+        ))
+        online.update(dict(
             caloHT_Emu=event.l1Sums["L1EmuHtt"],
             pfHT_Emu=event.l1Sums["L1EmuHtt"],
             caloMETBE_Emu=event.l1Sums["L1EmuMet"],
             caloMETHF_Emu=event.l1Sums["L1EmuMetHF"],
             pfMET_NoMu_Emu=event.l1Sums["L1EmuMetHF"],
-        )
+        ))
 
     return offline, online
 
@@ -108,7 +99,7 @@ def ExtractSums(event, doEmu):
 class Analyzer(BaseAnalyzer):
 
     def __init__(self, config, **kwargs):
-        super(Analyzer, self).__init__("weekly_analyzer", config)
+        super(Analyzer, self).__init__("jetMet_analyzer", config)
 
         self._lumiJson = config.try_get('input', 'lumi_json', '')
         self._lastLumi = -1
@@ -180,9 +171,9 @@ class Analyzer(BaseAnalyzer):
         cfgs = [
             Config("caloHT", "Offline Calo HT", "L1 HT", 30, 800),
             Config("pfHT", "Offline PF HT", "L1 HT", 30, 800),
-            Config("caloMETHF", "Offline Calo MET HF", "L1 MET", 0, 400),
-            Config("caloMETBE", "Offline Calo MET BE", "L1 MET", 0, 400),
-            Config("pfMET_NoMu", "Offline PF MET NoMu", "L1 MET", 0, 400),
+            Config("caloMETHF", "Offline Calo MET HF", "L1 MET HF", 0, 400),
+            Config("caloMETBE", "Offline Calo MET BE", "L1 MET BE", 0, 400),
+            Config("pfMET_NoMu", "Offline PF MET NoMu", "L1 MET HF", 0, 400),
             Config("caloJetET_BE", "Offline Central Calo Jet ET","L1 Jet ET", 20, 400),
             Config("caloJetET_HF", "Offline Forward Calo Jet ET","L1 Jet ET", 20, 400),
             Config("pfJetET_BE", "Offline Central PF Jet ET","L1 Jet ET", 20, 400),
@@ -211,11 +202,35 @@ class Analyzer(BaseAnalyzer):
             suffix = '_HR'
         if emulator:
             prefix = '_Emu'
-        for cfg in cfgs:
-            eff_plot = getattr(self, cfg.name + prefix + "_eff" + suffix)
 
+        if self.thresholds:
+            allThresholds = self.thresholds
+        else:
+            allThresholds = ALL_THRESHOLDS
+
+        for cfg in cfgs:
+
+            eff_plot = getattr(self, cfg.name + prefix + "_eff" + suffix)
             twoD_plot = getattr(self, cfg.name + prefix + "_2D" + suffix)
-            thresholds = THRESHOLDS.get(cfg.name)
+
+            thresholds = []
+            for l1trig, thresh in allThresholds.items():
+                if l1trig.replace("_Emu","") in cfg.name:
+                    if emulator and not "Emu" in l1trig:
+                        continue
+                    thresholds = thresh
+                    break
+            if 'pfMET' in cfg.name:
+                thresholds = allThresholds.get("METHF")
+
+            etaRange = ""
+            for l1trig, etaRange in ETA_RANGES.items():
+                if l1trig in cfg.name:
+                    etaRange = etaRange
+                    break
+            if 'pfMET' in cfg.name:
+                etaRange = ETA_RANGES.get("METHF")
+
             params = [
                 cfg.on_title, cfg.off_title + " (GeV)", puBins, thresholds,
                 200, cfg.min, cfg.max,
@@ -242,7 +257,7 @@ class Analyzer(BaseAnalyzer):
                         ]
 
 
-            eff_plot.build(*params, legend_title=ETA_RANGES.get(cfg.name, ""))
+            eff_plot.build(*params, legend_title=etaRange)
             params.remove(thresholds)
             twoD_plot.build(*params)
 
@@ -250,7 +265,7 @@ class Analyzer(BaseAnalyzer):
                 continue
             res_plot = getattr(self, cfg.name + prefix + "_res" + suffix)
             res_plot.build(cfg.on_title, cfg.off_title,
-                           puBins, 150, -3, 3, legend_title=ETA_RANGES.get(cfg.name, ""))
+                           puBins, 150, -3, 3, legend_title=etaRange)
 
             if not hasattr(self, cfg.name + prefix + "_phi_res"):
                 continue
@@ -270,7 +285,7 @@ class Analyzer(BaseAnalyzer):
                 100,
                 -2 * pi,
                 2 * pi,
-                legend_title=ETA_RANGES.get(cfg.name, ""),
+                legend_title=etaRange,
             )
 
     def fill_histograms(self, entry, event):
@@ -287,7 +302,7 @@ class Analyzer(BaseAnalyzer):
         if not self._processLumi:
             return True
 
-        offline, online = ExtractSums(event,self._doEmu)
+        offline, online = extractSums(event,self._doEmu)
         pileup = event.nVertex
 
         for name in self._sumTypes:

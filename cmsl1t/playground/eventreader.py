@@ -30,21 +30,24 @@ Met = namedtuple('Met', ['et', 'phi'])
 Mex = namedtuple('Mex', ['ex'])
 Mey = namedtuple('Mey', ['ey'])
 
-def getTrees(doEmu):
+def getTrees(doEmu, doReco):
     allTrees = {
         #    "caloTowers": 'l1CaloTowerTree/L1CaloTowerTree',
-        "jetReco": 'l1JetRecoTree/JetRecoTree',
-        "metFilterReco": 'l1MetFilterRecoTree/MetFilterRecoTree',
-        "muonReco": 'l1MuonRecoTree/Muon2RecoTree',
-        "recoTree": 'l1RecoTree/RecoTree',
         "upgrade": 'l1UpgradeTree/L1UpgradeTree',
         "event": "l1EventTree/L1EventTree"
     }
+    if doReco:
+        allTrees.update({
+            "jetReco": 'l1JetRecoTree/JetRecoTree',
+            "metFilterReco": 'l1MetFilterRecoTree/MetFilterRecoTree',
+            "muonReco": 'l1MuonRecoTree/Muon2RecoTree',
+            "recoTree": 'l1RecoTree/RecoTree',
+    })
     if doEmu:
-        allTrees += {
+        allTrees.update({
             "emuCaloTowers": 'l1CaloTowerEmuTree/L1CaloTowerTree',
             "emuUpgrade": 'l1UpgradeEmuTree/L1UpgradeTree',
-        }
+    })
     return allTrees
 
 class Event(object):
@@ -273,7 +276,7 @@ class EventReader(object):
         http://rootpy-log.readthedocs.io/en/latest/_modules/rootpy/tree/chain.html
     '''
 
-    def __init__(self, files, events=-1, doEmu=False):
+    def __init__(self, files, events=-1, doEmu=False, doReco=True):
         from cmsl1t.utils.root_glob import glob
         input_files = []
         for f in files:
@@ -285,7 +288,7 @@ class EventReader(object):
         self._trees = []
         self._names = []
 
-        allTrees = getTrees(doEmu)
+        allTrees = getTrees(doEmu,doReco)
         for name, path in allTrees.iteritems():
             try:
                 chain = TreeChain(path, input_files, cache=True, events=events)

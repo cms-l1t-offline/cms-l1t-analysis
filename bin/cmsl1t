@@ -40,9 +40,10 @@ def process_tuples(config, nevents, analyzers):
         logger.info(input_files)
         
     do_emu = config.try_get('analysis', 'do_emu', False)
+    do_reco = config.try_get('analysis', 'do_reco', True)
 
     from cmsl1t.playground.eventreader import EventReader
-    reader = EventReader(input_files, events=nevents, doEmu=do_emu)
+    reader = EventReader(input_files, events=nevents, doEmu=do_emu, doReco=do_reco)
 
     results = [analyzer.prepare_for_events(reader) for analyzer in analyzers]
     check(results, analyzers, 'prepare_for_events')
