@@ -236,7 +236,7 @@ class Analyzer(BaseAnalyzer):
 
             params = [
                 cfg.on_title, cfg.off_title + " (GeV)", puBins, thresholds,
-                50, cfg.min, cfg.max,
+                100, cfg.min, cfg.max,
             ]
             if high_range:
                 params = [
