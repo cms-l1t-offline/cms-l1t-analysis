@@ -3,7 +3,7 @@ from rootpy.plotting.hist import _HistBase, Efficiency
 from rootpy.plotting.graph import _GraphBase
 from rootpy.plotting import Style, Canvas
 from rootpy.context import preserve_current_style
-from rootpy.ROOT import gStyle, TLatex
+from rootpy.ROOT import gStyle, TLatex, TStyle
 from rootpy import asrootpy
 import rootpy.ROOT as ROOT
 from exceptions import RuntimeError
@@ -84,9 +84,16 @@ def __clean(hists):
     for hist in hists:
         if isinstance(hist, Efficiency):
             new = asrootpy(hist.CreateGraph("e0"))
+            #for i in range(1, new.GetN() + 1):
+                #new.SetPointEXhigh(i,0.)
+                #new.SetPointEXlow(i,0.)
             new.decorate(hist)
             hist = new
             hist.SetMarkerSize(0.5)
+            hist.SetLineWidth(1)
+            gStyle.SetLineScalePS(1)
+        else:
+            gStyle.SetLineScalePS(3)
         cleaned_hists.append(hist)
 
     axis_hist = cleaned_hists[0]
@@ -178,10 +185,10 @@ def label_canvas(sample_title=None, run=None, isData=False):
     cms = "#bf{CMS} #it{Preliminary}"
     if sample_title:
         cms += sample_title
-    latex.DrawLatex(0.15, 0.92, cms)
+    latex.DrawLatex(0.17, 0.92, cms)
 
-    run_summary = "(13 TeV)"
+    run_summary = "13 TeV"
     if run:
         run_summary += run
     latex.SetTextAlign(31)
-    latex.DrawLatex(0.92, 0.92, run_summary)
+    latex.DrawLatex(0.9, 0.92, run_summary)

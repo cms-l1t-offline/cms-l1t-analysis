@@ -1,27 +1,29 @@
 import cmsl1t.geometry as geo
 
 
-def jetFilterNoHF(jet):
+def pfJetFilter(jet):
     '''
         also a lot of potential for simplification
     '''
-    isForwardJet = geo.is_in_region('HF', jet.eta)
-    innerJet = abs(jet.eta) <= 2.4
+    isInnerJet = abs(jet.eta) <= 2.4
+    isCentralJet = abs(jet.eta) <= 2.7
+    isForwardCentralJet = (abs(jet.eta) > 2.7 and abs(jet.eta) <= 3.0)
+    isForwardJet = abs(jet.eta) > 3.0
     reject_if = [
         jet.muMult != 0,
-        isForwardJet,
-        jet.nhef >= 0.9,
-        jet.pef >= 0.9,
-        jet.mef >= 0.8,
-        jet.allMult <= 1,
-        innerJet and jet.sumMult <= 0,
-        innerJet and jet.chef <= 0,
-        innerJet and jet.eef >= 0.9,
+        isCentralJet and jet.nhef >= 0.9,
+        isCentralJet and jet.nemef >= 0.9,
+        isCentralJet and (jet.cMult + jet.nMult) <= 1,
+        isCentralJet and jet.mef >= 0.8,
+        isInnerJet   and jet.chef <= 0,
+        isInnerJet   and jet.cMult <= 0,
+        isInnerJet   and jet.cemef >= 0.9,
+        isForwardCentralJet and jet.nhef >= 0.98,
+        isForwardCentralJet and jet.nemef <= 0.01,
+        isForwardCentralJet and jet.nMult <= 2,
+        isForwardJet and jet.nemef >= 0.9,
+        isForwardJet and jet.nMult <= 10
     ]
     if any(reject_if):
         return False
     return True
-
-
-def defaultJetFilter(jet):
-    return (abs(jet.eta) > 3.0 or jetFilterNoHF(jet)) and jet.etCorr > 30.

@@ -1,0 +1,44 @@
+version: 0.0.1
+name: 'Offline Met Studies'
+
+input:
+  files:
+      # Single Muons
+       -   root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/bundocka/SingleMuon/smF_MET/180212_124613/0000/L1Ntuple_*.root
+       -   root://eoscms.cern.ch//eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/bundocka/SingleMuon/smF_MET/180212_124613/0001/L1Ntuple_*.root
+
+  sample:
+    name: Data
+    title: 2017 Data
+  trigger:
+    name: SingleMu
+    title: Single Muon
+  pileup_file: ""
+  run_number: 2017F
+  lumi_json: "https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions17/13TeV/PromptReco/Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON.txt"  
+
+analysis:
+  do_emu: True
+  do_fit: True
+  pu_type: 0PU24,25PU49,50PU
+  pu_bins: [0,25,50,999]
+  thresholds:
+    HT: [120, 200, 320, 450]
+    HT_Emu: [120, 200, 320, 450]
+    METBE: [80, 100, 120, 150]
+    METBE_Emu: [102, 124, 143, 169]
+    METHF: [80, 100, 120, 150]
+    METHF_Emu: [103, 125, 144, 170]
+    JetET: [35, 90, 120, 180]
+    JetET_Emu: [35, 90, 120, 180]
+
+  analyzers:
+     - cmsl1t.analyzers.jetMet_analyzer
+  modifiers: []
+  progress_bar:
+    report_every: 1000
+
+output:
+  template:
+     - output/constant_rate_turnons
+     - "{date}_{run_number}_{sample_name}_{trigger_name}"

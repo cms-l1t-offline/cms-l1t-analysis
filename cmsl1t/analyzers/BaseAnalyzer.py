@@ -22,6 +22,7 @@ class BaseAnalyzer(object):
             os.makedirs(self.plots_folder)
         self.all_plots = []
         self.puBins = config.try_get('analysis', 'pu_bins', [0, 999])
+        self.thresholds = config.try_get('analysis', 'thresholds', None)
 
     def prepare_for_events(self, reader):
         """

@@ -54,6 +54,16 @@ class Base():
             return bin_index
         return self._bin_center(bin_index)
 
+    def get_bin_upper(self, bin_index):
+        if bin_index in [self.overflow, self.underflow, self.everything]:
+            return bin_index
+        return self._bin_upper_edge(bin_index)
+
+    def get_bin_lower(self, bin_index):
+        if bin_index in [self.overflow, self.underflow, self.everything]:
+            return bin_index
+        return self._bin_lower_edge(bin_index)
+
     def get_bin_contents(self, bin_index):
         contents = self.values.get(bin_index, "DoesntExist")
         if contents is "DoesntExist":
@@ -125,6 +135,20 @@ class Sorted(Base):
             return (self.bins[bin_index + 1] + self.bins[bin_index]) * 0.5
         except IndexError as e:
             logger.error("Cannot get bin center for index " + str(bin_index))
+            raise e
+
+    def _bin_upper_edge(self, bin_index):
+        try:
+            return (self.bins[bin_index + 1])
+        except IndexError as e:
+            logger.error("Cannot get bin upper edge for index " + str(bin_index))
+            raise e
+
+    def _bin_lower_edge(self, bin_index):
+        try:
+            return (self.bins[bin_index])
+        except IndexError as e:
+            logger.error("Cannot get bin lower edge for index " + str(bin_index))
             raise e
 
 

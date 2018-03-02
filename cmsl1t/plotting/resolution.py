@@ -8,6 +8,7 @@ from cmsl1t.recalc.resolution import get_resolution_function
 
 from rootpy.context import preserve_current_style
 from rootpy.plotting import Legend
+from rootpy import ROOT
 
 
 class ResolutionPlot(BasePlotter):
@@ -20,11 +21,12 @@ class ResolutionPlot(BasePlotter):
 
     def create_histograms(self,
                           online_title, offline_title,
-                          pileup_bins, n_bins, low, high):
+                          pileup_bins, n_bins, low, high, legend_title=""):
         """ This is not in an init function so that we can by-pass this in the
         case where we reload things from disk """
         self.online_title = online_title
         self.offline_title = offline_title
+        self.legend_title = legend_title
         self.pileup_bins = bn.Sorted(pileup_bins, "pileup",
                                      use_everything_bin=True)
 
@@ -47,28 +49,73 @@ class ResolutionPlot(BasePlotter):
         fits = []
         for (pile_up, ), hist in self.plots.flat_items_all():
             if pile_up == bn.Base.everything:
-                hist.linestyle = "dashed"
-                label = "Everything"
+                #hist.linestyle = "dashed"
+                hist.drawstyle = "P"
+                label = "All PU"
             elif isinstance(pile_up, int):
-                hist.drawstyle = "EP"
-                label = "~ {:.0f}".format(self.pileup_bins.get_bin_center(pile_up))
+                hist.drawstyle = "P"
+                if self.pileup_bins.get_bin_upper(pile_up) < 500:
+                    label = "{:.0f} \\leq PU < {:.0f}".format(self.pileup_bins.get_bin_lower(pile_up), self.pileup_bins.get_bin_upper(pile_up))
+                else:
+                    label = "{:.0f} < PU".format(self.pileup_bins.get_bin_lower(pile_up))
             else:
                 continue
             hist.SetMarkerSize(0.5)
+            hist.SetLineWidth(1)
             hists.append(hist)
             labels.append(label)
-            # if with_fits:
-            #     fits.append(self.fits.get_bin_contents([pile_up]))
-        self.__make_overlay(hists, fits, labels, "Number of events")
+            if with_fits:
+                fits.append(self.fits.get_bin_contents([pile_up]))
+        #self.__make_overlay(hists, fits, labels, "Number of events")
 
         normed_hists = [hist / hist.integral() if hist.integral() != 0 else hist.Clone() for hist in hists]
-        self.__make_overlay(normed_hists, fits, labels, "Fraction of events", "__shapes")
+
+        self.__make_overlay(normed_hists, fits, labels, "a.u.", "__shapes")
+
+
+    def overlay_with_emu(self, emu_plotter, with_fits=False):
+        hists = []
+        labels = []
+        fits = []
+        for (pile_up, ), hist in self.plots.flat_items_all():
+            if pile_up == bn.Base.everything:
+                hist.SetLineStyle(1)
+                hist.drawstyle = "P"
+                label = "HW, all PU"
+            else:
+                continue
+            hist.SetMarkerSize(0.5)
+            hist.SetLineWidth(1)
+            hists.append(hist)
+            labels.append(label)
+
+        for (pile_up, ), hist in emu_plotter.plots.flat_items_all():
+            if pile_up == bn.Base.everything:
+                hist.SetLineStyle(1)
+                hist.drawstyle = "P"
+                label = "Emu, all PU"
+            else:
+                continue
+            hist.SetMarkerSize(0.5)
+            hist.SetLineWidth(1)
+            hists.append(hist)
+            labels.append(label)
+
+        #self.__make_overlay(hists, fits, labels, "Number of events", "__Overlay_Emu")
+
+        normed_hists = [hist / hist.integral() if hist.integral() != 0 else hist.Clone() for hist in hists]
+
+        self.__make_overlay(normed_hists, fits, labels, "a.u.", "__shapes__Overlay_Emu")
 
     def __make_overlay(self, hists, fits, labels, ytitle, suffix=""):
         with preserve_current_style():
             # Draw each resolution (with fit)
             xtitle = self.resolution_method.label.format(on=self.online_title, off=self.offline_title)
-            canvas = draw(hists, draw_args={"xtitle": xtitle, "ytitle": ytitle})
+            name = self.filename_format.format(pileup="all")
+            for hist in hists:
+                hist.GetYaxis().SetRangeUser(0,0.1)
+                hist.GetYaxis().SetTitleOffset(1.4)
+                canvas = draw(hists, draw_args={"xtitle": xtitle, "ytitle": ytitle})
             if fits:
                 for fit, hist in zip(fits, hists):
                     fit["asymmetric"].linecolor = hist.GetLineColor()
@@ -78,15 +125,28 @@ class ResolutionPlot(BasePlotter):
             label_canvas()
 
             # Add a legend
-            legend = Legend(len(hists), header="Pile-up bin",
-                            topmargin=0.35, entryheight=0.035)
+            legend = Legend(
+                len(hists),
+                header=self.legend_title,
+                topmargin=0.35,
+                rightmargin=0.3,
+                leftmargin=0.7,
+                textsize=0.03,
+                entryheight=0.03,
+            )
             for hist, label in zip(hists, labels):
                 legend.AddEntry(hist, label)
             legend.SetBorderSize(0)
             legend.Draw()
 
+            ymax = 1.2 * hists[-1].GetMaximum()
+
+            line = ROOT.TLine(0., 0., 0., ymax)
+            #line.SetLineStyle("dashed")
+            line.SetLineColor(15)
+            #line.Draw()
+
             # Save canvas to file
-            name = self.filename_format.format(pileup="all")
             self.save_canvas(canvas, name + suffix)
 
     def _is_consistent(self, new):

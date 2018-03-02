@@ -4,7 +4,8 @@ import six
 import os
 import math
 
-from jetfilters import defaultJetFilter
+from jetfilters import pfJetFilter
+from metfilters import pfMetFilter
 from cmsl1t.playground.cache import CachedIndexedTree
 import ROOT
 from collections import namedtuple
@@ -29,17 +30,25 @@ Met = namedtuple('Met', ['et', 'phi'])
 Mex = namedtuple('Mex', ['ex'])
 Mey = namedtuple('Mey', ['ey'])
 
-ALL_TREE = {
-    "caloTowers": 'l1CaloTowerTree/L1CaloTowerTree',
-    "emuCaloTowers": 'l1CaloTowerEmuTree/L1CaloTowerTree',
-    "jetReco": 'l1JetRecoTree/JetRecoTree',
-    "metFilterReco": 'l1MetFilterRecoTree/MetFilterRecoTree',
-    "muonReco": 'l1MuonRecoTree/Muon2RecoTree',
-    "recoTree": 'l1RecoTree/RecoTree',
-    "upgrade": 'l1UpgradeTree/L1UpgradeTree',
-    "emuUpgrade": 'l1UpgradeEmuTree/L1UpgradeTree',
-}
-
+def getTrees(doEmu, doReco):
+    allTrees = {
+        #    "caloTowers": 'l1CaloTowerTree/L1CaloTowerTree',
+        "upgrade": 'l1UpgradeTree/L1UpgradeTree',
+        "event": "l1EventTree/L1EventTree"
+    }
+    if doReco:
+        allTrees.update({
+            "jetReco": 'l1JetRecoTree/JetRecoTree',
+            "metFilterReco": 'l1MetFilterRecoTree/MetFilterRecoTree',
+            #"muonReco": 'l1MuonRecoTree/Muon2RecoTree',
+            "recoTree": 'l1RecoTree/RecoTree',
+    })
+    if doEmu:
+        allTrees.update({
+            "emuCaloTowers": 'l1CaloTowerEmuTree/L1CaloTowerTree',
+            "emuUpgrade": 'l1UpgradeEmuTree/L1UpgradeTree',
+    })
+    return allTrees
 
 class Event(object):
 
@@ -77,19 +86,28 @@ class Event(object):
         if "upgrade" in tree_names:
             self._upgrade = self._upgrade.L1Upgrade
             self._l1Jets = [L1Jet(self._upgrade, i)
-                            for i in range(self._upgrade.nJets)]
+                            for i in range(self._upgrade.nJets)
+                            if self._upgrade.jetBx[i]==0]
             self._readUpgradeSums()
 
         if "emuUpgrade" in tree_names:
             self._emuUpgrade = self._emuUpgrade.L1Upgrade
             self._l1EmuJets = [L1Jet(self._emuUpgrade, i)
-                               for i in range(self._emuUpgrade.nJets)]
+                               for i in range(self._emuUpgrade.nJets)
+                               if self._emuUpgrade.jetBx[i]==0]
             self._readEmuUpgradeSums()
 
         if "jetReco" in tree_names:
             self._jets = []
             for i in range(self._jetReco.Jet.nJets):
                 self._jets.append(Jet(self._jetReco.Jet, i))
+            self._caloJets = []
+            for i in range(self._jetReco.Jet.nCaloJets):
+                self._caloJets.append(CaloJet(self._jetReco.Jet, i))
+
+        if "event" in tree_names:
+            self._run = self._event.Event.run
+            self._lumi = self._event.Event.lumi
 
     def _readUpgradeSums(self):
         self._readSums(self._upgrade, prefix='L1')
@@ -123,8 +141,7 @@ class Event(object):
         print('>>>> nHCALTP (emu)', self._emuCaloTowers.CaloTP.nHCALTP)
         print('>>>> nJets', self._jetReco.Jet.nJets)
         print('>>>> met', self._jetReco.Sums.met)
-        print('>>>> hbheNoiseFilter',
-              self._metFilterReco.MetFilters.hbheNoiseFilter)
+        print('>>>> metFilter', pfMetFilter(self))
         print('>>>> nMuons', self._muonReco.Muon.nMuons)
         print('>>>> nVtx', self._recoTree.Vertex.nVtx)
         print('>>>> nJets (upgrade)', self._upgrade.nJets)
@@ -148,21 +165,25 @@ class Event(object):
         # for m in members:
         #     print('>' * 6, m[0], ':', m[1])
 
-    def goodJets(self, jetFilter=defaultJetFilter):
+    def goodJets(self, jetFilter=pfJetFilter, doCalo=False):
         '''
             filters and ET orders the jet collection
         '''
-        goodJets = filter(jetFilter, self._jets)
-        sorted_jets = sorted(
-            goodJets, key=lambda jet: jet.etCorr, reverse=True)
+        if doCalo:
+            goodJets = self._caloJets
+        else:
+            goodJets = self._jets
+        if jetFilter:
+            goodJets = filter(jetFilter, goodJets)
+        sorted_jets = sorted(goodJets, key=lambda jet: jet.etCorr, reverse=True)
         return sorted_jets
 
-    def getLeadingRecoJet(self, jetFilter=defaultJetFilter):
-        goodJets = self.goodJets(jetFilter)
+    def getLeadingRecoJet(self, jetFilter=pfJetFilter, doCalo=False):
+        goodJets = self.goodJets(jetFilter,doCalo)
         if not goodJets:
             return None
         leadingRecoJet = goodJets[0]
-        if leadingRecoJet.etCorr > 10.0:
+        if leadingRecoJet.etCorr > 20.0:
             return leadingRecoJet
         return None
 
@@ -173,9 +194,9 @@ class Event(object):
         if l1Type == 'EMU':
             l1Jets = self._l1EmuJets
 
-        if not l1Jets or not recoJet:
+        if not recoJet:
             return None
-        minDeltaR = 0.3
+        minDeltaR = 0.4
         closestJet = None
         for l1Jet in l1Jets:
             dEta = recoJet.eta - l1Jet.eta
@@ -202,9 +223,6 @@ class Event(object):
     def sums(self):
         return self._jetReco.Sums
 
-    def passesMETFilter(self):
-        return self._metFilterReco.MetFilters.hbheNoiseFilter
-
     @property
     def l1Sums(self):
         return self._l1Sums
@@ -219,21 +237,28 @@ class Jet(object):
     def __init__(self, jets, index):
         # this could be simplified with a list of attributes
         read_attributes = [
-            'etCorr', 'muMult', 'eta', 'phi', 'nhef', 'pef', 'mef', 'chMult',
-            'elMult', 'nhMult', 'phMult', 'chef', 'eef'
+            'etCorr', 'muMult', 'eta', 'phi', 'nhef', 'pef', 'mef', 'chMult', 'elMult', 
+            'nhMult', 'phMult', 'chef', 'eef', 'nemef', 'cMult', 'nMult', 'cemef'
         ]
         for attr in read_attributes:
             setattr(self, attr, getattr(jets, attr)[index])
 
-    @property
-    def sumMult(self):
-        return self.chMult + self.chMult + self.elMult
-        # not
-        # return self.chMult + self.muMult + self.elMult ?
+class CaloJet(object):
+    '''
+        Create a simple python wrapper for
+        L1Analysis::L1AnalysisRecoJetDataFormat
+    '''
 
-    @property
-    def allMult(self):
-        return self.sumMult + self.nhMult + self.phMult
+    def __init__(self, jets, index):
+        # this could be simplified with a list of attributes
+        read_attributes = dict(
+            et = 'caloEt',
+            etCorr = 'caloEtCorr',
+            eta = 'caloEta',
+            phi = 'caloPhi',
+        )
+        for outattr, attr in read_attributes.items():
+            setattr(self, outattr, getattr(jets, attr)[index])
 
 
 class L1Jet(object):
@@ -242,6 +267,7 @@ class L1Jet(object):
         self.et = l1Jets.jetEt[index]
         self.eta = l1Jets.jetEta[index]
         self.phi = l1Jets.jetPhi[index]
+        self.bx = l1Jets.jetBx[index]
 
 
 class EventReader(object):
@@ -250,7 +276,7 @@ class EventReader(object):
         http://rootpy-log.readthedocs.io/en/latest/_modules/rootpy/tree/chain.html
     '''
 
-    def __init__(self, files, events=-1):
+    def __init__(self, files, events=-1, doEmu=False, doReco=True):
         from cmsl1t.utils.root_glob import glob
         input_files = []
         for f in files:
@@ -261,7 +287,9 @@ class EventReader(object):
         # this is not efficient
         self._trees = []
         self._names = []
-        for name, path in ALL_TREE.iteritems():
+
+        allTrees = getTrees(doEmu,doReco)
+        for name, path in allTrees.iteritems():
             try:
                 chain = TreeChain(path, input_files, cache=True, events=events)
             except RuntimeError:
