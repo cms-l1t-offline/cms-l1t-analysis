@@ -40,7 +40,7 @@ def getTrees(doEmu, doReco):
         allTrees.update({
             "jetReco": 'l1JetRecoTree/JetRecoTree',
             "metFilterReco": 'l1MetFilterRecoTree/MetFilterRecoTree',
-            "muonReco": 'l1MuonRecoTree/Muon2RecoTree',
+            #"muonReco": 'l1MuonRecoTree/Muon2RecoTree',
             "recoTree": 'l1RecoTree/RecoTree',
     })
     if doEmu:
