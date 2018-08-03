@@ -11,7 +11,7 @@ before_install:
 
 install:
   - source ci/mapping.sh
-  - docker-compose build ci
+  - docker build --build-arg USERID=${USERID} -f ci/Dockerfile --cache-from kreczko/cms-l1t-analysis:ci -t kreczko/cms-l1t-analysis:ci .
 
 script:
   - docker-compose up --exit-code-from ci ci
