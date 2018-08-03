@@ -4,7 +4,7 @@ cache:
   directories:
     - $HOME/.cache/pip
     - $HOME/download
-    - /software/cmsl1t/miniconda
+    - $HOME/miniconda2
 
 language: python
 
@@ -12,7 +12,7 @@ services:
   - docker
 
 before_install:
-  - export CMSL1T_CONDA_PATH=/software/cmsl1t/miniconda
+  - export CMSL1T_CONDA_PATH=$HOME/miniconda2
   - ./.ci/before_install.sh
   - export PATH=${CMSL1T_CONDA_PATH}/bin:$PATH
 
