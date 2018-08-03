@@ -14,6 +14,6 @@ fi
 
 if [ "x${CI_RUN_TEST}" = 'xINTEGRATION' ]
 then
-  ./ci/integration-test.sh
+  ./.ci/integration-test.sh
 fi
 set +e
