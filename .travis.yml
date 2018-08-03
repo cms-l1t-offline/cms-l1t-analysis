@@ -1,5 +1,5 @@
 # travis-ci.org build & test configuration
-sudo: required
+sudo: false
 cache:
   directories:
     - $HOME/.cache/pip
@@ -7,9 +7,6 @@ cache:
     - $HOME/miniconda2
 
 language: python
-
-services:
-  - docker
 
 before_install:
   - export CMSL1T_CONDA_PATH=$HOME/miniconda2
