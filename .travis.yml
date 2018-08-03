@@ -1,5 +1,10 @@
 # travis-ci.org build & test configuration
 sudo: required
+cache:
+  directories:
+    - $HOME/.cache/pip
+    - $HOME/download
+    - /software/cmsl1t/miniconda
 
 language: python
 
@@ -7,14 +12,15 @@ services:
   - docker
 
 before_install:
-  - docker pull kreczko/cms-l1t-analysis:ci
+  - export CMSL1T_CONDA_PATH=/software/cmsl1t/miniconda
+  - ./.ci/before_install.sh
+  - export PATH=${CMSL1T_CONDA_PATH}/bin:$PATH
 
 install:
-  - source ci/mapping.sh
-  - docker build --build-arg USERID=${USERID} -f ci/Dockerfile --cache-from kreczko/cms-l1t-analysis:ci -t kreczko/cms-l1t-analysis:ci .
+  - ./.ci/install.sh
 
 script:
-  - docker-compose up --exit-code-from ci ci
+  - ./.ci/test.sh
 
 matrix:
   include:
