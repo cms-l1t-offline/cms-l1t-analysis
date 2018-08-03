@@ -12,6 +12,7 @@ before_install:
   - export CMSL1T_CONDA_PATH=$HOME/miniconda2
   - ./.ci/before_install.sh
   - export PATH=${CMSL1T_CONDA_PATH}/bin:$PATH
+  - export NO_CVMFS=1
 
 install:
   - ./.ci/install.sh
