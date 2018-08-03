@@ -2,7 +2,6 @@
 set -e
 export PATH=~/.local/bin:$PATH
 
-cd ${CODE_PATH}
 source bin/env.sh
 make setup
 ls -l build
