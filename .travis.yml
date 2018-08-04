@@ -35,3 +35,8 @@ matrix:
     - env: CI_RUN_TEST=INTEGRATION CI_RUN_CONFIG=gen
     - env: CI_RUN_TEST=INTEGRATION CI_RUN_CONFIG=study_tower28_met
 cache: apt
+
+addons:
+  apt:
+    packages:
+    - build-essential
