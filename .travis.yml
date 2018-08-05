@@ -8,6 +8,10 @@ cache:
 
 language: python
 
+python:
+  - "2.7"
+  - "3.6"
+
 before_install:
   - export CMSL1T_CONDA_PATH=$HOME/miniconda2
   - ./.ci/before_install.sh
@@ -30,10 +34,10 @@ matrix:
     - env: CI_RUN_TEST=INTEGRATION CI_RUN_CONFIG=rates
     - env: CI_RUN_TEST=INTEGRATION CI_RUN_CONFIG=rateVsPU
     - env: CI_RUN_TEST=INTEGRATION CI_RUN_CONFIG=weekly_checks
-  # currently no Generator or MuonReco test file
-  allow_failures:
     - env: CI_RUN_TEST=INTEGRATION CI_RUN_CONFIG=gen
     - env: CI_RUN_TEST=INTEGRATION CI_RUN_CONFIG=study_tower28_met
+  allow_failures:
+    - python: "3.6"
 cache: apt
 
 addons:
