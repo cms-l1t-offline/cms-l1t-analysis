@@ -76,7 +76,7 @@ else
 fi
 
 # Capture the user's site-packages directory:
-USER_SITE_PACKAGES="$(python -c "import site; print site.USER_SITE")"
+USER_SITE_PACKAGES="$(python -c "import site; print(site.USER_SITE)")"
 # add project to PYTHONPATH
 PYTHONPATH="${USER_SITE_PACKAGES}:$PYTHONPATH"
 
