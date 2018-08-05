@@ -40,3 +40,4 @@ addons:
   apt:
     packages:
     - build-essential
+    - python-psutil
