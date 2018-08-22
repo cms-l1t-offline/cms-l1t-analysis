@@ -1,9 +1,11 @@
 """
 Study the MET distibutions and various PUS schemes
 """
-from __future__ import division
+from __future__ import division, print_function
 import numpy as np
+import pandas as pd
 import ROOT
+from tabulate import tabulate
 import os
 from cmsl1t.analyzers.BaseAnalyzer import BaseAnalyzer
 from cmsl1t.plotting.rates import RatesPlot
@@ -92,11 +94,10 @@ class Analyzer(BaseAnalyzer):
                         'Error: Please specify thresholds in the config .yaml in dictionary format')
 
             rates_plot = getattr(self, name + "_rates")
-            rates_plot.build(name, puBins, 200, 0, 200, ETA_RANGES.get(name))
+            rates_plot.build("L1 " + name, puBins, 200, 0, 200, ETA_RANGES.get(name))
 
             rate_vs_pileup_plot = getattr(self, name + "_rate_vs_pileup")
-            rate_vs_pileup_plot.build(
-                "L1 " + name, trig_thresholds, 16, 0, 80, ETA_RANGES.get(name))
+            rate_vs_pileup_plot.build("L1 " + name, trig_thresholds, 16, 0, 80, ETA_RANGES.get(name))
 
         '''
         self.rates = HistogramsByPileUpCollection(
