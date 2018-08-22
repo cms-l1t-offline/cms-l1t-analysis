@@ -164,7 +164,6 @@ class RatesPlot(BasePlotter):
             human_readable_threshold = '{0}; PU > {1}'.format(self.online_title, self.pileup_bins.bins[pileup])
             rhist = hist.rebinned(summary_bins)
             stats = {}
-            edges = list(rhist.xedges())
             summary_columns = self._summary_columns(summary_bins, summary_label)
             for i, summary_column in enumerate(summary_columns):
                 stats[summary_column] = rhist.integral(i, i + 1)

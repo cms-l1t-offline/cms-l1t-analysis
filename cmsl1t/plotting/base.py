@@ -103,7 +103,6 @@ class BasePlotter(object):
         """
         raise NotImplementedError("draw() needs to be implemented")
 
-
     def get_stats(self, summary_bins=[], summary_label=''):
         """
         Has to be overloaded by users code.

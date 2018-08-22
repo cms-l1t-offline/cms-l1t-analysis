@@ -176,7 +176,6 @@ class RateVsPileupPlot(BasePlotter):
             human_readable_threshold = '{0} > {1} GeV'.format(self.online_title, self.thresholds.bins[threshold])
             rhist = hist.rebinned(summary_bins)
             stats = {}
-            edges = list(rhist.xedges())
             summary_columns = self._summary_columns(summary_bins, summary_label)
             for i, summary_column in enumerate(summary_columns):
                 stats[summary_column] = rhist.integral(i, i + 1) * normalisation
