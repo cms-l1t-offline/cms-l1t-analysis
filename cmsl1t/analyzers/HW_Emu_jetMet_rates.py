@@ -290,6 +290,48 @@ class Analyzer(BaseAnalyzer):
         '''
         return True
 
+    def finalize(self):
+        self.__print_histogram_statistics()
+        return True
+
+    def __print_histogram_statistics(self):
+        summary = dict(
+            RateVsPileupPlot=dict(
+                label='PU',
+                bins=self.puBins,
+            ),
+            RatesPlot=dict(
+                label='threshold',
+                bins=self.thresholds,
+            ),
+        )
+        all_stats = {}
+        for plot in self.all_plots:
+            # different hist collection will have different stats formats!
+            collection_type = type(plot).__name__
+            if collection_type not in all_stats:
+                all_stats[collection_type] = []
+
+            summary_label = 'PU'
+            summary_bins = self.puBins
+            if collection_type == 'RatesPlot':
+                summary_label = 'threshold'
+                for var, thresholds in self.thresholds.items():
+                    if "L1 " + var in plot.online_title:
+                        summary_bins = thresholds
+            all_stats[collection_type] += [plot.get_stats(summary_label=summary_label, summary_bins=summary_bins)]
+
+        for collection_type in all_stats:
+            df = pd.concat(all_stats[collection_type])
+            df.sort_values(by=['identifier'], inplace=True)
+            df.fillna('------', inplace=True)
+            # df = pd.DataFrame(all_stats, columns=['identifier', 'statistics'])
+            print('Histogram collection:', collection_type)
+            print(tabulate(df, headers='keys', tablefmt='psql', showindex=False))
+            df_output = os.path.join(self.output_folder, '{}_histogram_stats.csv'.format(collection_type))
+            df.to_csv(df_output)
+            print('Saved histogram statistics to', df_output)
+
 
 def plot(hist, name, output_folder):
     pu = ''
