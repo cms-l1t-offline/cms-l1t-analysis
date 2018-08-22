@@ -295,16 +295,6 @@ class Analyzer(BaseAnalyzer):
         return True
 
     def __print_histogram_statistics(self):
-        summary = dict(
-            RateVsPileupPlot=dict(
-                label='PU',
-                bins=self.puBins,
-            ),
-            RatesPlot=dict(
-                label='threshold',
-                bins=self.thresholds,
-            ),
-        )
         all_stats = {}
         for plot in self.all_plots:
             # different hist collection will have different stats formats!
@@ -315,7 +305,7 @@ class Analyzer(BaseAnalyzer):
             summary_label = 'PU'
             summary_bins = self.puBins
             if collection_type == 'RatesPlot':
-                summary_label = 'threshold'
+                summary_label = 'bin'
                 for var, thresholds in self.thresholds.items():
                     if "L1 " + var in plot.online_title:
                         summary_bins = thresholds
