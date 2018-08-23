@@ -312,11 +312,9 @@ class Analyzer(BaseAnalyzer):
             all_stats[collection_type] += [plot.get_stats(summary_label=summary_label, summary_bins=summary_bins)]
 
         for collection_type in all_stats:
-            df = pd.concat(all_stats[collection_type])
+            df = pd.concat(all_stats[collection_type], sort=False)
             df.sort_values(by=['identifier'], inplace=True)
             df.fillna('------', inplace=True)
-            summary_columns = [c for c in df.columns.values if c not in ['identifier', 'total']]
-            df = df[['identifier', 'total'] + summary_columns]
             print('Histogram collection:', collection_type)
             print(tabulate(df, headers='keys', tablefmt='psql', showindex=False))
             df_output = os.path.join(self.output_folder, '{}_histogram_stats.csv'.format(collection_type))

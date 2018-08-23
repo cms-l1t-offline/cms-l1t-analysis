@@ -153,7 +153,7 @@ class RatesPlot(BasePlotter):
         summary_columns = list(self._summary_columns(summary_bins, summary_label))
         stats = list(self._collect_stats(summary_bins, summary_label))
         df = pd.DataFrame(stats)
-        return df[['identifier', 'total'] + summary_columns]
+        return df[['identifier', 'total', 'overflow'] + summary_columns]
 
     def _summary_columns(self, summary_bins, summary_label):
         for lower, upper in zip(summary_bins[:-1], summary_bins[1:]):
@@ -168,6 +168,7 @@ class RatesPlot(BasePlotter):
             for summary_column, y in zip(summary_columns, rhist.y()):
                 stats[summary_column] = y
             total = sum(stats.values())
-            header = dict(identifier=human_readable_threshold, total=total)
+            overflow = rhist.integral(overflow=True) - total
+            header = dict(identifier=human_readable_threshold, total=total, overflow=overflow)
             header.update(stats)
             yield header
