@@ -165,8 +165,8 @@ class RatesPlot(BasePlotter):
             rhist = hist.rebinned(summary_bins)
             stats = {}
             summary_columns = self._summary_columns(summary_bins, summary_label)
-            for i, summary_column in enumerate(summary_columns):
-                stats[summary_column] = rhist.integral(i, i + 1)
+            for summary_column, y in zip(summary_columns, rhist.y()):
+                stats[summary_column] = y
             total = sum(stats.values())
             header = dict(identifier=human_readable_threshold, total=total)
             header.update(stats)
