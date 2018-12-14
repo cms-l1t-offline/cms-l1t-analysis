@@ -71,6 +71,18 @@ def run(config_file, debug, batch, files_per_job):
 
       cmsl1t_batch_status -i {1}""".format(batch_dir, info_file)))
 
+    # Finally dump the commands needed to run the next steps to screen:
+    next_steps = """
+    when all jobs are done, you can combine all results together with:
+
+        cmsl1t -c {cfg} -r --hist-files '{outdir}/*.root'
+
+    ie. use the same config file given here, but reload hists from the intermediate root files.
+    """
+
+    logger.info(next_steps.format(cfg=config_file.name,
+                                  outdir=outdir.format(index="*")))
+
 
 if __name__ == '__main__':
     run()
