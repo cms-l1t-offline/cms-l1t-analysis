@@ -1,7 +1,37 @@
-# Changelog
+# Change Log
 
-## [v0.5.1](https://github.com/cms-l1t-offline/cms-l1t-analysis/tree/v0.5.1)
+## [v0.6.0](https://github.com/cms-l1t-offline/cms-l1t-analysis/tree/v0.6.0)
 
+[Full Changelog](https://github.com/cms-l1t-offline/cms-l1t-analysis/compare/v0.5.1...v0.6.0)
+
+**Implemented enhancements:**
+
+- Simplify the event loop by using a context manager [\#10](https://github.com/cms-l1t-offline/cms-l1t-analysis/issues/10)
+
+**Closed issues:**
+
+- Update setup to work under CentOS7 [\#164](https://github.com/cms-l1t-offline/cms-l1t-analysis/issues/164)
+- Problem running jobs with HTCondor [\#162](https://github.com/cms-l1t-offline/cms-l1t-analysis/issues/162)
+- HTCondor on lxplus [\#160](https://github.com/cms-l1t-offline/cms-l1t-analysis/issues/160)
+- Printout number of objects passing thresholds when estimating rates [\#150](https://github.com/cms-l1t-offline/cms-l1t-analysis/issues/150)
+- Speed up CI by using a smarter docker image [\#148](https://github.com/cms-l1t-offline/cms-l1t-analysis/issues/148)
+
+**Merged pull requests:**
+
+- Remove pileup selection in jetMetAnalyzer [\#172](https://github.com/cms-l1t-offline/cms-l1t-analysis/pull/172) ([bundocka](https://github.com/bundocka))
+- Global filters for events [\#170](https://github.com/cms-l1t-offline/cms-l1t-analysis/pull/170) ([kreczko](https://github.com/kreczko))
+- Roll back LCG version to workaround matplotlib efficiency bug [\#168](https://github.com/cms-l1t-offline/cms-l1t-analysis/pull/168) ([bundocka](https://github.com/bundocka))
+- Trig plots [\#166](https://github.com/cms-l1t-offline/cms-l1t-analysis/pull/166) ([benkrikler](https://github.com/benkrikler))
+- added setup.sh and added CentOS 7 support [\#165](https://github.com/cms-l1t-offline/cms-l1t-analysis/pull/165) ([kreczko](https://github.com/kreczko))
+- Add the home variable for condor jobs which was causing issues [\#163](https://github.com/cms-l1t-offline/cms-l1t-analysis/pull/163) ([benkrikler](https://github.com/benkrikler))
+- Workaround for HTCondor on lxplus [\#161](https://github.com/cms-l1t-offline/cms-l1t-analysis/pull/161) ([kreczko](https://github.com/kreczko))
+- Fixing current travis build issues [\#158](https://github.com/cms-l1t-offline/cms-l1t-analysis/pull/158) ([kreczko](https://github.com/kreczko))
+- Sort reco jets by etCorr, check jet bx == 0, fix batch sub [\#156](https://github.com/cms-l1t-offline/cms-l1t-analysis/pull/156) ([bundocka](https://github.com/bundocka))
+- Printout number of objects passing thresholds when estimating rates [\#153](https://github.com/cms-l1t-offline/cms-l1t-analysis/pull/153) ([kreczko](https://github.com/kreczko))
+- \[WIP\] Python 3 compatibility [\#152](https://github.com/cms-l1t-offline/cms-l1t-analysis/pull/152) ([kreczko](https://github.com/kreczko))
+- Speeding up CI [\#149](https://github.com/cms-l1t-offline/cms-l1t-analysis/pull/149) ([kreczko](https://github.com/kreczko))
+
+## [v0.5.1](https://github.com/cms-l1t-offline/cms-l1t-analysis/tree/v0.5.1) (2018-08-03)
 [Full Changelog](https://github.com/cms-l1t-offline/cms-l1t-analysis/compare/v0.5.0...v0.5.1)
 
 **Implemented enhancements:**
@@ -19,7 +49,6 @@
 - Config scope reduction for analyzers and producers [\#144](https://github.com/cms-l1t-offline/cms-l1t-analysis/pull/144) ([kreczko](https://github.com/kreczko))
 
 ## [v0.5.0](https://github.com/cms-l1t-offline/cms-l1t-analysis/tree/v0.5.0) (2018-07-25)
-
 [Full Changelog](https://github.com/cms-l1t-offline/cms-l1t-analysis/compare/v0.4.4...v0.5.0)
 
 **Implemented enhancements:**
@@ -27,17 +56,14 @@
 - Moving analysers to the new eventReader & producers [\#140](https://github.com/cms-l1t-offline/cms-l1t-analysis/pull/140) ([kreczko](https://github.com/kreczko))
 
 ## [v0.4.4](https://github.com/cms-l1t-offline/cms-l1t-analysis/tree/v0.4.4) (2018-07-25)
-
 [Full Changelog](https://github.com/cms-l1t-offline/cms-l1t-analysis/compare/v0.4.3...v0.4.4)
 
 **Merged pull requests:**
 
 - Improving "make release" scripts [\#143](https://github.com/cms-l1t-offline/cms-l1t-analysis/pull/143) ([kreczko](https://github.com/kreczko))
-- More plot formatting [\#142](https://github.com/cms-l1t-offline/cms-l1t-analysis/pull/142) ([bundocka](https://github.com/bundocka))
 - Dynamic binning for efficiencies [\#141](https://github.com/cms-l1t-offline/cms-l1t-analysis/pull/141) ([bundocka](https://github.com/bundocka))
 
 ## [v0.4.3](https://github.com/cms-l1t-offline/cms-l1t-analysis/tree/v0.4.3) (2018-05-15)
-
 [Full Changelog](https://github.com/cms-l1t-offline/cms-l1t-analysis/compare/v0.4.2...v0.4.3)
 
 **Fixed bugs:**
@@ -50,7 +76,6 @@
 - Add hardware vs emu rate comparisons [\#136](https://github.com/cms-l1t-offline/cms-l1t-analysis/pull/136) ([bundocka](https://github.com/bundocka))
 
 ## [v0.4.2](https://github.com/cms-l1t-offline/cms-l1t-analysis/tree/v0.4.2) (2018-05-15)
-
 [Full Changelog](https://github.com/cms-l1t-offline/cms-l1t-analysis/compare/v0.4.1...v0.4.2)
 
 **Closed issues:**
@@ -60,11 +85,11 @@
 
 **Merged pull requests:**
 
+- More plot formatting [\#142](https://github.com/cms-l1t-offline/cms-l1t-analysis/pull/142) ([bundocka](https://github.com/bundocka))
 - BaseProducer, input & output checks [\#135](https://github.com/cms-l1t-offline/cms-l1t-analysis/pull/135) ([kreczko](https://github.com/kreczko))
 - Added error reporting to utils.module.exists \(issue \#88\) [\#133](https://github.com/cms-l1t-offline/cms-l1t-analysis/pull/133) ([kreczko](https://github.com/kreczko))
 
 ## [v0.4.1](https://github.com/cms-l1t-offline/cms-l1t-analysis/tree/v0.4.1) (2018-05-14)
-
 [Full Changelog](https://github.com/cms-l1t-offline/cms-l1t-analysis/compare/v0.4.0...v0.4.1)
 
 **Merged pull requests:**
@@ -72,7 +97,6 @@
 - Implement offline cuts for resolution plots [\#132](https://github.com/cms-l1t-offline/cms-l1t-analysis/pull/132) ([bundocka](https://github.com/bundocka))
 
 ## [v0.4.0](https://github.com/cms-l1t-offline/cms-l1t-analysis/tree/v0.4.0) (2018-05-07)
-
 [Full Changelog](https://github.com/cms-l1t-offline/cms-l1t-analysis/compare/v0.3.0...v0.4.0)
 
 **Implemented enhancements:**
@@ -94,7 +118,6 @@
 - Tidying up configuration files and removing obsolete analysers [\#130](https://github.com/cms-l1t-offline/cms-l1t-analysis/pull/130) ([kreczko](https://github.com/kreczko))
 
 ## [v0.3.0](https://github.com/cms-l1t-offline/cms-l1t-analysis/tree/v0.3.0) (2018-05-02)
-
 [Full Changelog](https://github.com/cms-l1t-offline/cms-l1t-analysis/compare/v0.2.0...v0.3.0)
 
 **Fixed bugs:**
@@ -124,7 +147,6 @@
 - Replacing nose with pytest [\#112](https://github.com/cms-l1t-offline/cms-l1t-analysis/pull/112) ([kreczko](https://github.com/kreczko))
 
 ## [v0.2.0](https://github.com/cms-l1t-offline/cms-l1t-analysis/tree/v0.2.0) (2018-03-27)
-
 [Full Changelog](https://github.com/cms-l1t-offline/cms-l1t-analysis/compare/v0.1.2...v0.2.0)
 
 **Implemented enhancements:**
@@ -155,7 +177,6 @@
 - Github templates for issues and pull requests [\#86](https://github.com/cms-l1t-offline/cms-l1t-analysis/pull/86) ([kreczko](https://github.com/kreczko))
 
 ## [v0.1.2](https://github.com/cms-l1t-offline/cms-l1t-analysis/tree/v0.1.2) (2017-09-18)
-
 [Full Changelog](https://github.com/cms-l1t-offline/cms-l1t-analysis/compare/v0.1.1...v0.1.2)
 
 **Implemented enhancements:**
@@ -184,7 +205,6 @@
 - First version of weekly checks config [\#65](https://github.com/cms-l1t-offline/cms-l1t-analysis/pull/65) ([kreczko](https://github.com/kreczko))
 
 ## [v0.1.1](https://github.com/cms-l1t-offline/cms-l1t-analysis/tree/v0.1.1) (2017-09-04)
-
 [Full Changelog](https://github.com/cms-l1t-offline/cms-l1t-analysis/compare/v0.1.0...v0.1.1)
 
 **Implemented enhancements:**
@@ -247,9 +267,6 @@
 - Documentation [\#7](https://github.com/cms-l1t-offline/cms-l1t-analysis/pull/7) ([kreczko](https://github.com/kreczko))
 
 ## [v0.1.0](https://github.com/cms-l1t-offline/cms-l1t-analysis/tree/v0.1.0) (2017-03-24)
-
-[Full Changelog](https://github.com/cms-l1t-offline/cms-l1t-analysis/compare/c7c030eced33f723c5ac2ce7a4b5e18dec53186e...v0.1.0)
-
 **Merged pull requests:**
 
 - Adding continuous integration [\#2](https://github.com/cms-l1t-offline/cms-l1t-analysis/pull/2) ([kreczko](https://github.com/kreczko))
@@ -276,4 +293,4 @@
  - Request feedback from other analysers
    - See what is easy, what is not
 
-\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*
+\* *This Change Log was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*
