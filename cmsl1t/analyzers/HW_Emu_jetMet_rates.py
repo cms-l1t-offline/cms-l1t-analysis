@@ -112,7 +112,7 @@ class Analyzer(BaseAnalyzer):
                         'Error: Please specify thresholds in the config .yaml in dictionary format')
 
             rates_plot = getattr(self, name + "_rates")
-            rates_plot.build("L1 " + name, puBins, 200, 0, 200, ETA_RANGES.get(name))
+            rates_plot.build("L1 " + name, puBins, 40, 0, 400, ETA_RANGES.get(name))
 
             rate_vs_pileup_plot = getattr(self, name + "_rate_vs_pileup")
             rate_vs_pileup_plot.build("L1 " + name, trig_thresholds, 18, 20, 56, ETA_RANGES.get(name))

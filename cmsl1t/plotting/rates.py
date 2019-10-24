@@ -54,7 +54,7 @@ class RatesPlot(BasePlotter):
                 h.linestyle = "dashed"
                 label = "Everything"
             elif isinstance(pile_up, int):
-                h.drawstyle = "EP"
+                h.drawstyle = "HISTC"
                 label = "~ {:.0f}".format(
                     self.pileup_bins.get_bin_center(pile_up))
             else:
@@ -79,20 +79,22 @@ class RatesPlot(BasePlotter):
         hist = self.plots.get_bin_contents([bn.Base.everything])
         hist = cumulative_hist(hist)
 
-        hist.drawstyle = "EP"
+        hist.drawstyle = "HISTC"
         hist.SetMarkerSize(0.5)
+        hist.SetLineWidth(3)
         hist.SetMarkerColor(1)
         # if with_fits:
         #    fit = self.fits.get_bin_contents([threshold])
         #    fits.append(fit)
         hists.append(hist)
-        labels.append("HW")
+        labels.append("Hw")
 
         emu_hist = emu_plotter.plots.get_bin_contents([bn.Base.everything])
         emu_hist = cumulative_hist(emu_hist)
 
-        emu_hist.drawstyle = "EP"
+        emu_hist.drawstyle = "HISTC"
         emu_hist.SetMarkerSize(0.5)
+        emu_hist.SetLineWidth(3)
         emu_hist.SetMarkerColor(2)
         # if with_fits:
         #    emu_fit = self.fits.get_bin_contents([threshold])
@@ -100,14 +102,22 @@ class RatesPlot(BasePlotter):
         hists.append(emu_hist)
         labels.append("Emu")
 
-        self.__make_overlay(hists, fits, labels, "# Events", setlogy=True)
+        self.__make_overlay(hists, fits, labels, "Rate (Hz)", setlogy=True)
 
     def __make_overlay(self, hists, fits, labels, ytitle, suffix="", setlogy=False):
         with preserve_current_style():
             # Draw each resolution (with fit)
-            xtitle = self.online_title
+            
+            xtitle = ""
+            if 'Jet' in self.online_title:
+                xtitle = "Jet #it{p}_{T} (GeV)"
+            if 'HT' in self.online_title:
+                xtitle = "#it{H}_{T} (GeV)"
+            if 'MET' in self.online_title:
+                xtitle = "#it{E}_{T}^{miss} (GeV)"
+
             canvas = draw(hists, draw_args={
-                          "xtitle": xtitle, "ytitle": ytitle, "logy": setlogy})
+                          "xtitle": xtitle, "ytitle": ytitle, "logy": setlogy, "ylimits": (1000,50000000)})
             if fits:
                 for fit, hist in zip(fits, hists):
                     fit["asymmetric"].linecolor = hist.GetLineColor()
@@ -123,10 +133,12 @@ class RatesPlot(BasePlotter):
                 topmargin=0.35,
                 rightmargin=0.2,
                 leftmargin=0.8,
-                entryheight=0.028
+                entryheight=0.028,
+                textsize=0.03
             )
             for hist, label in zip(hists, labels):
                 legend.AddEntry(hist, label)
+                hist = normalise_to_collision_rate(hist)
             legend.SetBorderSize(0)
             legend.Draw()
 

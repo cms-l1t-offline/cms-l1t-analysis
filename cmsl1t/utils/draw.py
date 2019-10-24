@@ -86,8 +86,8 @@ def __clean(hists):
             new = asrootpy(hist.CreateGraph("e0"))
             new.decorate(hist)
             hist = new
-            hist.SetMarkerSize(0.5)
-            hist.SetLineWidth(1)
+            hist.SetMarkerSize(1)
+            hist.SetLineWidth(3)
             gStyle.SetLineScalePS(1)
         else:
             gStyle.SetLineScalePS(3)
@@ -179,10 +179,10 @@ def label_canvas(sample_title=None, run=None, isData=False):
     latex.SetNDC()
     latex.SetTextFont(42)
 
-    cms = "#bf{CMS} #it{Preliminary}    2018D Data    6.2 fb^{-1}"
+    cms = "#bf{CMS} #it{Preliminary}"
     if sample_title:
         cms += sample_title
-    latex.DrawLatex(0.17, 0.92, cms)
+    latex.DrawLatex(0.1, 0.92, cms)
 
     run_summary = "13 TeV"
     if run:
