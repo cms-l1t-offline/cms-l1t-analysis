@@ -17,8 +17,13 @@ import cmsl1t.hist.binning as bn
 from cmsl1t.utils.hist import cumulative_hist, normalise_to_collision_rate
 
 
-def types():
-    sum_types = ["HT", "METBE", "METHF"]
+def types(doPhase2):
+    sum_types = []
+    jet_types = []
+
+    if not doPhase2:
+        sum_types.extend(["HT", "METBE", "METHF"])
+
     jet_types = ["JetET_BE", "JetET_HF"]
     sum_types += [t + '_Emu' for t in sum_types]
     jet_types += [t + '_Emu' for t in jet_types]
@@ -63,6 +68,10 @@ class Analyzer(BaseAnalyzer):
         self.thresholds = self.params['thresholds']
         self.puBins = self.params['pu_bins']
 
+        loaded_trees = self.params['load_trees']
+        self._doGen = 'genTree' in loaded_trees or 'p2Upgrade' in loaded_trees 
+        self._doPhase2 = 'p2Upgrade' in loaded_trees
+
         lumiMuDict = dict()
         with open(os.path.join(cmsl1t.PROJECT_ROOT, 'run_lumi.csv'), 'rb') as runLumiFile:
             reader = csv.reader(runLumiFile, delimiter=',')
@@ -77,7 +86,7 @@ class Analyzer(BaseAnalyzer):
 
         self._lastRunAndLumi = (-1, -1)
         self._processLumi = True
-        self._sumTypes, self._jetTypes = types()
+        self._sumTypes, self._jetTypes = types(self._doPhase2)
 
         for name in self._sumTypes + self._jetTypes:
             rates_plot = RatesPlot(name)
@@ -125,8 +134,6 @@ class Analyzer(BaseAnalyzer):
     '''
 
     def fill_histograms(self, entry, event):
-        if not self._passesLumiFilter(event['run'], event['lumi']):
-            return True
         # Get pileup if ntuples have reco trees in them.
         # If not, set PU to 1 so that it fills the (only) pu bin.
 
@@ -135,14 +142,15 @@ class Analyzer(BaseAnalyzer):
         except AttributeError:
             pileup = 1.
 
-        pileup = self._lumiMu[(event['run'],event['lumi'])]        
-
-        #if self._lumiMu[(event['run'],event['lumi'])] < 50:
-        #    return True
+        if not self._doGen:
+            if not self._passesLumiFilter(event['run'], event['lumi']):
+                return True
+            pileup = self._lumiMu[(event['run'],event['lumi'])]        
 
 
         # Sums:
-        online = extractSums(event)
+        if not self._doPhase2:
+            online = extractSums(event)
         for name in self._sumTypes:
             on = online[name]
             getattr(self, name + "_rates").fill(pileup, on.et)
