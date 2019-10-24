@@ -58,8 +58,9 @@ class Producer(BaseProducer):
 
     def produce(self, event):
         variables = [event[i] for i in self._inputs]
+        checkBx = True in ['Bx' in inp for inp in self._inputs]
         jets = [self._jetClass(*args) for args in zip(*variables)]
-        if 'L1' in self._jetType:
+        if 'L1' in self._jetType and checkBx:
             jets = [jet for jet in jets if jet.bx == 0]
         if self._jetFilter:
             jets = self._jetFilter(jets)
