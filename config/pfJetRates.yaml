@@ -1,0 +1,71 @@
+version: 0.0.1
+name: 'Jet Met Rates'
+
+input:
+  files:
+      # Zero Bias
+        - /eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/bundocka/cmsl1t/snuRates.root
+  sample:
+    name: MC
+    title: TDR
+  trigger:
+    name: histPFJet
+    title: SingleNeutrino
+  pileup_file: ""
+  run_number:
+  lumi_json: "https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions18/13TeV/PromptReco/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt"
+  ntuple_map_file: config/ntuple_content_mc.yaml
+
+analysis:
+  load_trees:
+    - p2Upgrade
+  do_fit: True
+  pu_type: 0PU24,25PU49,50PU
+  pu_bins: [0,25,50,999]
+  thresholds:
+    HT:       [120, 200, 320]
+    METBE:    [80, 100, 120]
+    METHF:    [80, 100, 120]
+    JetET_BE: [35, 90, 120, 180]
+    JetET_HF: [35, 90, 120, 180]
+
+  analyzers:
+     HW_Emu_jetMet_rates:
+       module: cmsl1t.analyzers.HW_Emu_jetMet_rates
+  producers:
+    l1Jets:
+      module: cmsl1t.producers.jets
+      inputs:
+        - L1PhaseIPFJet_phaseIPFJetEt
+        - L1PhaseIPFJet_phaseIPFJetEta
+        - L1PhaseIPFJet_phaseIPFJetPhi
+      jetType: L1
+      filter: null
+      outputs:
+        - l1Jets
+    l1EmuJets:
+      module: cmsl1t.producers.jets
+      inputs:
+        - L1AK4PFJet_ak4PFJetEt
+        - L1AK4PFJet_ak4PFJetEta
+        - L1AK4PFJet_ak4PFJetPhi
+      jetType: L1
+      filter: null
+      outputs:
+        - l1EmuJets
+
+    goodGenJets:
+      module: cmsl1t.producers.jets
+      inputs:
+        - L1GenJet_jetPt
+        - L1GenJet_jetEta
+        - L1GenJet_jetPhi
+      jetType: Gen
+      outputs:
+        - goodGenJets
+
+
+output:
+  template:
+     - output/zb_rates
+     - "{date}_{run_number}_{sample_name}_{trigger_name}"
