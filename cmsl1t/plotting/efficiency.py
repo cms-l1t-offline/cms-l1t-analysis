@@ -240,7 +240,7 @@ class EfficiencyPlot(BasePlotter):
 
             xmin = int(hists[0].GetTotalHistogram().GetBinLowEdge(1))
             xmax = int(hists[0].GetTotalHistogram().GetBinLowEdge(hists[0].GetTotalHistogram().GetNbinsX() + 1))
-            
+
             xtitle = ""
             if 'Jet' in self.online_title:
                 xtitle = "Jet #it{p}_{T} (GeV)"
@@ -284,7 +284,7 @@ class EfficiencyPlot(BasePlotter):
                 line.SetLineColor(15)
                 line.Draw()
 
-            for t in xrange(xmin,xmax,20):
+            for t in xrange(xmin, xmax, 20):
                 line = ROOT.TLine(t, 0., t, 1.)
                 line.SetLineStyle("dashed")
                 line.SetLineColor(15)

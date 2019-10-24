@@ -126,11 +126,11 @@ class Analyzer(BaseAnalyzer):
         super(Analyzer, self).__init__(**kwargs)
 
         lumiMuDict = dict()
-	run_lumi_csv = os.path.join(cmsl1t.PROJECT_ROOT, 'run_lumi.csv')
+        run_lumi_csv = os.path.join(cmsl1t.PROJECT_ROOT, 'run_lumi.csv')
         with open(run_lumi_csv, 'rb') as runLumiFile:
             reader = csv.reader(runLumiFile, delimiter=',')
             for line in reader:
-                lumiMuDict[(int(line[1]),int(line[2]))] = float(line[3])
+                lumiMuDict[(int(line[1]), int(line[2]))] = float(line[3])
         self._lumiMu = lumiMuDict
 
         self._lumiFilter = None
@@ -314,7 +314,7 @@ class Analyzer(BaseAnalyzer):
 
             params = [
                 cfg.on_title, cfg.off_title + " (GeV)", puBins, thresholds,
-                (cfg.max-cfg.min)/10, cfg.min, cfg.max,
+                (cfg.max - cfg.min) / 10, cfg.min, cfg.max,
             ]
             if high_range:
                 params = [
@@ -323,21 +323,18 @@ class Analyzer(BaseAnalyzer):
                 ]
                 if "HT" in cfg.name:
                     params = [
-                        cfg.on_title, cfg.off_title +
-                        " (GeV)", puBins, thresholds,
-                        105, 30, 2130,
+                        cfg.on_title, cfg.off_title + " (GeV)",
+                        puBins, thresholds, 105, 30, 2130
                     ]
                 if "JetET" in cfg.name:
                     params = [
-                        cfg.on_title, cfg.off_title +
-                        " (GeV)", puBins, thresholds,
-                        105, 20, 2120,
+                        cfg.on_title, cfg.off_title + " (GeV)",
+                        puBins, thresholds, 105, 20, 2120
                     ]
                 if "MET" in cfg.name:
                     params = [
-                        cfg.on_title, cfg.off_title +
-                        " (GeV)", puBins, thresholds,
-                        100, 0, 2000,
+                        cfg.on_title, cfg.off_title + " (GeV)",
+                        puBins, thresholds, 100, 0, 2000
                     ]
 
             eff_plot.build(*params, legend_title=etaRange)
@@ -382,14 +379,13 @@ class Analyzer(BaseAnalyzer):
             genNVtx = event.Generator_nVtx
 
         if not self._doGen:
-            pileup = self._lumiMu[(event['run'],event['lumi'])]
+            pileup = self._lumiMu[(event['run'], event['lumi'])]
             if not self._passesLumiFilter(event.run, event.lumi):
                 return True
-            
+
         if not self._doPhase2:
             offline, online = extractSums(
                 event, self._doEmu, self._doReco, self._doGen)
-
 
         for name in self._sumTypes:
             if 'pfMET' in name and not pfMetFilter(event):
