@@ -24,8 +24,8 @@ setattr(Efficiency, "__iadd__", my_iadd)
 
 
 class EfficiencyPlot(BasePlotter):
-    drawstyle = 'HIST'
-    drawstyle_data = 'P'
+    drawstyle = 'HISTC'
+    drawstyle_data = 'PC'
     markerstyle_overlay = 23
 
     def __init__(self, online_name, offline_name):
@@ -166,7 +166,7 @@ class EfficiencyPlot(BasePlotter):
             hists.append(hist)
 
             label = label_template.format(
-                online_title='L1 MET HF PUS On',
+                online_title='L1 Hw',
                 threshold=self.thresholds.bins[threshold],
             )
             labels.append(label)
@@ -184,7 +184,7 @@ class EfficiencyPlot(BasePlotter):
             hists.append(hist)
 
             label = label_template.format(
-                online_title='L1 MET HF PUS Off',
+                online_title='L1 Emu',
                 threshold=emu_plotter.thresholds.bins[threshold],
             )
             labels.append(label)
@@ -238,11 +238,19 @@ class EfficiencyPlot(BasePlotter):
             name = self.filename_format.format(pileup=pileup,
                                                threshold=threshold)
 
-            xmin = hists[0].GetTotalHistogram().GetBinLowEdge(1)
-            xmax = hists[0].GetTotalHistogram().GetBinLowEdge(hists[0].GetTotalHistogram().GetNbinsX() + 1)
+            xmin = int(hists[0].GetTotalHistogram().GetBinLowEdge(1))
+            xmax = int(hists[0].GetTotalHistogram().GetBinLowEdge(hists[0].GetTotalHistogram().GetNbinsX() + 1))
+            
+            xtitle = ""
+            if 'Jet' in self.online_title:
+                xtitle = "Jet #it{p}_{T} (GeV)"
+            if 'HT' in self.online_title:
+                xtitle = "#it{H}_{T} (GeV)"
+            if 'MET' in self.online_title:
+                xtitle = "#it{E}_{T}^{miss} (GeV)"
 
             # Draw each efficiency (with fit)
-            draw_args = {"xtitle": self.offline_title, "ytitle": "Efficiency", "xlimits": [50, 300]}
+            draw_args = {"xtitle": xtitle, "ytitle": "Efficiency", "xlimits": [xmin, xmax]}
 
             canvas = draw(hists, draw_args=draw_args)
             if len(fits) > 0:
@@ -257,7 +265,7 @@ class EfficiencyPlot(BasePlotter):
             legend = Legend(
                 len(hists),
                 header=self.legend_title,
-                topmargin=0.4,
+                topmargin=0.35,
                 rightmargin=0.31,
                 leftmargin=0.69,
                 textsize=0.025,
@@ -271,12 +279,12 @@ class EfficiencyPlot(BasePlotter):
             legend.Draw()
 
             for val in [0.25, 0.5, 0.75, 0.95, 1.]:
-                line = ROOT.TLine(50, val, 300, val)
+                line = ROOT.TLine(xmin, val, xmax, val)
                 line.SetLineStyle("dashed")
                 line.SetLineColor(15)
                 line.Draw()
 
-            for t in xrange(60,300,20):
+            for t in xrange(xmin,xmax,20):
                 line = ROOT.TLine(t, 0., t, 1.)
                 line.SetLineStyle("dashed")
                 line.SetLineColor(15)
