@@ -107,7 +107,7 @@ class RatesPlot(BasePlotter):
     def __make_overlay(self, hists, fits, labels, ytitle, suffix="", setlogy=False):
         with preserve_current_style():
             # Draw each resolution (with fit)
-            
+
             xtitle = ""
             if 'Jet' in self.online_title:
                 xtitle = "Jet #it{p}_{T} (GeV)"
@@ -117,7 +117,7 @@ class RatesPlot(BasePlotter):
                 xtitle = "#it{E}_{T}^{miss} (GeV)"
 
             canvas = draw(hists, draw_args={
-                          "xtitle": xtitle, "ytitle": ytitle, "logy": setlogy, "ylimits": (1000,50000000)})
+                          "xtitle": xtitle, "ytitle": ytitle, "logy": setlogy, "ylimits": (1000, 50000000)})
             if fits:
                 for fit, hist in zip(fits, hists):
                     fit["asymmetric"].linecolor = hist.GetLineColor()
