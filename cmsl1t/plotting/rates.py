@@ -116,6 +116,9 @@ class RatesPlot(BasePlotter):
             if 'MET' in self.online_title:
                 xtitle = "#it{E}_{T}^{miss} (GeV)"
 
+            for hist in hists:
+                hist = normalise_to_collision_rate(hist)
+
             canvas = draw(hists, draw_args={
                           "xtitle": xtitle, "ytitle": ytitle, "logy": setlogy, "ylimits": (1000, 50000000)})
             if fits:
@@ -138,7 +141,6 @@ class RatesPlot(BasePlotter):
             )
             for hist, label in zip(hists, labels):
                 legend.AddEntry(hist, label)
-                hist = normalise_to_collision_rate(hist)
             legend.SetBorderSize(0)
             legend.Draw()
 
