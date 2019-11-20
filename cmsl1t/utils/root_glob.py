@@ -7,7 +7,11 @@ from rootpy.ROOT import gSystem
 import glob as gl
 import os.path
 import fnmatch
-from urlparse import urlparse
+import sys
+if sys.version_info[0] > 2:
+    from urllib.parse import urlparse
+else:
+    from urlparse import urlparse
 
 __all__ = ["glob", "iglob"]
 
