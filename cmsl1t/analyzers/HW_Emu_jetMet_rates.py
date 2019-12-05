@@ -272,7 +272,6 @@ class Analyzer(BaseAnalyzer):
             if 'rate_vs_pileup' not in plot.filename_format:
                 hist = plot.plots.get_bin_contents([bn.Base.everything])
                 hist = cumulative_hist(hist)
-                hist = normalise_to_collision_rate(hist)
                 setattr(self, plot.online_name, hist)
                 # plot.draw()
 
@@ -283,12 +282,6 @@ class Analyzer(BaseAnalyzer):
                 continue
             h = getattr(self, histo_name)
             h_emu = getattr(self, histo_name + "_Emu")
-            bin1 = h.get_bin_content(1)
-            if bin1 != 0.:
-                h.Scale(40000000. / bin1)
-            bin1_emu = h_emu.get_bin_content(1)
-            if bin1_emu != 0.:
-                h_emu.Scale(40000000. / bin1_emu)
             thresholds = self.thresholds.get(histo_name)
             emu_thresholds = []
             for thresh in thresholds:

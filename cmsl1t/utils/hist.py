@@ -9,11 +9,13 @@ def cumulative_hist(hist, suffix='_cumul'):
     return h
 
 
-def normalise_to_collision_rate(hist, collision_rate=4.0e7):
+def normalise_to_collision_rate(hist, collision_rate=4.0e4):
     first_bin = hist.get_bin_content(1)
     if first_bin != 0:
         hist.GetSumw2()
-        hist.Scale(collision_rate / first_bin)
+        frac_filled = (2736. / 3564)
+        rate_per_event = (collision_rate / first_bin)
+        hist.Scale(frac_filled * rate_per_event)
     return hist
 
 
