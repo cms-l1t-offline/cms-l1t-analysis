@@ -14,7 +14,6 @@ from cmsl1t.plotting.rates import RatesPlot
 from cmsl1t.plotting.rate_vs_pileup import RateVsPileupPlot
 from cmsl1t.filters import LuminosityFilter
 import cmsl1t.hist.binning as bn
-from cmsl1t.utils.hist import cumulative_hist, normalise_to_collision_rate
 
 
 def types(doPhase2):
