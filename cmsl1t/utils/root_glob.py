@@ -26,11 +26,13 @@ def __directory_iter(directory):
         except TypeError:
             break
 
+
 def split_url(url):
     parsed_uri = urlparse(url)
     domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
     path = parsed_uri.path
     return domain, path
+
 
 def glob(pathname):
     # Let normal python glob try first
@@ -82,6 +84,7 @@ def root_glob(pathname):
                 pass
     return files
 
+
 def xrootd_glob(pathname):
     from pyxrootd.client import FileSystem
     # Split the pathname into a directory and basename
@@ -110,6 +113,7 @@ def xrootd_glob(pathname):
             files.append(os.path.join(dirname, filename))
 
     return files
+
 
 def iglob(pathname):
     for name in glob(pathname):
