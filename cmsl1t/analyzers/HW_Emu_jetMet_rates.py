@@ -14,6 +14,7 @@ from cmsl1t.plotting.rates import RatesPlot
 from cmsl1t.plotting.rate_vs_pileup import RateVsPileupPlot
 from cmsl1t.filters import LuminosityFilter
 import cmsl1t.hist.binning as bn
+from cmsl1t.utils.hist import cumulative_hist
 
 
 def types(doPhase2):
@@ -144,6 +145,7 @@ class Analyzer(BaseAnalyzer):
         if not self._doGen:
             if not self._passesLumiFilter(event['run'], event['lumi']):
                 return True
+        if (event['run'], event['lumi']) in self._lumiMu:
             pileup = self._lumiMu[(event['run'], event['lumi'])]
 
         # Sums:
