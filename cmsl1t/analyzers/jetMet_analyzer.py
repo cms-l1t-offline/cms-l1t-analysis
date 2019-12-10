@@ -379,7 +379,8 @@ class Analyzer(BaseAnalyzer):
             genNVtx = event.Generator_nVtx
 
         if not self._doGen:
-            pileup = self._lumiMu[(event['run'], event['lumi'])]
+            if (event['run'], event['lumi']) in self._lumiMu:
+                pileup = self._lumiMu[(event['run'], event['lumi'])]
             if not self._passesLumiFilter(event.run, event.lumi):
                 return True
 
