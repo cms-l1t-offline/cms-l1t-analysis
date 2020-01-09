@@ -18,6 +18,7 @@ input:
 analysis:
   load_trees:
     - p2Upgrade
+    - p2UpgradeEmu
 
   do_fit: True
   pu_type: 0PU24,25PU49,50PU
