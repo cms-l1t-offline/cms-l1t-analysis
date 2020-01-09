@@ -38,6 +38,7 @@ files_to_load = [
     'L1AnalysisRecoElectronDataFormat.h',
     'L1AnalysisRecoRpcHitDataFormat.h',
     'L1AnalysisPhaseIPFJetDataFormat.h',
+    'L1AnalysisPhaseIIDataFormat.h',
 ]
 DST = 'external/L1Trigger/L1TNtuples/interface'
 

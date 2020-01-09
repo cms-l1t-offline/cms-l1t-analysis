@@ -274,6 +274,89 @@ content:
       Generator.weight:
         aliases:
         - event.Generator_weight
+  genTree/L1GenTree:
+    name: L1GenTree
+    optional: true
+    branches:
+      Generator.jetEta:
+        aliases:
+        - event.Generator_jetEta
+      Generator.jetM:
+        aliases:
+        - event.Generator_jetM
+      Generator.jetPhi:
+        aliases:
+        - event.Generator_jetPhi
+      Generator.jetPt:
+        aliases:
+        - event.Generator_jetPt
+      Generator.nJet:
+        aliases:
+        - event.Generator_nJet
+      Generator.nMeanPU:
+        aliases:
+        - event.Generator_nMeanPU
+      Generator.nPart:
+        aliases:
+        - event.Generator_nPart
+      Generator.nVtx:
+        aliases:
+        - event.Generator_nVtx
+      Generator.partCh:
+        aliases:
+        - event.Generator_partCh
+      Generator.partE:
+        aliases:
+        - event.Generator_partE
+      Generator.partEta:
+        aliases:
+        - event.Generator_partEta
+      Generator.partId:
+        aliases:
+        - event.Generator_partId
+      Generator.partParent:
+        aliases:
+        - event.Generator_partParent
+      Generator.partPhi:
+        aliases:
+        - event.Generator_partPhi
+      Generator.partPt:
+        aliases:
+        - event.Generator_partPt
+      Generator.partStat:
+        aliases:
+        - event.Generator_partStat
+      Generator.pthat:
+        aliases:
+        - event.Generator_pthat
+      Generator.weight:
+        aliases:
+        - event.Generator_weight
+      Generator.partP:
+        aliases:
+        - event.Generator_partP
+      Generator.partDxy:
+        aliases:
+        - event.Generator_partDxy
+      Generator.partLxy:
+        aliases:
+        - event.Generator_partLxy
+      Generator.partVx:
+        aliases:
+        - event.Generator_partVx
+      Generator.partVy:
+        aliases:
+        - event.Generator_partVy
+      Generator.partVz:
+        aliases:
+        - event.Generator_partVz
+      Generator.genMetTrue:
+        aliases:
+        - event.Generator_genMetTrue
+      Generator.genMetCalo:
+        aliases:
+        - event.Generator_genMetCalo
+
   l1HOTree/L1HOTree:
     name: L1HOTree
     optional: false
@@ -1260,3 +1343,70 @@ content:
       L1uGT.m_preScColumn:
         aliases:
         - event.L1uGT_m_preScColumn
+  l1PhaseIITree/L1PhaseIITree:
+    name: L1PhaseIITree
+    optional: true
+    branches:
+      L1PhaseII.nPfPhase1L1Jets:
+        aliases:
+        - event.L1PhaseII_nPfPhase1L1Jets
+      L1PhaseII.pfPhase1L1JetEt:
+        aliases:
+        - event.L1PhaseII_pfPhase1L1JetEt
+      L1PhaseII.pfPhase1L1JetEta:
+        aliases:
+        - event.L1PhaseII_pfPhase1L1JetEta
+      L1PhaseII.pfPhase1L1JetPhi:
+        aliases:
+        - event.L1PhaseII_pfPhase1L1JetPhi
+      L1PhaseII.pfPhase1L1HT:
+        aliases:
+        - event.L1PhaseII_pfPhase1L1HT
+      L1PhaseII.pfPhase1L1MHTEt:
+        aliases:
+        - event.L1PhaseII_pfPhase1L1MHTEt
+      L1PhaseII.pfPhase1L1MHTPhi:
+        aliases:
+        - event.L1PhaseII_pfPhase1L1MHTPhi
+      L1PhaseII.nPfPhase1L1MHT:
+        aliases:
+        - event.L1PhaseII_nPfPhase1L1MHT
+      L1PhaseII.nPuppiJets:
+        aliases:
+        - event.L1PhaseII_nPuppiJets
+      L1PhaseII.puppiJetEt:
+        aliases:
+        - event.L1PhaseII_puppiJetEt
+      L1PhaseII.puppiJetEta:
+        aliases:
+        - event.L1PhaseII_puppiJetEta
+      L1PhaseII.puppiJetPhi:
+        aliases:
+        - event.L1PhaseII_puppiJetPhi
+      L1PhaseII.puppiJetBx:
+        aliases:
+        - event.L1PhaseII_puppiJetBx
+      L1PhaseII.puppiJetzVtx:
+        aliases:
+        - event.L1PhaseII_puppiJetzVtx
+      L1PhaseII.puppiJetEtUnCorr:
+        aliases:
+        - event.L1PhaseII_puppiJetEtUnCorr
+      L1PhaseII.puppiMETEt:
+        aliases:
+        - event.L1PhaseII_puppiMETEt
+      L1PhaseII.puppiMETPhi:
+        aliases:
+        - event.L1PhaseII_puppiMETPhi
+      L1PhaseII.puppiHT:
+        aliases:
+        - event.L1PhaseII_puppiHT
+      L1PhaseII.puppiMHTEt:
+        aliases:
+        - event.L1PhaseII_puppiMHTEt
+      L1PhaseII.puppiMHTPhi:
+        aliases:
+        - event.L1PhaseII_puppiMHTPhi
+      L1PhaseII.nPuppiMHT:
+        aliases:
+        - event.L1PhaseII_nPuppiMHT
