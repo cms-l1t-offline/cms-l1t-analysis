@@ -15,9 +15,10 @@ dill
 mock
 boltons
 tabulate
-pytest>=3.5.0
+pytest>=3.5.0,<4.0.0
 uproot
 mock
 requests
 plumbum
 six
+more-itertools<6.0.0
