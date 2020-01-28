@@ -15,7 +15,7 @@ dill
 mock
 boltons
 tabulate
-pytest>=3.5.0,<4.0.0
+pytest==3.5.0
 uproot
 mock
 requests
