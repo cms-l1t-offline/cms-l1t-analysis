@@ -17,29 +17,28 @@ import cmsl1t.hist.binning as bn
 from cmsl1t.utils.hist import cumulative_hist
 
 
-def types(doPhase2):
-    sum_types = []
-    jet_types = []
+def types(doEmu):
 
-    if not doPhase2:
-        sum_types.extend(["HT", "METBE", "METHF"])
-
+    sum_types = ["HT", "METBE", "METHF"]
     jet_types = ["JetET_BE", "JetET_HF"]
-    sum_types += [t + '_Emu' for t in sum_types]
-    jet_types += [t + '_Emu' for t in jet_types]
+
+    if doEmu:
+        sum_types += [t + '_Emu' for t in sum_types]
+        jet_types += [t + '_Emu' for t in jet_types]
 
     return sum_types, jet_types
 
 
-def extractSums(event):
+def extractSums(event, doEmu):
     online = dict(
         HT=event.l1Sums_Htt,
         METBE=event.l1Sums_Met,
-        METHF=event.l1Sums_MetHF,
-        HT_Emu=event.l1EmuSums_Htt,
-        METBE_Emu=event.l1EmuSums_Met,
-        METHF_Emu=event.l1EmuSums_MetHF,
+        METHF=event.l1Sums_MetHF
     )
+    if doEmu:
+        online['HT_Emu']=event.l1EmuSums_Htt
+        online['METBE_Emu']=event.l1EmuSums_Met
+        online['METHF_Emu']=event.l1EmuSums_MetHF
 
     return online
 
@@ -70,7 +69,7 @@ class Analyzer(BaseAnalyzer):
 
         loaded_trees = self.params['load_trees']
         self._doGen = 'genTree' in loaded_trees or 'p2Upgrade' in loaded_trees
-        self._doPhase2 = 'p2Upgrade' in loaded_trees
+        self._doEmu = 'emuUpgrade' in loaded_trees or 'p2UpgradeEmu' in loaded_trees
 
         lumiMuDict = dict()
         with open(os.path.join(cmsl1t.PROJECT_ROOT, 'run_lumi.csv'), 'rb') as runLumiFile:
@@ -86,7 +85,7 @@ class Analyzer(BaseAnalyzer):
 
         self._lastRunAndLumi = (-1, -1)
         self._processLumi = True
-        self._sumTypes, self._jetTypes = types(self._doPhase2)
+        self._sumTypes, self._jetTypes = types(self._doEmu)
 
         for name in self._sumTypes + self._jetTypes:
             rates_plot = RatesPlot(name)
@@ -145,12 +144,11 @@ class Analyzer(BaseAnalyzer):
         if not self._doGen:
             if not self._passesLumiFilter(event['run'], event['lumi']):
                 return True
-        if (event['run'], event['lumi']) in self._lumiMu:
-            pileup = self._lumiMu[(event['run'], event['lumi'])]
+            if (event['run'], event['lumi']) in self._lumiMu:
+                pileup = self._lumiMu[(event['run'], event['lumi'])]
 
         # Sums:
-        if not self._doPhase2:
-            online = extractSums(event)
+        online = extractSums(event, self._doEmu)
         for name in self._sumTypes:
             on = online[name]
             getattr(self, name + "_rates").fill(pileup, on.et)
@@ -164,12 +162,13 @@ class Analyzer(BaseAnalyzer):
         else:
             maxL1JetEt = 0.
 
-        l1EmuJetEts = [jet.et for jet in event.l1EmuJets]
-        nEmuJets = len(l1EmuJetEts)
-        if nEmuJets > 0:
-            maxL1EmuJetEt = max(l1EmuJetEts)
-        else:
-            maxL1EmuJetEt = 0.
+        if self._doEmu:
+            l1EmuJetEts = [jet.et for jet in event.l1EmuJets]
+            nEmuJets = len(l1EmuJetEts)
+            if nEmuJets > 0:
+                maxL1EmuJetEt = max(l1EmuJetEts)
+            else:
+                maxL1EmuJetEt = 0.
 
         # Central Jets:
         l1BEJets = [jet for jet in event.l1Jets if abs(jet.eta) < 3.0]
@@ -180,13 +179,14 @@ class Analyzer(BaseAnalyzer):
         else:
             maxL1BEJetEt = 0.
 
-        l1EmuBEJets = [jet for jet in event.l1EmuJets if abs(jet.eta) < 3.0]
-        l1EmuBEJetEts = [beJet.et for beJet in l1EmuBEJets]
-        nEmuBEJets = len(l1EmuBEJetEts)
-        if nEmuBEJets > 0:
-            maxL1EmuBEJetEt = max(l1EmuBEJetEts)
-        else:
-            maxL1EmuBEJetEt = 0.
+        if self._doEmu:
+            l1EmuBEJets = [jet for jet in event.l1EmuJets if abs(jet.eta) < 3.0]
+            l1EmuBEJetEts = [beJet.et for beJet in l1EmuBEJets]
+            nEmuBEJets = len(l1EmuBEJetEts)
+            if nEmuBEJets > 0:
+                maxL1EmuBEJetEt = max(l1EmuBEJetEts)
+            else:
+                maxL1EmuBEJetEt = 0.
 
         # Forward Jets
         l1HFJets = [jet for jet in event.l1Jets if abs(jet.eta) > 3.0]
@@ -197,13 +197,14 @@ class Analyzer(BaseAnalyzer):
         else:
             maxL1HFJetEt = 0.
 
-        l1EmuHFJets = [jet for jet in event.l1EmuJets if abs(jet.eta) > 3.0]
-        l1EmuHFJetEts = [hfJet.et for hfJet in l1EmuHFJets]
-        nEmuHFJets = len(l1EmuHFJetEts)
-        if nEmuHFJets > 0:
-            maxL1EmuHFJetEt = max(l1EmuHFJetEts)
-        else:
-            maxL1EmuHFJetEt = 0.
+        if self._doEmu:
+            l1EmuHFJets = [jet for jet in event.l1EmuJets if abs(jet.eta) > 3.0]
+            l1EmuHFJetEts = [hfJet.et for hfJet in l1EmuHFJets]
+            nEmuHFJets = len(l1EmuHFJetEts)
+            if nEmuHFJets > 0:
+                maxL1EmuHFJetEt = max(l1EmuHFJetEts)
+            else:
+                maxL1EmuHFJetEt = 0.
 
         for name in self._jetTypes:
             if 'Emu' in name:
@@ -257,49 +258,52 @@ class Analyzer(BaseAnalyzer):
                 'Error: Please specify thresholds in the config .yaml in dictionary format')
 
         # print hw vs emu for rates and rate vs pileup
-        for histo_name in self._sumTypes + self._jetTypes:
-            if "_Emu" in histo_name:
-                continue
-            plotter = getattr(self, histo_name + '_rates')
-            emu_plotter = getattr(self, histo_name + '_Emu_rates')
-            plotter.overlay_with_emu(emu_plotter)
+        if self._doEmu:
+            for histo_name in self._sumTypes + self._jetTypes:
+                if "_Emu" in histo_name:
+                    continue
+                plotter = getattr(self, histo_name + '_rates')
+                emu_plotter = getattr(self, histo_name + '_Emu_rates')
+                plotter.overlay_with_emu(emu_plotter)
 
-            plotter = getattr(self, histo_name + '_rate_vs_pileup')
-            emu_plotter = getattr(self, histo_name + "_Emu" + '_rate_vs_pileup')
-            plotter.overlay_with_emu(emu_plotter)
+                plotter = getattr(self, histo_name + '_rate_vs_pileup')
+                emu_plotter = getattr(self, histo_name + "_Emu" + '_rate_vs_pileup')
+                plotter.overlay_with_emu(emu_plotter)
 
         # calculate cumulative histograms
-        for plot in self.all_plots:
-            if 'rate_vs_pileup' not in plot.filename_format:
-                hist = plot.plots.get_bin_contents([bn.Base.everything])
-                hist = cumulative_hist(hist)
-                setattr(self, plot.online_name, hist)
-                # plot.draw()
+        if not self._doEmu:
+            for plot in self.all_plots:
+                if 'rate_vs_pileup' not in plot.filename_format:
+                    hist = plot.plots.get_bin_contents([bn.Base.everything])
+                    hist = cumulative_hist(hist)
+                    setattr(self, plot.online_name, hist)
+                    plot.draw()
 
         print('  thresholds:')
 
-        for histo_name in self._sumTypes + self._jetTypes:
-            if "_Emu" in histo_name:
-                continue
-            h = getattr(self, histo_name)
-            h_emu = getattr(self, histo_name + "_Emu")
-            thresholds = self.thresholds.get(histo_name)
-            emu_thresholds = []
-            for thresh in thresholds:
-                rate_delta = []
-                hw_rate = h.get_bin_content(thresh)
-                for i in range(h.nbins()):
-                    emu_rate = h_emu.get_bin_content(i)
-                    if hw_rate == 0. or emu_rate == 0.:
-                        rate_delta.append(40000000.)
-                    else:
-                        rate_delta.append(abs(hw_rate - emu_rate))
-                emu_thresholds.append(rate_delta.index(min(rate_delta)))
-            outputlineA = '    {0}: {1}'.format(histo_name, thresholds)
-            outputlineB = '    {0}: {1}'.format(histo_name + '_Emu', emu_thresholds)
-            outputline = outputlineA + '\n' + outputlineB
+        if self._doEmu:
+            for histo_name in self._sumTypes + self._jetTypes:
+                if "_Emu" in histo_name:
+                    continue
+                h = getattr(self, histo_name)
+                h_emu = getattr(self, histo_name + "_Emu")
+                thresholds = self.thresholds.get(histo_name)
+                emu_thresholds = []
+                for thresh in thresholds:
+                    rate_delta = []
+                    hw_rate = h.get_bin_content(thresh)
+                    for i in range(h.nbins()):
+                        emu_rate = h_emu.get_bin_content(i)
+                        if hw_rate == 0. or emu_rate == 0.:
+                            rate_delta.append(40000000.)
+                        else:
+                            rate_delta.append(abs(hw_rate - emu_rate))
+                    emu_thresholds.append(rate_delta.index(min(rate_delta)))
+                outputlineA = '    {0}: {1}'.format(histo_name, thresholds)
+                outputlineB = '    {0}: {1}'.format(histo_name + '_Emu', emu_thresholds)
+                outputline = outputlineA + '\n' + outputlineB
 
-            print(outputline)
+                print(outputline)
 
         '''
         for histo_name in object_types:
