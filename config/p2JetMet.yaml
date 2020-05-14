@@ -4,12 +4,12 @@ name: 'Jet Met MC Studies'
 input:
   files:
       # ttbar MC
-       - /eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/bundocka/condor/ttbar_dz_1578573121/*.root
+       - /eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/bundocka/condor/p2l1t_hybridTDR_def_1586819983/*.root
   sample:
     name: ttbar
     title: MC
   trigger:
-    name: VtxDz
+    name: VtxFW
     title: PF
   pileup_file: ""
   run_number:
