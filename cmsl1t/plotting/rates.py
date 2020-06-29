@@ -52,10 +52,9 @@ class RatesPlot(BasePlotter):
             if pile_up == bn.Base.everything:
                 h.linestyle = "dashed"
                 label = "L1 Rate"
-            elif isinstance(pile_up, int):
-                continue
-                h.drawstyle = "HIST"
-                label = str(self.pileup_bins.bins[pile_up])
+            # elif isinstance(pile_up, int):
+            #    h.drawstyle = "HIST"
+            #    label = str(self.pileup_bins.bins[pile_up])
             else:
                 continue
             h.SetMarkerSize(0.5)
