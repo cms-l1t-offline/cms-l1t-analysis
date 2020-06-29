@@ -16,33 +16,33 @@ class Producer(BaseProducer):
         prefix = self._outputs[0] + '_'
 
         jet_pt, jet_eta, part_id, partPhi, partPt, partEta, genMetTrue = variables
-        ht=0
+        ht = 0
         for pt, eta in zip(jet_pt, jet_eta):
             if abs(eta) < 2.4:
-                ht+=pt
-        #setattr(event, prefix + 'HT', EnergySum(np.sum(jet_pt)))
+                ht += pt
+        # setattr(event, prefix + 'HT', EnergySum(np.sum(jet_pt)))
         setattr(event, prefix + 'HT', EnergySum(ht))
-        setattr(event, prefix + 'MetBE', Met(genMetTrue,0))
-        setattr(event, prefix + 'MetHF', Met(genMetTrue,0))
+        setattr(event, prefix + 'MetBE', Met(genMetTrue, 0))
+        setattr(event, prefix + 'MetHF', Met(genMetTrue, 0))
 
         return True
 
-        #part_id = np.absolute(part_id)
-        #partEta = np.absolute(partEta)
-        #partPhi = np.array(partPhi)
-        #partPt = np.array(partPt)
+        # part_id = np.absolute(part_id)
+        # partEta = np.absolute(partEta)
+        # partPhi = np.array(partPhi)
+        # partPt = np.array(partPt)
 
         # nu_e, mu, nu_mu, nu_tau
-        #particleMask = (part_id == 12) | (part_id == 13) | (part_id == 14) | (part_id == 16)
-        #eta_mask = partEta < 3.0
+        # particleMask = (part_id == 12) | (part_id == 13) | (part_id == 14) | (part_id == 16)
+        # eta_mask = partEta < 3.0
 
-        #genMetHF = self._calculate_met(partPt, partPhi, particleMask)
-        #setattr(event, prefix + 'MetHF', genMetHF)
+        # genMetHF = self._calculate_met(partPt, partPhi, particleMask)
+        # setattr(event, prefix + 'MetHF', genMetHF)
 
-        #genMetBE = self._calculate_met(partPt, partPhi, particleMask & eta_mask)
-        #setattr(event, prefix + 'MetBE', genMetBE)
+        # genMetBE = self._calculate_met(partPt, partPhi, particleMask & eta_mask)
+        # setattr(event, prefix + 'MetBE', genMetBE)
 
-        #return True
+        # return True
 
     def _calculate_met(self, partPt, partPhi, mask):
         met_x = np.dot(partPt[mask], np.cos(partPhi[mask]))
