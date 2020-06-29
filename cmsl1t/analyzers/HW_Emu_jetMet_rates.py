@@ -36,9 +36,9 @@ def extractSums(event, doEmu):
         METHF=event.l1Sums_MetHF
     )
     if doEmu:
-        online['HT_Emu']=event.l1EmuSums_Htt
-        online['METBE_Emu']=event.l1EmuSums_Met
-        online['METHF_Emu']=event.l1EmuSums_MetHF
+        online['HT_Emu'] = event.l1EmuSums_Htt
+        online['METBE_Emu'] = event.l1EmuSums_Met
+        online['METHF_Emu'] = event.l1EmuSums_MetHF
 
     return online
 
