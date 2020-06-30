@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-from cmsl1t.energySums import EnergySum, Mex, Mey, Met
+from cmsl1t.energySums import EnergySum, Met
 from .base import BaseProducer
 
 
