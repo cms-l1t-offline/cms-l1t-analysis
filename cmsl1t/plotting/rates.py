@@ -30,7 +30,6 @@ class RatesPlot(BasePlotter):
         self.pileup_bins = bn.Sorted(pileup_bins, "pileup",
                                      use_everything_bin=True)
         self.legend_title = legend_title
-
         name = ["rate_vs_threshold", self.online_name, "pu_{pileup}"]
         name = "__".join(name)
         title = " ".join([self.online_name, "vs.", "in PU bin: {pileup}"])
@@ -52,11 +51,10 @@ class RatesPlot(BasePlotter):
             h = normalise_to_collision_rate(h)
             if pile_up == bn.Base.everything:
                 h.linestyle = "dashed"
-                label = "Everything"
-            elif isinstance(pile_up, int):
-                h.drawstyle = "HIST"
-                label = "~ {:.0f}".format(
-                    self.pileup_bins.get_bin_center(pile_up))
+                label = "L1 Rate"
+            # elif isinstance(pile_up, int):
+            #    h.drawstyle = "HIST"
+            #    label = str(self.pileup_bins.bins[pile_up])
             else:
                 continue
             h.SetMarkerSize(0.5)
@@ -64,7 +62,7 @@ class RatesPlot(BasePlotter):
             labels.append(label)
             # if with_fits:
             #     fits.append(self.fits.get_bin_contents([pile_up]))
-        self.__make_overlay(hists, fits, labels, "Number of events")
+        self.__make_overlay(hists, fits, labels, "Rate (kHz)", setlogy=True)
 
         normed_hists = list(normalise_to_unit_area(hists))
         self.__make_overlay(normed_hists, fits, labels,

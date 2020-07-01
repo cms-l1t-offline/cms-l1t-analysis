@@ -1,0 +1,79 @@
+version: 1
+name: 'Jet Met Rates'
+
+input:
+  files:
+      # Zero Bias
+       - /eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/bundocka/condor/p2l1tMet_nu0_1590687442/*.root
+  sample:
+    name: nuGun
+    title: MC
+  trigger:
+    name: nuNoSm
+    title: PF
+  pileup_file: ""
+  run_number:
+  ntuple_map_file: config/ntuple_content_mc.yaml
+
+analysis:
+  load_trees:
+    - p2Upgrade
+
+  do_fit: True
+  pu_type: 0PU
+  pu_bins: [0, 999]
+  thresholds:
+    HT:           [120, 200, 320]
+    METBE:        [60, 100, 140]
+    METHF:        [60, 100, 140]
+    JetET_BE:     [40, 100, 180]
+    JetET_HF:     [40, 100, 180]
+
+  analyzers:
+     HW_Emu_jetMet_rates:
+       module: cmsl1t.analyzers.HW_Emu_jetMet_rates
+  producers:
+    l1Jets:
+      module: cmsl1t.producers.jets
+      inputs:
+        - L1PhaseII_pfPhase1L1JetEt
+        - L1PhaseII_pfPhase1L1JetEta
+        - L1PhaseII_pfPhase1L1JetPhi
+      jetType: L1
+      filter: null
+      outputs:
+        - l1Jets
+    goodGenJets:
+      module: cmsl1t.producers.jets
+      inputs:
+        - Generator_jetPt
+        - Generator_jetEta
+        - Generator_jetPhi
+      jetType: Gen
+      outputs:
+        - goodGenJets
+    genSums:
+      module: cmsl1t.producers.gensums
+      inputs:
+        - Generator_jetPt
+        - Generator_jetEta
+        - Generator_partId
+        - Generator_partPhi
+        - Generator_partPt
+        - Generator_partEta
+        - Generator_genMetTrue
+      outputs:
+        - genSums
+    l1Sums:
+      module: cmsl1t.producers.l1p2sums
+      inputs:
+        - L1PhaseII_puppiMETEt
+        - L1PhaseII_puppiMETPhi
+        - L1PhaseII_puppiHT
+      outputs:
+        - l1Sums
+
+output:
+  template:
+     - output/zb_rates
+     - "{date}_{sample_name}_{trigger_name}"
