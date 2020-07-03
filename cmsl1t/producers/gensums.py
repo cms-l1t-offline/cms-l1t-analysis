@@ -12,6 +12,8 @@ class Producer(BaseProducer):
         super(Producer, self).__init__(inputs, outputs, **kwargs)
 
     def produce(self, event):
+
+        calculateMET = False
         variables = [event[i] for i in self._inputs]
         prefix = self._outputs[0] + '_'
 
@@ -25,20 +27,22 @@ class Producer(BaseProducer):
         setattr(event, prefix + 'MetBE', Met(genMetTrue, 0))
         setattr(event, prefix + 'MetHF', Met(genMetTrue, 0))
 
-        part_id = np.absolute(part_id)
-        partEta = np.absolute(partEta)
-        partPhi = np.array(partPhi)
-        partPt = np.array(partPt)
+        if calculateMET:
 
-        # nu_e, mu, nu_mu, nu_tau
-        particleMask = (part_id == 12) | (part_id == 13) | (part_id == 14) | (part_id == 16)
-        eta_mask = partEta < 3.0
+            part_id = np.absolute(part_id)
+            partEta = np.absolute(partEta)
+            partPhi = np.array(partPhi)
+            partPt = np.array(partPt)
 
-        genMetHF = self._calculate_met(partPt, partPhi, particleMask)
-        # setattr(event, prefix + 'MetHF', genMetHF)
+            # nu_e, mu, nu_mu, nu_tau
+            particleMask = (part_id == 12) | (part_id == 13) | (part_id == 14) | (part_id == 16)
+            eta_mask = partEta < 3.0
 
-        genMetBE = self._calculate_met(partPt, partPhi, particleMask & eta_mask)
-        # setattr(event, prefix + 'MetBE', genMetBE)
+            genMetHF = self._calculate_met(partPt, partPhi, particleMask)
+            setattr(event, prefix + 'MetHF', genMetHF)
+
+            genMetBE = self._calculate_met(partPt, partPhi, particleMask & eta_mask)
+            setattr(event, prefix + 'MetBE', genMetBE)
 
         return True
 

@@ -15,6 +15,7 @@ from cmsl1t.plotting.rate_vs_pileup import RateVsPileupPlot
 from cmsl1t.filters import LuminosityFilter
 import cmsl1t.hist.binning as bn
 from cmsl1t.utils.hist import cumulative_hist
+from cmsl1t.utils.hist import normalise_to_collision_rate
 
 
 def types(doEmu):
@@ -66,6 +67,7 @@ class Analyzer(BaseAnalyzer):
         self.triggerName = self.params['triggerName']
         self.thresholds = self.params['thresholds']
         self.puBins = self.params['pu_bins']
+        self.menuRates = self.params['rates']
 
         loaded_trees = self.params['load_trees']
         self._doGen = 'genTree' in loaded_trees or 'p2Upgrade' in loaded_trees
@@ -247,7 +249,7 @@ class Analyzer(BaseAnalyzer):
 
         return self._processLumi
 
-    def make_plots(self):
+    def make_plots(self, other_analyzers=None):
         # TODO: implement this in BaseAnalyzer
         # make_plots -> make_plots(plot_func)
 
@@ -258,17 +260,24 @@ class Analyzer(BaseAnalyzer):
                 'Error: Please specify thresholds in the config .yaml in dictionary format')
 
         # print hw vs emu for rates and rate vs pileup
-        if self._doEmu:
-            for histo_name in self._sumTypes + self._jetTypes:
+        for histo_name in self._sumTypes + self._jetTypes:
+            plotter = getattr(self, histo_name + '_rates')
+            if self._doEmu:
                 if "_Emu" in histo_name:
                     continue
-                plotter = getattr(self, histo_name + '_rates')
                 emu_plotter = getattr(self, histo_name + '_Emu_rates')
-                plotter.overlay_with_emu(emu_plotter)
+                plotter.overlay_with_emu([emu_plotter])
+            if self._doComp:
+                plotter.overlay([getattr(other_analyzer, histo_name + '_rates')
+                                for other_analyzer in other_analyzers])
 
-                plotter = getattr(self, histo_name + '_rate_vs_pileup')
+            plotter = getattr(self, histo_name + '_rate_vs_pileup')
+            if self._doEmu:
                 emu_plotter = getattr(self, histo_name + "_Emu" + '_rate_vs_pileup')
-                plotter.overlay_with_emu(emu_plotter)
+                plotter.overlay_with_emu([emu_plotter])
+            if self._doComp:
+                plotter.overlay([getattr(other_analyzer, histo_name + '_rate_vs_pileup')
+                                for other_analyzer in other_analyzers])
 
         # calculate cumulative histograms
         if not self._doEmu:
@@ -280,6 +289,22 @@ class Analyzer(BaseAnalyzer):
                     plot.draw()
 
         print('  thresholds:')
+
+        if self.menuRates:
+            for histo_name in self._sumTypes + self._jetTypes:
+                h = getattr(self, histo_name)
+                h = normalise_to_collision_rate(h)
+                targetRate = self.menuRates.get(histo_name)
+                threshold = None
+                closestRateDiff = 999999999
+                threshold = None
+                for i in range(h.nbins()):
+                    if abs(h.get_bin_content(i) - targetRate) < closestRateDiff:
+                        closestRateDiff = abs(h.get_bin_content(i) - targetRate)
+                        threshold = h.get_bin_low_edge(i)
+                outputLine = '    {0}:\t{1} KHz at threshold of \t{2}\tGeV'.format(
+                    histo_name.ljust(5, ' '), targetRate, threshold)
+                print(outputLine)
 
         if self._doEmu:
             for histo_name in self._sumTypes + self._jetTypes:

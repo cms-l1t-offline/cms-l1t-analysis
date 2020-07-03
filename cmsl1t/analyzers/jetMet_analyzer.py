@@ -45,7 +45,7 @@ def types(doEmu, doReco, doGen):
 ETA_RANGES = dict(
     HT="|\\eta| < 2.4",
     METBE="|\\eta| < 3.0",
-    METHF="|\\eta| < 5.0, 50 \\leq PU < 60",
+    METHF="|\\eta| < 5.0",
     JetET_BE="|\\eta| < 3.0",
     JetET_HF="3.0 < |\\eta| < 5.0",
 )
@@ -565,124 +565,44 @@ class Analyzer(BaseAnalyzer):
 
         return self._processLumi
 
-    def make_plots(self):
+    def make_plots(self, other_analyzers=None):
         """
         Custom version, does what the normal one does but also overlays whatever you like.
         """
-        # for plot in self.all_plots:
-        #    plot.draw()
 
         if self._doReco:
-            getattr(self, 'caloHT_eff').draw()
-            getattr(self, 'pfHT_eff').draw()
-            getattr(self, 'caloMETBE_eff').draw()
-            getattr(self, 'caloMETHF_eff').draw()
-            getattr(self, 'pfMET_NoMu_eff').draw()
-            getattr(self, 'caloJetET_BE_eff').draw()
-            getattr(self, 'caloJetET_HF_eff').draw()
-            getattr(self, 'pfJetET_BE_eff').draw()
-            getattr(self, 'pfJetET_HF_eff').draw()
 
-            getattr(self, 'caloHT_eff_HR').draw()
-            getattr(self, 'pfHT_eff_HR').draw()
-            getattr(self, 'caloMETBE_eff_HR').draw()
-            getattr(self, 'caloMETHF_eff_HR').draw()
-            getattr(self, 'pfMET_NoMu_eff_HR').draw()
-            getattr(self, 'caloJetET_BE_eff_HR').draw()
-            getattr(self, 'caloJetET_HF_eff_HR').draw()
-            getattr(self, 'pfJetET_BE_eff_HR').draw()
-            getattr(self, 'pfJetET_HF_eff_HR').draw()
-
-            getattr(self, 'caloHT_res').draw()
-            getattr(self, 'pfHT_res').draw()
-            getattr(self, 'caloMETBE_res').draw()
-            getattr(self, 'caloMETHF_res').draw()
-            getattr(self, 'pfMET_NoMu_res').draw()
-            getattr(self, 'caloJetET_BE_res').draw()
-            getattr(self, 'caloJetET_HF_res').draw()
-            getattr(self, 'pfJetET_BE_res').draw()
-            getattr(self, 'pfJetET_HF_res').draw()
-
-            if self._doEmu:
-                getattr(self, 'caloHT_eff').overlay_with_emu(
-                    getattr(self, 'caloHT_Emu_eff'))
-                getattr(self, 'pfHT_eff').overlay_with_emu(
-                    getattr(self, 'pfHT_Emu_eff'))
-                getattr(self, 'caloMETBE_eff').overlay_with_emu(
-                    getattr(self, 'caloMETBE_Emu_eff'))
-                getattr(self, 'caloMETHF_eff').overlay_with_emu(
-                    getattr(self, 'caloMETHF_Emu_eff'))
-                getattr(self, 'pfMET_NoMu_eff').overlay_with_emu(
-                    getattr(self, 'pfMET_NoMu_Emu_eff'))
-                getattr(self, 'caloJetET_BE_eff').overlay_with_emu(
-                    getattr(self, 'caloJetET_BE_Emu_eff'))
-                getattr(self, 'caloJetET_HF_eff').overlay_with_emu(
-                    getattr(self, 'caloJetET_HF_Emu_eff'))
-                getattr(self, 'pfJetET_BE_eff').overlay_with_emu(
-                    getattr(self, 'pfJetET_BE_Emu_eff'))
-                getattr(self, 'pfJetET_HF_eff').overlay_with_emu(
-                    getattr(self, 'pfJetET_HF_Emu_eff'))
-
-                getattr(self, 'caloHT_res').overlay_with_emu(
-                    getattr(self, 'caloHT_Emu_res'))
-                getattr(self, 'pfHT_res').overlay_with_emu(
-                    getattr(self, 'pfHT_Emu_res'))
-                getattr(self, 'caloMETBE_res').overlay_with_emu(
-                    getattr(self, 'caloMETBE_Emu_res'))
-                getattr(self, 'caloMETHF_res').overlay_with_emu(
-                    getattr(self, 'caloMETHF_Emu_res'))
-                getattr(self, 'pfMET_NoMu_res').overlay_with_emu(
-                    getattr(self, 'pfMET_NoMu_Emu_res'))
-                getattr(self, 'caloJetET_BE_res').overlay_with_emu(
-                    getattr(self, 'caloJetET_BE_Emu_res'))
-                getattr(self, 'caloJetET_HF_res').overlay_with_emu(
-                    getattr(self, 'caloJetET_HF_Emu_res'))
-                getattr(self, 'pfJetET_BE_res').overlay_with_emu(
-                    getattr(self, 'pfJetET_BE_Emu_res'))
-                getattr(self, 'pfJetET_HF_res').overlay_with_emu(
-                    getattr(self, 'pfJetET_HF_Emu_res'))
+            plot_names = [
+                'caloHT', 'pfHT', 'caloMETBE', 'caloMETHF',
+                'pfMET_NoMu', 'caloJetET_BE', 'caloJetET_HF',
+                'pfJetET_BE', 'pfJetET_HF'
+            ]
 
         if self._doGen:
 
-            getattr(self, 'genHT_eff').draw()
-            getattr(self, 'genMETBE_eff').draw()
-            getattr(self, 'genMETHF_eff').draw()
-            getattr(self, 'genHT_eff_HR').draw()
-            getattr(self, 'genMETBE_eff_HR').draw()
-            getattr(self, 'genMETHF_eff_HR').draw()
-            getattr(self, 'genHT_res').draw()
-            getattr(self, 'genMETBE_res').draw()
-            getattr(self, 'genMETHF_res').draw()
+            plot_names = ['genJetET_BE', 'genJetET_HF', 'genHT', 'genMETBE', 'genMETHF']
 
-            getattr(self, 'genJetET_BE_eff').draw()
-            getattr(self, 'genJetET_HF_eff').draw()
-            getattr(self, 'genJetET_BE_eff_HR').draw()
-            getattr(self, 'genJetET_HF_eff_HR').draw()
-            getattr(self, 'genJetET_BE_res').draw()
-            getattr(self, 'genJetET_HF_res').draw()
+        for plot_name in plot_names:
+            getattr(self, plot_name + '_eff').draw()
+            getattr(self, plot_name + '_eff_HR').draw()
+            getattr(self, plot_name + '_res').draw()
 
-            if self._doEmu:
+        if self._doEmu:
 
-                getattr(self, 'genHT_eff').overlay_with_emu(
-                    getattr(self, 'genHT_Emu_eff'))
-                getattr(self, 'genMETBE_eff').overlay_with_emu(
-                    getattr(self, 'genMETBE_Emu_eff'))
-                getattr(self, 'genMETHF_eff').overlay_with_emu(
-                    getattr(self, 'genMETHF_Emu_eff'))
-                getattr(self, 'genHT_res').overlay_with_emu(
-                    getattr(self, 'genHT_Emu_res'))
-                getattr(self, 'genMETBE_res').overlay_with_emu(
-                    getattr(self, 'genMETBE_Emu_res'))
-                getattr(self, 'genMETHF_res').overlay_with_emu(
-                    getattr(self, 'genMETHF_Emu_res'))
+            for plot_name in plot_names:
+                getattr(self, plot_name + '_eff').overlay([
+                    getattr(self, plot_name + '_Emu_eff')])
+                getattr(self, plot_name + '_res').overlay([
+                    getattr(self, plot_name + '_Emu_res')])
 
-                getattr(self, 'genJetET_BE_eff').overlay_with_emu(
-                    getattr(self, 'genJetET_BE_Emu_eff'))
-                getattr(self, 'genJetET_HF_eff').overlay_with_emu(
-                    getattr(self, 'genJetET_HF_Emu_eff'))
-                getattr(self, 'genJetET_BE_Emu_res').overlay_with_emu(
-                    getattr(self, 'genJetET_BE_Emu_res'))
-                getattr(self, 'genJetET_HF_Emu_res').overlay_with_emu(
-                    getattr(self, 'genJetET_HF_Emu_res'))
+        if self._doComp:
+
+            for plot_name in plot_names:
+                getattr(self, plot_name + '_eff').overlay(
+                    [getattr(other_analyzer, plot_name + '_eff')
+                        for other_analyzer in other_analyzers])
+                getattr(self, plot_name + '_res').overlay(
+                    [getattr(other_analyzer, plot_name + '_res')
+                        for other_analyzer in other_analyzers])
 
         return True
