@@ -13,6 +13,7 @@ class BasePlotter(object):
     def __init__(self, directory_name):
         self.directory_name = directory_name
         self._is_built = False
+        self.comp_title = None
 
     def set_plot_output_cfg(self, outdir, fmt):
         """
@@ -58,13 +59,15 @@ class BasePlotter(object):
         to_root(self, outfile)
         return True
 
-    def from_root(self, filename):
+    def from_root(self, filename, comp_title=None):
         """
         Reload histograms from existing files on disk.
 
         Might be called multiple times, in which case histograms should be
         merged together with existing ones
         """
+        if comp_title:
+            self.comp_title = comp_title
         reloaded = from_root(filename)
         return self.merge_in(reloaded)
 

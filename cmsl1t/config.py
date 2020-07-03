@@ -53,11 +53,11 @@ class ConfigParser(object):
         self.config = {}
         self.config_errors = []
 
-    def read(self, input_file, reload_histograms=False, hist_files=None):
+    def read(self, input_file, reload_histograms=False, hist_files=None, comp_file=None):
         cfg = yaml.load(input_file)
-        self._read_config(cfg, reload_histograms, hist_files)
+        self._read_config(cfg, reload_histograms, hist_files, comp_file)
 
-    def _read_config(self, cfg, reload_histograms=False, hist_files=None):
+    def _read_config(self, cfg, reload_histograms=False, hist_files=None, comp_file=None):
         cfg['general'] = dict(version=cfg['version'], name=cfg['name'])
         del cfg['version'], cfg['name']
 
@@ -82,7 +82,7 @@ class ConfigParser(object):
             raise IOError(msg)
 
         try:
-            self.__fill_outdir_and_reload_files(reload_histograms, hist_files)
+            self.__fill_outdir_and_reload_files(reload_histograms, hist_files, comp_file)
         except Exception as e:
             msg = 'Could not fill out output template: ' + str(e)
             logger.exception(msg)
@@ -212,9 +212,8 @@ class ConfigParser(object):
     def __repr__(self):
         return self.config.__repr__()
 
-    def __fill_outdir_and_reload_files(self, reload_histograms, hist_files):
+    def __fill_outdir_and_reload_files(self, reload_histograms, hist_files, comp_file):
         cfg = self.config
-
         # Deduce what sort of reload we want:
         if reload_histograms:
             if hist_files:
@@ -224,6 +223,9 @@ class ConfigParser(object):
                     reload_histograms = "merge"
                 else:
                     reload_histograms = "plot specific"
+            elif comp_file:
+                cfg['input']['comp_file'] = comp_file
+                reload_histograms = "plot comparison"
             else:
                 reload_histograms = "plot last"
         cfg["input"]["reload_histograms"] = reload_histograms
@@ -256,7 +258,7 @@ class ConfigParser(object):
                     search_path = os.path.join(latest_version, "*.root")
                     self.config['input']['hist_files'] = resolve_file_paths([search_path])
                 else:
-                    # Either merging multiple hists, or we're reading trees
+                    # Merging multiple hists, reading trees, or plotting comparisons
                     # Essentially, this is a new analysis output
                     output_folder = get_unique_out_dir(output_folder)
 
