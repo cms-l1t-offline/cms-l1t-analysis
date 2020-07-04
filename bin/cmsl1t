@@ -172,7 +172,7 @@ def run(configs, nevents, reload_histograms, do_comparison):
     # Turn the histograms to plots
     logger.info(section.format("Making plots"))
     if not do_comparison:
-        results = [analyzer.make_plots() for analyzer in analyzers]
+        results = [analyzer.make_plots() for analyzer in analyzer_lists[0]]
     else:
         # Need to transpose list of analyzers for each config
         # to get the other comparison analyzers...
@@ -227,7 +227,7 @@ def check(results, analyzers, method):
 @click_log.simple_verbosity_option(logger)
 def analyze(config_files, nevents, reload_histograms, hist_files, comp_files):
     logger.info(section.format("Starting CMS L1T Analysis"))
-    if comp_files and len(comp_files) is not len(config_files):
+    if comp_files and (len(comp_files) != len(config_files)):
         msg = "Must provide equal number of config files & root files\
                 for comparison. Exiting..."
         raise IOError(msg)

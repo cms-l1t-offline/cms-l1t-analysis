@@ -61,7 +61,7 @@ class BaseAnalyzer(object):
         raise NotImplementedError("fill_histograms needs to be implemented")
         return True
 
-    def reload_histograms(self, input_filename, do_comparison):
+    def reload_histograms(self, input_filename, do_comparison=False):
         """
         Read back histograms from the given root file.
         May need to append histograms

@@ -38,7 +38,7 @@ class Analyzer(BaseAnalyzer):
 
         return True
 
-    def reload_histograms(self, input_file):
+    def reload_histograms(self, input_file, do_comparison=False):
         # Something like this needs to be implemented still
         # self.efficiencies = EfficiencyCollection.from_root(input_file)
         return True

@@ -28,7 +28,7 @@ class Analyzer(BaseAnalyzer):
     def prepare_for_events(self, reader):
         return True
 
-    def reload_histograms(self, input_file):
+    def reload_histograms(self, input_file, do_comparison=False):
         return True
 
     def fill_histograms(self, entry, event):
