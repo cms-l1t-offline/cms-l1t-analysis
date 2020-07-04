@@ -13,7 +13,7 @@ input:
     title: PF
   pileup_file: ""
   run_number:
-  ntuple_map_file: config/ntuple_content_mc.yaml
+  ntuple_map_file: config/ntuple_content_mc_p2.yaml
 
 analysis:
   load_trees:

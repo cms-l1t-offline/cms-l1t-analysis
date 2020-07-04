@@ -216,7 +216,7 @@ content:
       Event.time:
         aliases:
         - event.time
-  l1GeneratorTree/L1GenTree:
+  genTree/L1GenTree:
     name: L1GenTree
     optional: true
     branches:
@@ -274,6 +274,31 @@ content:
       Generator.weight:
         aliases:
         - event.Generator_weight
+      Generator.partP:
+        aliases:
+        - event.Generator_partP
+      Generator.partDxy:
+        aliases:
+        - event.Generator_partDxy
+      Generator.partLxy:
+        aliases:
+        - event.Generator_partLxy
+      Generator.partVx:
+        aliases:
+        - event.Generator_partVx
+      Generator.partVy:
+        aliases:
+        - event.Generator_partVy
+      Generator.partVz:
+        aliases:
+        - event.Generator_partVz
+      Generator.genMetTrue:
+        aliases:
+        - event.Generator_genMetTrue
+      Generator.genMetCalo:
+        aliases:
+        - event.Generator_genMetCalo
+
   l1HOTree/L1HOTree:
     name: L1HOTree
     optional: false
