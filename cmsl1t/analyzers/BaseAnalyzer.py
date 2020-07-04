@@ -109,7 +109,7 @@ class BaseAnalyzer(object):
             pass
         return all(results)
 
-    def make_plots(self):
+    def make_plots(self, other_analyzers=None):
         """
         Called after all events have been read to convert histograms to actual
         plots Might be called on existing files of histograms (ie. without
