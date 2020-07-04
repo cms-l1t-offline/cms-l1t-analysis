@@ -33,6 +33,12 @@ analysis:
     METHF:    [80, 100, 120]
     JetET_BE: [35, 90, 120]
     JetET_HF: [35, 90, 120]
+  rates:
+    HT:           11 #kHz
+    METBE:        18
+    METHF:        18
+    JetET_BE:     70
+    JetET_HF:     3 # guess
 
   analyzers:
      HW_Emu_jetMet_rates:

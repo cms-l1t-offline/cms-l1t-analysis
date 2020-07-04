@@ -266,7 +266,7 @@ class Analyzer(BaseAnalyzer):
                 if "_Emu" in histo_name:
                     continue
                 emu_plotter = getattr(self, histo_name + '_Emu_rates')
-                plotter.overlay_with_emu([emu_plotter])
+                plotter.overlay([emu_plotter])
             if self._doComp:
                 plotter.overlay([getattr(other_analyzer, histo_name + '_rates')
                                 for other_analyzer in other_analyzers])
@@ -274,18 +274,18 @@ class Analyzer(BaseAnalyzer):
             plotter = getattr(self, histo_name + '_rate_vs_pileup')
             if self._doEmu:
                 emu_plotter = getattr(self, histo_name + "_Emu" + '_rate_vs_pileup')
-                plotter.overlay_with_emu([emu_plotter])
+                plotter.overlay([emu_plotter])
             if self._doComp:
                 plotter.overlay([getattr(other_analyzer, histo_name + '_rate_vs_pileup')
                                 for other_analyzer in other_analyzers])
 
         # calculate cumulative histograms
-        if not self._doEmu:
-            for plot in self.all_plots:
-                if 'rate_vs_pileup' not in plot.filename_format:
-                    hist = plot.plots.get_bin_contents([bn.Base.everything])
-                    hist = cumulative_hist(hist)
-                    setattr(self, plot.online_name, hist)
+        for plot in self.all_plots:
+            if 'rate_vs_pileup' not in plot.filename_format:
+                hist = plot.plots.get_bin_contents([bn.Base.everything])
+                hist = cumulative_hist(hist)
+                setattr(self, plot.online_name, hist)
+                if not self._doEmu:
                     plot.draw()
 
         print('  thresholds:')
@@ -294,7 +294,7 @@ class Analyzer(BaseAnalyzer):
             for histo_name in self._sumTypes + self._jetTypes:
                 h = getattr(self, histo_name)
                 h = normalise_to_collision_rate(h)
-                targetRate = self.menuRates.get(histo_name)
+                targetRate = self.menuRates.get(histo_name.replace('_Emu',''))
                 threshold = None
                 closestRateDiff = 999999999
                 threshold = None
@@ -302,10 +302,10 @@ class Analyzer(BaseAnalyzer):
                     if abs(h.get_bin_content(i) - targetRate) < closestRateDiff:
                         closestRateDiff = abs(h.get_bin_content(i) - targetRate)
                         threshold = h.get_bin_low_edge(i)
-                outputLine = '    {0}:\t{1} KHz at threshold of \t{2}\tGeV'.format(
-                    histo_name.ljust(5, ' '), targetRate, threshold)
+                outputLine = '    {0}:\t{1} KHz at threshold of \t\t{2}\tGeV'.format(
+                    histo_name.ljust(15, ' '), targetRate, threshold)
                 print(outputLine)
-
+        print('\n')
         if self._doEmu:
             for histo_name in self._sumTypes + self._jetTypes:
                 if "_Emu" in histo_name:
