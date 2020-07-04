@@ -28,7 +28,6 @@ class Producer(BaseProducer):
         # setattr(event, prefix + 'HT', EnergySum(np.sum(jet_pt)))
         setattr(event, prefix + 'HT', EnergySum(ht))
 
-
         if calculateMET:
             part_id = np.absolute(part_id)
             partEta = np.absolute(partEta)

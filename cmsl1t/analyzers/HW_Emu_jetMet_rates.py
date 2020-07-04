@@ -294,7 +294,7 @@ class Analyzer(BaseAnalyzer):
             for histo_name in self._sumTypes + self._jetTypes:
                 h = getattr(self, histo_name)
                 h = normalise_to_collision_rate(h)
-                targetRate = self.menuRates.get(histo_name.replace('_Emu',''))
+                targetRate = self.menuRates.get(histo_name.replace('_Emu', ''))
                 threshold = None
                 closestRateDiff = 999999999
                 threshold = None
