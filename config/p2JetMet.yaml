@@ -4,16 +4,16 @@ name: 'Jet Met MC Studies'
 input:
   files:
       # ttbar MC
-       - /eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/bundocka/condor/p2l1tMet_tt0_1590687637/*.root
+       - /eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/bundocka/condor/p2l1tMet_tt_cnnWP_1592568643/*.root
   sample:
     name: ttbar
     title: MC
   trigger:
-    name: CNN_0p2_2GeV
+    name: Full_3CNN
     title: PF
   pileup_file: ""
   run_number:
-  ntuple_map_file: config/ntuple_content_mc.yaml
+  ntuple_map_file: config/ntuple_content_mc_p2.yaml
 
 analysis:
   load_trees:
@@ -23,11 +23,11 @@ analysis:
   pu_type: 0PU24,25PU49,50PU
   pu_bins: [0,25,50,999]
   thresholds:
-    HT:           [120, 200, 320]
-    METBE:        [60, 100, 140]
-    METHF:        [60, 100, 140]
-    JetET_BE:     [40, 100, 180]
-    JetET_HF:     [40, 100, 180]
+    HT:           [354]
+    METBE:        [103]
+    METHF:        [103]
+    JetET_BE:     [121]
+    JetET_HF:     [110]
 
   analyzers:
      jetMet_analyzer:

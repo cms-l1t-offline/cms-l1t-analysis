@@ -57,7 +57,6 @@ class RatesPlot(BasePlotter):
             #    label = str(self.pileup_bins.bins[pile_up])
             else:
                 continue
-            h.SetMarkerSize(0.5)
             hists.append(h)
             labels.append(label)
             # if with_fits:
@@ -68,41 +67,46 @@ class RatesPlot(BasePlotter):
         self.__make_overlay(normed_hists, fits, labels,
                             "Fraction of events", "__shapes")
 
-    def overlay_with_emu(self, emu_plotter, with_fits=False):
+    def overlay(self, other_plotters=None, with_fits=False):
 
         hists = []
         labels = []
         fits = []
+        suffix = '__emu_overlay'
+        titles = ['Hw', 'Emu']
+        if self.comp_title:
+            suffix = '__comparison'
+            titles = [other_plotter.comp_title for other_plotter in other_plotters]
+            titles.insert(0, self.comp_title)
 
         hist = self.plots.get_bin_contents([bn.Base.everything])
         hist = cumulative_hist(hist)
         hist = normalise_to_collision_rate(hist)
-
         hist.drawstyle = "HIST"
-        hist.SetMarkerSize(0.5)
         hist.SetLineWidth(3)
         hist.SetMarkerColor(1)
         # if with_fits:
         #    fit = self.fits.get_bin_contents([threshold])
         #    fits.append(fit)
         hists.append(hist)
-        labels.append("Hw")
+        labels.append('L1 ' + titles[0])
 
-        emu_hist = emu_plotter.plots.get_bin_contents([bn.Base.everything])
-        emu_hist = cumulative_hist(emu_hist)
-        emu_hist = normalise_to_collision_rate(emu_hist)
+        for other_plotter in other_plotters:
+            hist = other_plotter.plots.get_bin_contents([bn.Base.everything])
+            hist = cumulative_hist(hist)
+            hist = normalise_to_collision_rate(hist)
 
-        emu_hist.drawstyle = "HIST"
-        emu_hist.SetMarkerSize(0.5)
-        emu_hist.SetLineWidth(3)
-        emu_hist.SetMarkerColor(2)
-        # if with_fits:
-        #    emu_fit = self.fits.get_bin_contents([threshold])
-        #    fits.append(emu_fit)
-        hists.append(emu_hist)
-        labels.append("Emu")
+            hist.drawstyle = "HIST"
+            hist.SetLineWidth(3)
+            hist.SetMarkerColor(2)
+            hist.markerstyle = 21 + other_plotters.index(other_plotter)
+            # if with_fits:
+            #    fit = self.fits.get_bin_contents([threshold])
+            #    fits.append(fit)
+            hists.append(hist)
+            labels.append('L1 ' + titles[other_plotters.index(other_plotter) + 1])
 
-        self.__make_overlay(hists, fits, labels, "Rate (kHz)", setlogy=True)
+        self.__make_overlay(hists, fits, labels, "Rate (kHz)", suffix, setlogy=True)
 
     def __make_overlay(self, hists, fits, labels, ytitle, suffix="", setlogy=False):
         with preserve_current_style():
