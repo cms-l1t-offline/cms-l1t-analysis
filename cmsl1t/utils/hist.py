@@ -13,7 +13,7 @@ def normalise_to_collision_rate(hist, collision_rate=4.0e4):
     first_bin = hist.get_bin_content(1)
     if first_bin != 0:
         hist.GetSumw2()
-        frac_filled = (2736. / 3564)
+        frac_filled = (2760. / 3564)
         rate_per_event = (collision_rate / first_bin)
         hist.Scale(frac_filled * rate_per_event)
     return hist

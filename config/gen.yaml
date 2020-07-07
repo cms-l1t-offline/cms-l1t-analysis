@@ -65,6 +65,7 @@ analysis:
       module: cmsl1t.producers.gensums
       inputs:
         - Generator_jetPt
+        - Generator_jetEta
         - Generator_partId
         - Generator_partPhi
         - Generator_partPt

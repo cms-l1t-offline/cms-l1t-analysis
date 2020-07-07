@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 from __future__ import print_function
 import ROOT
-import os
 from datetime import datetime
 from cmsl1t.utils.timers import timerfunc_log_to
 from cmsl1t.config import ConfigParser
@@ -72,11 +71,14 @@ def process_tuples(config, nevents, analyzers, producers):
 
 
 @timerfunc_log_to(logger.info)
-def process_histogram_files(config, analyzers):
+def process_histogram_files(configs, analyzer_lists, do_comparison):
     # Open the histogram files
     logger.info(section.format("Reading back histograms"))
 
-    inputs = config.get('input', 'hist_files')
+    if do_comparison:
+        inputs = [config.get('input', 'comp_file') for config in configs]
+    else:
+        inputs = configs[0].get('input', 'hist_files')
     logger.info("Inputs:")
     if len(inputs) > 10:
         msg = inputs[:10], "... and " + str(len(inputs) - 10) + " more"
@@ -86,12 +88,21 @@ def process_histogram_files(config, analyzers):
 
     # Open the histogram file
     results = {}
-    for filename in inputs:
-        for analyzer in analyzers:
-            if analyzer not in results:
-                results[analyzer] = True
-            if analyzer.might_contain_histograms(filename):
-                results[analyzer] &= bool(analyzer.reload_histograms(filename))
+    if not do_comparison:
+        for filename in inputs:
+            for analyzer in analyzer_lists[0]:
+                if analyzer not in results:
+                    results[analyzer] = True
+                if analyzer.might_contain_histograms(filename):
+                    results[analyzer] &= bool(analyzer.reload_histograms(filename))
+    else:
+        for filename, analyzers in zip(inputs, analyzer_lists):
+            for analyzer in analyzers:
+                if analyzer not in results:
+                    results[analyzer] = True
+                if analyzer.might_contain_histograms(filename):
+                    results[analyzer] &= \
+                        bool(analyzer.reload_histograms(filename, do_comparison))
 
     # Check for errors
     return check(results.values(), results.keys(), 'process_histogram_files')
@@ -110,39 +121,71 @@ def process_legacy(config, nevents, analyzers):
     return all(results)
 
 
-def run(config, nevents, reload_histograms):
+def run(configs, nevents, reload_histograms, do_comparison):
     results = [False]
-    # Fetch the analyzer
-    analyzers = config.get('analysis', 'analyzers')
-    out_cfg = config.get('output')
-    analyzers = [load_analyzer(analyzer, out_cfg) for analyzer in analyzers]
+    # Fetch the analyzers for each config
+    if not do_comparison:
+        unloaded_analyzer_lists = [configs[0].get('analysis', 'analyzers')]
+    # Find common analyzers between the configs
+    else:
+        unloaded_analyzer_lists = [config.get('analysis', 'analyzers') \
+                                    for config in configs]
+        analyzer_names_list = [[ analyzer['name'] for analyzer in analyzers ] \
+            for analyzers in unloaded_analyzer_lists]
+        common_analyzer_names = \
+            list(set(analyzer_names_list[0]).intersection(*analyzer_names_list[1:]))
+        for config in configs:
+            analyzers = config.get('analysis', 'analyzers')
+            unloaded_analyzer_lists.append(
+                [analyzer for analyzer in analyzers if analyzer['name'] \
+                    in common_analyzer_names]
+            )
 
-    producers = config.get('analysis', 'producers')
-    producers = [load_producer(producer, out_cfg) for producer in producers]
-    _check_producer_outputs(producers)
+    # Get output and initialize analyzers
+    analyzer_lists = []
+    for config, analyzers in zip(configs, unloaded_analyzer_lists):
+        out_cfg = config.get('output')
+        analyzers = [load_analyzer(analyzer, out_cfg) for analyzer in analyzers]
+        analyzer_lists.append(analyzers)
 
     if not reload_histograms:
-        analysis_mode = config.try_get('analysis', 'mode', default='new')
-        if analysis_mode == 'legacy':
-            process_legacy(config, nevents, analyzers)
-        else:
-            process_tuples(config, nevents, analyzers, producers)
-    else:
-        process_histogram_files(config, analyzers)
+        # Use producers from first config, not needed for comparisons
+        producers = configs[0].get('analysis', 'producers')
+        producers = [load_producer(producer, configs[0].get('output')) \
+                        for producer in producers]
+        _check_producer_outputs(producers)
 
-    # Write out the histograms
-    for analyzer in analyzers:
+        analysis_mode = configs[0].try_get('analysis', 'mode', default='new')
+        if analysis_mode == 'legacy':
+            process_legacy(configs[0], nevents, analyzer_lists[0])
+        else:
+            process_tuples(configs[0], nevents, analyzer_lists[0], producers)
+    else:
+        process_histogram_files(configs, analyzer_lists, do_comparison)
+
+    # Write out the histograms [item for sublist in l for item in sublist]
+    for analyzer in [analyzer for analyzers in analyzer_lists \
+                        for analyzer in analyzers]:
         analyzer.write_histograms()
 
     # Turn the histograms to plots
     logger.info(section.format("Making plots"))
-    results = [analyzer.make_plots() for analyzer in analyzers]
-    check(results, analyzers, 'make_plots')
+    if not do_comparison:
+        results = [analyzer.make_plots() for analyzer in analyzer_lists[0]]
+    else:
+        # Need to transpose list of analyzers for each config
+        # to get the other comparison analyzers...
+        results = [analyzer.make_plots(other_analyzers[1:]) \
+            for analyzer, other_analyzers in \
+                zip(analyzer_lists[0], [list(i) for i in zip(*analyzer_lists)])]
+    check(results, analyzer_lists[0], 'make_plots')
 
     # Finalize
     print(section.format("Finalizing things"))
-    results = [analyzer.finalize() for analyzer in analyzers]
-    check(results, analyzers, 'finalize')
+    results = [analyzer.finalize() for analyzers in analyzer_lists \
+                for analyzer in analyzers]
+    check(results, [analyzer for analyzers in analyzer_lists \
+                for analyzer in analyzers], 'finalize')
 
     return all(results)
 
@@ -170,19 +213,44 @@ def check(results, analyzers, method):
 
 
 @click.command()
-@click.option('-c', '--config_file', help='YAML style config file', type=click.File(), required=True)
+@click.option('-c', '--config_files', help='YAML style config file',
+                type=click.File(), required=True, multiple=True)
 @click.option('-n', '--nevents', default=-1, help='Number of events to process.')
 @click.option('-r', '--reload-histograms', is_flag=True,
               help="Reload histograms from a file and skip the input tuples")
 @click.option('--hist-files', default=None,
               help="Provide a list of files to reload histograms from")
+@click.option('-cf', '--comp_files', default=None, multiple=True,
+              help="Reload histograms from multiple files for comparison,\
+                    e.g. -cf <title1>:<file1> -cf <title2>:<file2> ...")
 @click_log.simple_verbosity_option(logger)
-def analyze(config_file, nevents, reload_histograms, hist_files):
+def analyze(config_files, nevents, reload_histograms, hist_files, comp_files):
     logger.info(section.format("Starting CMS L1T Analysis"))
-    config = ConfigParser()
-    config.read(config_file, reload_histograms, hist_files)
+    if comp_files and (len(comp_files) != len(config_files)):
+        msg = "Must provide equal number of config files & root files\
+                for comparison. Exiting..."
+        raise IOError(msg)
+    if comp_files and hist_files:
+        msg = "Please choose either comp-files or hist-files. Exiting..."
+        raise IOError(msg)
+    if not comp_files and len(config_files) > 1:
+        msg = "Can only take one config file unless running comparisons. Exiting..."
+        raise IOError(msg)
+    configs = []
+    do_comparison = False
+    if comp_files:
+        do_comparison = True
+        reload_histograms = True
+        for config_file, comp_file in zip(config_files, comp_files):
+            config = ConfigParser()
+            config.read(config_file, reload_histograms, hist_files, comp_file)
+            configs.append(config)
+    else:
+        config = ConfigParser()
+        config.read(config_files[0], reload_histograms, hist_files)
+        configs.append(config)
 
-    isok = run(config, nevents, reload_histograms)
+    isok = run(configs, nevents, reload_histograms, do_comparison)
 
     print('\n' + separator + '\n')
     if isok is not True:

@@ -12,33 +12,41 @@ class Producer(BaseProducer):
         super(Producer, self).__init__(inputs, outputs, **kwargs)
 
     def produce(self, event):
+
+        calculateMET = True if 'Generator_genMetTrue' not in self._inputs else False
         variables = [event[i] for i in self._inputs]
         prefix = self._outputs[0] + '_'
 
-        jet_pt, jet_eta, part_id, partPhi, partPt, partEta, genMetTrue = variables
+        if calculateMET:
+            jet_pt, jet_eta, part_id, partPhi, partPt, partEta = variables
+        else:
+            jet_pt, jet_eta, part_id, partPhi, partPt, partEta, genMetTrue = variables
         ht = 0
         for pt, eta in zip(jet_pt, jet_eta):
             if abs(eta) < 2.4:
                 ht += pt
         # setattr(event, prefix + 'HT', EnergySum(np.sum(jet_pt)))
         setattr(event, prefix + 'HT', EnergySum(ht))
-        setattr(event, prefix + 'MetBE', Met(genMetTrue, 0))
-        setattr(event, prefix + 'MetHF', Met(genMetTrue, 0))
 
-        part_id = np.absolute(part_id)
-        partEta = np.absolute(partEta)
-        partPhi = np.array(partPhi)
-        partPt = np.array(partPt)
+        if calculateMET:
+            part_id = np.absolute(part_id)
+            partEta = np.absolute(partEta)
+            partPhi = np.array(partPhi)
+            partPt = np.array(partPt)
 
-        # nu_e, mu, nu_mu, nu_tau
-        particleMask = (part_id == 12) | (part_id == 13) | (part_id == 14) | (part_id == 16)
-        eta_mask = partEta < 3.0
+            # nu_e, mu, nu_mu, nu_tau
+            particleMask = (part_id == 12) | (part_id == 13) | (part_id == 14) | (part_id == 16)
+            eta_mask = partEta < 3.0
 
-        genMetHF = self._calculate_met(partPt, partPhi, particleMask)
-        # setattr(event, prefix + 'MetHF', genMetHF)
+            genMetHF = self._calculate_met(partPt, partPhi, particleMask)
+            genMetBE = self._calculate_met(partPt, partPhi, particleMask & eta_mask)
 
-        genMetBE = self._calculate_met(partPt, partPhi, particleMask & eta_mask)
-        # setattr(event, prefix + 'MetBE', genMetBE)
+            setattr(event, prefix + 'MetHF', genMetHF)
+            setattr(event, prefix + 'MetBE', genMetBE)
+
+        else:
+            setattr(event, prefix + 'MetBE', Met(genMetTrue, 0))
+            setattr(event, prefix + 'MetHF', Met(genMetTrue, 0))
 
         return True
 

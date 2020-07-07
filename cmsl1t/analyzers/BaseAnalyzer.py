@@ -18,6 +18,7 @@ class BaseAnalyzer(object):
         self.all_plots = []
         self.file_format = kwargs.pop('file_format')
         self.__params = kwargs
+        self._doComp = False
 
         if not os.path.exists(self.output_folder):
             os.makedirs(self.output_folder)
@@ -60,7 +61,7 @@ class BaseAnalyzer(object):
         raise NotImplementedError("fill_histograms needs to be implemented")
         return True
 
-    def reload_histograms(self, input_filename):
+    def reload_histograms(self, input_filename, do_comparison=False):
         """
         Read back histograms from the given root file.
         May need to append histograms
@@ -68,12 +69,19 @@ class BaseAnalyzer(object):
         returns:
           Should return True if histograms were written without problem.
           If anything else is returned, processing of the trees will stop
-        """
+        nb:
+             If comparing multiple files, legend title "comp_title" is
+             provided with the filename, and passed to from_root
+         """
         results = []
+        if do_comparison:
+            self._doComp = True
+            comp_title = input_filename.split(':')[0]
+            input_filename = input_filename.split(':')[1]
         with root_open(input_filename, "r") as input_file:
             for hist in self.all_plots:
                 indir = input_file.GetDirectory(hist.directory_name)
-                results.append(hist.from_root(indir))
+                results.append(hist.from_root(indir, comp_title))
         ok = all(results)
         return ok
 
@@ -101,7 +109,7 @@ class BaseAnalyzer(object):
             pass
         return all(results)
 
-    def make_plots(self):
+    def make_plots(self, other_analyzers=None):
         """
         Called after all events have been read to convert histograms to actual
         plots Might be called on existing files of histograms (ie. without

@@ -82,13 +82,13 @@ def __prepare_canvas(canvas_args):
 def __clean(hists):
     cleaned_hists = []
     for hist in hists:
+        hist.SetMarkerSize(0.7)
+        hist.SetLineWidth(2)
         if isinstance(hist, Efficiency):
             new = asrootpy(hist.CreateGraph("e0"))
             new.decorate(hist)
             hist = new
-            hist.SetMarkerSize(1)
-            hist.SetLineWidth(3)
-            gStyle.SetLineScalePS(1)
+            gStyle.SetLineScalePS(2)
         else:
             gStyle.SetLineScalePS(3)
         cleaned_hists.append(hist)
@@ -114,14 +114,15 @@ def __apply_colour_map(hists, colourmap, colour_values, change_colour):
         for value, hist in enumerate(hists):
             if colour_values:
                 value, max = colour_values(value)
-            colour = colourmap(value + 0.5, max)
+            colour = colourmap(value + 3, max)
             if "line" in change_colour:
                 hist.linecolor = colour
             if "marker" in change_colour:
                 hist.markercolor = colour
+                hist.markerstyle = 24 + hists.index(hist)
 
 
-def draw(hists, colourmap="RainBow", colour_values=None,
+def draw(hists, colourmap="VisibleSpectrum", colour_values=None,
          change_colour=("line", "marker"), canvas_args={}, draw_args={}):
     """
     Create a standard canvas, fill it with the list of histograms and a legend.
