@@ -337,48 +337,57 @@ content:
       L1PhaseIPFJet.phaseIPFJetEt:
         aliases:
         - event.L1PhaseIPFJet_phaseIPFJetEt
-      L1PhaseIPFJet.phaseIPFJetHt:
-        aliases:
-        - event.L1PhaseIPFJet_phaseIPFJetHt
       L1PhaseIPFJet.phaseIPFJetEta:
         aliases:
         - event.L1PhaseIPFJet_phaseIPFJetEta
       L1PhaseIPFJet.phaseIPFJetPhi:
         aliases:
         - event.L1PhaseIPFJet_phaseIPFJetPhi
+      L1PhaseIPFJet.phaseIPFJetHt:
+        aliases:
+        - event.L1PhaseIPFJet_phaseIPFJetHt
+      L1PhaseIPFJet.phaseIPFJetMet:
+        aliases:
+        - event.L1PhaseIPFJet_phaseIPFJetMET
       L1PhaseIPFJet.nAK4PFJets:
         aliases:
-        - event.L1AK4PFJet_nAK4PFJets
-      L1PhaseIPFJet.ak4PFJetHt:
-        aliases:
-        - event.L1AK4PFJet_ak4PFJetHt
+        - event.L1PhaseIPFJet_nAK4PFJets
       L1PhaseIPFJet.ak4PFJetEt:
         aliases:
-        - event.L1AK4PFJet_ak4PFJetEt
+        - event.L1PhaseIPFJet_ak4PFJetEt
       L1PhaseIPFJet.ak4PFJetEta:
         aliases:
-        - event.L1AK4PFJet_ak4PFJetEta
+        - event.L1PhaseIPFJet_ak4PFJetEta
       L1PhaseIPFJet.ak4PFJetPhi:
         aliases:
-        - event.L1AK4PFJet_ak4PFJetPhi
+        - event.L1PhaseIPFJet_ak4PFJetPhi
+      L1PhaseIPFJet.ak4PFJetHt:
+        aliases:
+        - event.L1PhaseIPFJet_ak4PFJetHt
+      L1PhaseIPFJet.pfMet:
+        aliases:
+        - event.L1PhaseIPFJet_pfMet
       L1PhaseIPFJet.nGenJets:
         aliases:
-        - event.L1GenJet_nGenJets
-      L1PhaseIPFJet.genJetHt:
-        aliases:
-        - event.L1GenJet_jetHt
+        - event.L1PhaseIPFJet_nGenJets
       L1PhaseIPFJet.genJetPt:
         aliases:
-        - event.L1GenJet_jetPt
+        - event.L1PhaseIPFJet_genJetPt
       L1PhaseIPFJet.genJetEta:
         aliases:
-        - event.L1GenJet_jetEta
+        - event.L1PhaseIPFJet_genJetEta
       L1PhaseIPFJet.genJetPhi:
         aliases:
-        - event.L1GenJet_jetPhi
+        - event.L1PhaseIPFJet_genJetPhi
       L1PhaseIPFJet.genJetM:
         aliases:
-        - event.L1GenJet_jetM
+        - event.L1PhaseIPFJet_genJetM
+      L1PhaseIPFJet.genJetHt:
+        aliases:
+        - event.L1PhaseIPFJet_genJetHt
+      L1PhaseIPFJet.genMet:
+        aliases:
+        - event.L1PhaseIPFJet_genMet
   l1UpgradeEmuTree/L1UpgradeTree:
     name: L1UpgradeTree
     optional: false
