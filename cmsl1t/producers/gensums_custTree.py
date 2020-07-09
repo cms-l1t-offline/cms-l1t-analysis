@@ -1,6 +1,4 @@
 from __future__ import division
-import numpy as np
-import math
 from cmsl1t.energySums import EnergySum, Met
 from .base import BaseProducer
 
