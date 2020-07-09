@@ -346,9 +346,12 @@ content:
       L1PhaseIPFJet.phaseIPFJetHt:
         aliases:
         - event.L1PhaseIPFJet_phaseIPFJetHt
-      L1PhaseIPFJet.phaseIPFJetMet:
+      L1PhaseIPFJet.phaseIPFJetMET:
         aliases:
         - event.L1PhaseIPFJet_phaseIPFJetMET
+      L1PhaseIPFJet.phaseIPFJetMETHF:
+        aliases:
+        - event.L1PhaseIPFJet_phaseIPFJetMETHF
       L1PhaseIPFJet.nAK4PFJets:
         aliases:
         - event.L1PhaseIPFJet_nAK4PFJets
