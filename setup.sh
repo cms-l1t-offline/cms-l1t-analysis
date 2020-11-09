@@ -34,10 +34,8 @@ then
 fi
 export OS_VERSION
 
-#LCG_VERSION=LCG_95
-#LCG_ARCH=x86_64-${OS_VERSION}-gcc8-opt
-LCG_VERSION=LCG_87
-LCG_ARCH=x86_64-${OS_VERSION}-gcc62-opt
+LCG_VERSION=LCG_98
+LCG_ARCH=x86_64-centos7-gcc9-opt
 export LCG_VERSION
 export LCG_ARCH
 
@@ -100,15 +98,14 @@ else
     PATH=${CMSL1T_CONDA_PATH}/bin:$PATH; export PATH
     rm -f miniconda.sh
     echo "Finished conda installation, creating new conda environment"
-    conda config --add channels http://conda.anaconda.org/NLeSC
     conda config --set show_channel_urls yes
     conda create -n cms python=2.7 -yq
     source activate cms
-    conda install -y -q \
+    conda install -y -q -c conda-forge \
       matplotlib \
       numpy \
-      root>=6.04 \
-      rootpy
+      "root>=6.04" \
+    pip install -U rootpy
     echo "Created conda environment, installing basic dependencies"
     pip install -U pip
     pip install -r requirements.txt
