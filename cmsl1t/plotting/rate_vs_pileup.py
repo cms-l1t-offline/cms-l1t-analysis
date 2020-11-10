@@ -67,7 +67,7 @@ class RateVsPileupPlot(BasePlotter):
 
             self.__make_overlay(hists, fits, labels, thresholds)
 
-    def overlay(self, other_plotters=None, with_fits=False):
+    def overlay(self, other_plotters=None, with_fits=False, comp=False):
 
         hists = []
         labels = []
@@ -75,7 +75,7 @@ class RateVsPileupPlot(BasePlotter):
         thresholds = []
         suffix = '__emu_overlay'
         titles = ['Hw', 'Emu']
-        if self.comp_title:
+        if comp:
             suffix = '__comparison'
             titles = [other_plotter.comp_title for other_plotter in other_plotters]
             titles.insert(0, self.comp_title)
@@ -145,10 +145,10 @@ class RateVsPileupPlot(BasePlotter):
                 textsize=0.025,
                 entryheight=0.028,
             )
-            legend.AddEntry(hists[1], labels[1])
-            legend.AddEntry(hists[0], labels[0])
-            legend.AddEntry(hists[3], labels[3])
-            legend.AddEntry(hists[2], labels[2])
+
+            for hist, label in zip(hists, labels):
+                legend.AddEntry(hist, label)
+
             legend.SetBorderSize(0)
             legend.Draw()
 

@@ -134,18 +134,18 @@ class EfficiencyPlot(BasePlotter):
                         fits.append(self.fits.get_bin_contents(
                             [pileup, threshold]))
                     labels.append(str(self.pileup_bins.bins[pileup]))
-                self.__make_overlay(pileup, threshold, hists,
-                                    fits, labels, "PU bin")
+                #self.__make_overlay(pileup, threshold, hists,
+                #                    fits, labels, "PU bin")
 
         # Produce the fit summary plot
         if with_fits:
             self.__summarize_fits()
 
-    def overlay(self, other_plotters=None, with_fits=False):
+    def overlay(self, other_plotters=None, with_fits=False, comp=False):
 
         suffix = '__emu_overlay'
         titles = ['Hw', 'Emu']
-        if self.comp_title:
+        if comp:
             suffix = '__comparison'
             titles = [other_plotter.comp_title for other_plotter in other_plotters]
             titles.insert(0, self.comp_title)
