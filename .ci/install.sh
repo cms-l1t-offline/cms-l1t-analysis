@@ -13,7 +13,7 @@ conda install -y -q psutil
 conda install -c conda-forge -y -q \
   matplotlib \
   numpy \
-  "root>=6.04"
+  "root==6.18.04"
 
 pip install -U pip
 pip install --user --upgrade setuptools==46.4.0
