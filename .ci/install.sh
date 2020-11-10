@@ -15,8 +15,9 @@ conda install -c conda-forge -y -q \
   numpy \
   "root>=6.04"
 
-pip install rootpy
 pip install -U pip
+pip install --user --upgrade setuptools==46.4.0
+pip install rootpy
 pip install -r requirements.txt
 source deactivate
 set +e
