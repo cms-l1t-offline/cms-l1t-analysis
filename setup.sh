@@ -36,8 +36,8 @@ export OS_VERSION
 
 #LCG_VERSION=LCG_95
 #LCG_ARCH=x86_64-${OS_VERSION}-gcc8-opt
-LCG_VERSION=LCG_87
-LCG_ARCH=x86_64-${OS_VERSION}-gcc62-opt
+LCG_VERSION=LCG_95
+LCG_ARCH=x86_64-${OS_VERSION}-gcc7-opt
 export LCG_VERSION
 export LCG_ARCH
 
@@ -90,7 +90,7 @@ then
   source /cvmfs/sft.cern.ch/lcg/views/${LCG_VERSION}/${LCG_ARCH}/setup.sh
   # to fix java for the hadoop commands:
   unset JAVA_HOME
-  pip install --user -r requirements.txt
+  python -m pip install --user -r requirements.txt
 else
   echo "No CVMFS available, setting up Anaconda Python"
   if [ ! -d "${CMSL1T_CONDA_PATH}" ]
@@ -107,10 +107,10 @@ else
       matplotlib \
       numpy \
       "root>=6.04" \
-    pip install -U rootpy
+    python -m pip install -U rootpy
     echo "Created conda environment, installing basic dependencies"
-    pip install -U pip
-    pip install -r requirements.txt
+    python -m pip install -U pip
+    python -m pip install -r requirements.txt
     conda clean -t -y
   fi
   source activate cms
