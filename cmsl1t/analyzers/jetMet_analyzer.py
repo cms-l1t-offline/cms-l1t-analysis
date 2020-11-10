@@ -582,11 +582,6 @@ class Analyzer(BaseAnalyzer):
 
             plot_names = ['genJetET_BE', 'genJetET_HF', 'genHT', 'genMETBE', 'genMETHF']
 
-        for plot_name in plot_names:
-            getattr(self, plot_name + '_eff').draw()
-            getattr(self, plot_name + '_eff_HR').draw()
-            getattr(self, plot_name + '_res').draw()
-
         if self._doEmu:
 
             for plot_name in plot_names:
@@ -595,14 +590,27 @@ class Analyzer(BaseAnalyzer):
                 getattr(self, plot_name + '_res').overlay([
                     getattr(self, plot_name + '_Emu_res')])
 
+                if self._doComp:
+                    getattr(self, plot_name + '_Emu_eff').overlay(
+                        [getattr(other_analyzer, plot_name + '_Emu_eff')
+                            for other_analyzer in other_analyzers], comp=True)
+                    getattr(self, plot_name + '_Emu_res').overlay(
+                        [getattr(other_analyzer, plot_name + '_Emu_res')
+                            for other_analyzer in other_analyzers], comp=True)
+        else: # print hw plots
+            for plot_name in plot_names:
+                getattr(self, plot_name + '_eff').draw()
+                getattr(self, plot_name + '_res').draw()
+                getattr(self, plot_name + '_eff_HR').draw()
+
         if self._doComp:
 
             for plot_name in plot_names:
                 getattr(self, plot_name + '_eff').overlay(
                     [getattr(other_analyzer, plot_name + '_eff')
-                        for other_analyzer in other_analyzers])
+                        for other_analyzer in other_analyzers], comp=True)
                 getattr(self, plot_name + '_res').overlay(
                     [getattr(other_analyzer, plot_name + '_res')
-                        for other_analyzer in other_analyzers])
+                        for other_analyzer in other_analyzers], comp=True)
 
         return True

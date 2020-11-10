@@ -67,14 +67,15 @@ class RatesPlot(BasePlotter):
         self.__make_overlay(normed_hists, fits, labels,
                             "Fraction of events", "__shapes")
 
-    def overlay(self, other_plotters=None, with_fits=False):
+    def overlay(self, other_plotters=None, with_fits=False, comp=False):
+
 
         hists = []
         labels = []
         fits = []
         suffix = '__emu_overlay'
         titles = ['Hw', 'Emu']
-        if self.comp_title:
+        if comp:
             suffix = '__comparison'
             titles = [other_plotter.comp_title for other_plotter in other_plotters]
             titles.insert(0, self.comp_title)
