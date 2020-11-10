@@ -10,15 +10,12 @@ fi
 source activate cms
 conda install -y -q psutil
 
-conda config --add channels http://conda.anaconda.org/NLeSC
-conda config --set show_channel_urls yes
-
-conda install -y -q \
+conda install -c conda-forge -y -q \
   matplotlib \
   numpy \
-  root>=6.04 \
-  rootpy
+  "root>=6.04"
 
+pip install rootpy
 pip install -U pip
 pip install -r requirements.txt
 source deactivate
