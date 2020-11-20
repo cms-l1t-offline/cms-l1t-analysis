@@ -291,7 +291,7 @@ class Analyzer(BaseAnalyzer):
                     rvp_plotter.overlay([getattr(other_analyzer, histo_name + '_rate_vs_pileup')
                                     for other_analyzer in other_analyzers], comp=True)
 
-        print('  thresholds:')
+        outstring = '\n  thresholds:'
 
         # calculate cumulative histograms
         for plot in self.all_plots:
@@ -304,18 +304,18 @@ class Analyzer(BaseAnalyzer):
             for histo_name in self._sumTypes + self._jetTypes:
                 h = getattr(self, histo_name)
                 h = normalise_to_collision_rate(h)
-                targetRate = self.menuRates.get(histo_name.replace('_Emu', ''))
-                threshold = None
-                closestRateDiff = 999999999
-                threshold = None
-                for i in range(h.nbins()):
-                    if abs(h.get_bin_content(i) - targetRate) < closestRateDiff:
-                        closestRateDiff = abs(h.get_bin_content(i) - targetRate)
-                        threshold = h.get_bin_low_edge(i)
-                outputLine = '    {0}: [{2}] #threshold gives {1} KHz rate'.format(
-                    histo_name.ljust(15, ' '), targetRate, int(threshold))
-                print(outputLine)
-        print('\n')
+                targetRates = self.menuRates.get(histo_name.replace('_Emu', ''))
+                for targetRate in targetRates:
+                    closestRateDiff = 999999999
+                    threshold = None
+                    for i in range(h.nbins()):
+                        if abs(h.get_bin_content(i) - targetRate) < closestRateDiff:
+                            closestRateDiff = abs(h.get_bin_content(i) - targetRate)
+                            threshold = h.get_bin_low_edge(i)
+                    outputLine = '\n    {0}: [{2}] \tthreshold gives {1} KHz rate'.format(
+                        histo_name.ljust(15, ' '), targetRate, int(threshold))
+                    outstring += outputLine
+        outstring += '\n unpacked vs emulated thresholds for fixed rate [thresholds] [rates]:'
         if self._doEmu:
             for histo_name in self._sumTypes + self._jetTypes:
                 if "_Emu" in histo_name:
@@ -324,9 +324,11 @@ class Analyzer(BaseAnalyzer):
                 h_emu = getattr(self, histo_name + "_Emu")
                 thresholds = self.thresholds.get(histo_name)
                 emu_thresholds = []
+                hw_rates = []
                 for thresh in thresholds:
                     rate_delta = []
                     hw_rate = h.get_bin_content(thresh)
+                    hw_rates.append(int(hw_rate))
                     for i in range(h.nbins()):
                         emu_rate = h_emu.get_bin_content(i)
                         if hw_rate == 0. or emu_rate == 0.:
@@ -334,11 +336,14 @@ class Analyzer(BaseAnalyzer):
                         else:
                             rate_delta.append(abs(hw_rate - emu_rate))
                     emu_thresholds.append(rate_delta.index(min(rate_delta)))
-                outputlineA = '    {0}:\t\t{1}'.format(histo_name, thresholds)
-                outputlineB = '    {0}:\t\t{1}'.format(histo_name + '_Emu', emu_thresholds)
-                outputline = outputlineA + '\n' + outputlineB
+                outputlineA = '    {0}:'.format(histo_name).ljust(20) + '\t{0}\t\t rates: \t{1}'.format(thresholds, hw_rates)
+                outputlineB = '    {0}:'.format(histo_name + '_Emu').ljust(20) + '\t{0}\t\t rates: \t{1}'.format(emu_thresholds, hw_rates)
+                outputline = '\n' + outputlineA + '\n' + outputlineB
+                outstring += outputline
 
-                print(outputline)
+        with open(os.path.join(self.output_folder, 'thresholds_and_rates.txt'), 'a') as outfile:
+            outfile.write(outstring)
+        print(outstring)
 
         '''
         for histo_name in object_types:
