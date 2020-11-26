@@ -1,4 +1,4 @@
-root>=6.04
+root
 numpy
 matplotlib
 pandas==0.23
