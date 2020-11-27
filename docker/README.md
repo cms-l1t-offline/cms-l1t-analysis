@@ -22,26 +22,30 @@ popd
 
 ```bash
 git clone git@github.com:cms-l1t-offline/cms-l1t-analysis.git
+cd cms-l1t-analysis
 ROOT_VERSION=v6-18-04
 docker build \
   --build-arg ROOT_VERSION=${ROOT_VERSION} \
-  -t cmsl1tanalysis/cmsl1t-dev:${ROOT_VERSION} \
+  -t cmsl1tanalysis/cmsl1t-dev:root_${ROOT_VERSION} \
   -f docker/dev/Dockerfile .
 
-docker push cmsl1tanalysis/cmsl1t-dev:${ROOT_VERSION}
+docker push cmsl1tanalysis/cmsl1t-dev:root_${ROOT_VERSION}
 ```
 
 ## Build production docker
 
 ```bash
 git clone git@github.com:cms-l1t-offline/cms-l1t-analysis.git
+cd cms-l1t-analysis
 ROOT_VERSION=v6-18-04
+CMSL1T_VERSION=$(python -c 'from __future__ import print_function; import cmsl1t; print(cmsl1t.__version__)')
+
 docker build \
   --build-arg ROOT_VERSION=${ROOT_VERSION} \
-  -t cmsl1tanalysis/cmsl1t:${ROOT_VERSION} \
+  -t cmsl1tanalysis/cmsl1t:${CMSL1T_VERSION}_root_${ROOT_VERSION} \
   -f docker/production/Dockerfile .
 
-docker push cmsl1tanalysis/cmsl1t:${ROOT_VERSION}
+docker push cmsl1tanalysis/cmsl1t:${CMSL1T_VERSION}_root_${ROOT_VERSION}
 ```
 
 ## Run dev docker
@@ -53,7 +57,7 @@ ROOT_VERSION=v6-18-04
 
 docker run \
   -v $PWD:/opt/cms-l1t-analysis \
-  -ti cmsl1tanalysis/cmsl1t-dev:${ROOT_VERSION} \
+  -ti cmsl1tanalysis/cmsl1t-dev:root_${ROOT_VERSION} \
   bash
 ```
 
@@ -63,9 +67,10 @@ docker run \
 ROOT_VERSION=v6-18-04
 # /tmp or in a different location
 mkdir -p /tmp/output
+CMSL1T_VERSION=$(python -c 'from __future__ import print_function; import cmsl1t; print(cmsl1t.__version__)')
 
 docker run \
   -v /tmp/output:/opt/cms-l1t-analysis/output \
-  -ti cmsl1tanalysis/cmsl1t:${ROOT_VERSION} \
+  -ti cmsl1tanalysis/cmsl1t:${CMSL1T_VERSION}_root_${ROOT_VERSION} \
   cmsl1t config/demo.yaml
 ```
