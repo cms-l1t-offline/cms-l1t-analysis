@@ -74,6 +74,7 @@ class BaseAnalyzer(object):
              provided with the filename, and passed to from_root
          """
         results = []
+        comp_title = ""
         if do_comparison:
             self._doComp = True
             comp_title = input_filename.split(':')[0]
