@@ -1,4 +1,4 @@
-numpy
+numpy<1.17
 matplotlib==1.2.0
 pandas==0.23
 memory_profiler
@@ -22,3 +22,4 @@ requests
 plumbum
 six
 more-itertools<6.0.0
+xrootd
