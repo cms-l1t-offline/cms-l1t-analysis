@@ -3,7 +3,7 @@ services:
   cmsl1t:
     build:
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: docker/dev/condor/Dockerfile
     image: kreczko/cms-l1t-analysis
     volumes:
       - .:/code
