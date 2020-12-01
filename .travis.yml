@@ -1,16 +1,8 @@
 # travis-ci.org build & test configuration
-sudo: false
-cache:
-  directories:
-    - $HOME/.cache/pip
-    - $HOME/download
-    - $HOME/miniconda2
+services:
+  - docker
 
 language: python
-
-python:
-  - "2.7"
-  - "3.6"
 
 env:
   - CI_RUN_TEST=UNIT CI_RUN_CONFIG=NONE
@@ -25,25 +17,10 @@ env:
   - CI_RUN_TEST=INTEGRATION CI_RUN_CONFIG=study_tower28_met
 
 before_install:
-  - export CMSL1T_CONDA_PATH=$HOME/miniconda2
-  - ./.ci/before_install.sh
-  - export PATH=${CMSL1T_CONDA_PATH}/bin:$PATH
-  - export NO_CVMFS=1
-
-install:
-  - ./.ci/install.sh
+  - docker pull cmsl1tanalysis/cmsl1t-dev:v6-18-04
+  - docker run -d --name cms -v $PWD:/opt/cms-l1t-analysis cmsl1tanalysis/cmsl1t-dev:v6-18-04 bash
+  - docker ps -a
+  - docker exec cms bash -c "python -m pip install -r /opt/cms-l1t-analysis/requirements.txt"
 
 script:
-  - ./.ci/test.sh
-
-
-matrix:
-  allow_failures:
-    - python: "3.6"
-cache: apt
-
-addons:
-  apt:
-    packages:
-    - build-essential
-    - python-psutil
+  - docker exec -e CI_RUN_TEST=$CI_RUN_TEST -e CI_RUN_CONFIG=$CI_RUN_CONFIG cms bash -c "cd /opt/cms-l1t-analysis; ./.ci/test.sh"
