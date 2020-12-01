@@ -2,7 +2,7 @@
 
 Software package to analyse L1TNtuples
 
-Latest stable version: https://github.com/cms-l1t-offline/cms-l1t-analysis/releases/tag/v0.5.1
+Latest stable version: [version 0.5.1](https://github.com/cms-l1t-offline/cms-l1t-analysis/releases/tag/v0.5.1)
 
 [![Build Status](https://travis-ci.org/cms-l1t-offline/cms-l1t-analysis.svg?branch=master)](https://travis-ci.org/cms-l1t-offline/cms-l1t-analysis) [![DOI](https://zenodo.org/badge/80877637.svg)](https://zenodo.org/badge/latestdoi/80877637) [![Code Health](https://landscape.io/github/cms-l1t-offline/cms-l1t-analysis/master/landscape.svg?style=flat)](https://landscape.io/github/cms-l1t-offline/cms-l1t-analysis/master) [![docs](https://readthedocs.org/projects/cms-l1t-analysis/badge/?version=latest)](http://cms-l1t-analysis.readthedocs.io/en/latest/)
 
@@ -20,7 +20,7 @@ mkdir -p cmsl1t_output
 --bind $PWD \
 --bind /cvmfs \
 --bind $PWD/cmsl1t_output:/opt/cms-l1t-analysis/output  \
-/cvmfs/singularity.opensciencegrid.org/cmsl1tanalysis/ cmsl1t:0.5.1_root_v6-18-04 bash
+/cvmfs/singularity.opensciencegrid.org/cmsl1tanalysis/cmsl1t:0.5.1_root_v6-18-04 bash
 
 # inside the container
 cd /opt/cms-l1t-analysis
