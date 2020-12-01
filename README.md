@@ -13,13 +13,11 @@ Latest stable version: https://github.com/cms-l1t-offline/cms-l1t-analysis/relea
 If you have access to Singularity with unprivileged user namespaces (e.g. on LXPLUS), you can run
 
 ```bash
-git clone https://github.com/<your github user name>/cms-l1t-analysis.git
-cd cms-l1t-analysis
-git remote add upstream https://github.com/cms-l1t-offline/cms-l1t-analysis.git
-
+ssh <you cern user name>@lxplus.cern.ch
 mkdir -p cmsl1t_output
 
 /cvmfs/oasis.opensciencegrid.org/mis/singularity/bin/singularity exec --contain --ipc --pid \
+--bind $PWD \
 --bind /cvmfs \
 --bind $PWD/cmsl1t_output:/opt/cms-l1t-analysis/output  \
 /cvmfs/singularity.opensciencegrid.org/cmsl1tanalysis/ cmsl1t:0.5.1_root_v6-18-04 bash
@@ -29,7 +27,13 @@ cd /opt/cms-l1t-analysis
 # you can now run your configs
 ## to test you can run the demo:
 cmsl1t -c config/demo.yaml
+
+# if you need remote access (e.g. grid storage or compute) you will need to also
+source /cvmfs/grid.cern.ch/umd-c7ui-latest/etc/profile.d/setup-c7-ui-example.sh
+voms-proxy-init -voms cms
 ```
+
+All results will be put into the `cmsl1t_output` folder and will be available outside the container.
 
 ## Development instructions
 
