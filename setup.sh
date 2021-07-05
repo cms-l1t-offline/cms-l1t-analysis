@@ -106,7 +106,7 @@ else
     conda install -y -q -c conda-forge \
       matplotlib \
       numpy \
-      "root>=6.04" \
+      "root>=6.04"
     python -m pip install -U rootpy
     echo "Created conda environment, installing basic dependencies"
     python -m pip install -U pip
