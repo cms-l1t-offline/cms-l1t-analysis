@@ -235,7 +235,6 @@ dependencies:
     - matplotlib==3.6.0
     - mccabe==0.7.0
     - mypy-extensions==0.4.3
-    - numba==0.55.2
     - numpy==1.23.3
     - pandas==1.5.0
     - pathspec==0.10.1
