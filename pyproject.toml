@@ -33,7 +33,8 @@ dependencies = [
     "htcondor",
     "pyyaml",
     "tabulate",
-    "requests"
+    "requests",
+    "xrootd",
 ]
 
 [project.optional-dependencies]
