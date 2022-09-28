@@ -1,0 +1,77 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "cmsl1t"
+authors = [{name = "cms-l1t-offline", email = "kreczko@cern.ch"}]
+maintainers = [{name = "cms-l1t-offline", email = "kreczko@cern.ch"}]
+readme = "README.md"
+
+requires-python = ">=3.9"
+
+classifiers = [
+  "License :: OSI Approved :: BSD License",
+  "Topic :: Scientific/Engineering",
+  "Intended Audience :: Science/Research",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "License :: OSI Approved :: BSD License",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Development Status :: 1 - Planning",
+]
+dynamic = ["version", "description"]
+dependencies = [
+    "numpy",
+    "matplotlib",
+    "pandas",
+    "uproot",
+    "typer",
+    "htcondor",
+    "pyyaml",
+    "tabulate",
+    "requests"
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest >=6",
+    "pytest-cov",
+    "pytest-mock",
+    "flake8",
+    "black",
+]
+dev = [
+    "pytest >=6",
+    "pytest-cov",
+    "pytest-mock",
+    "flake8",
+    "black",
+]
+docs = [
+  "Sphinx~=3.0",
+  "myst_parser>=0.13",
+  "sphinx-book-theme>=0.1.0",
+  "sphinx_copybutton",
+]
+
+
+[project.urls]
+Home = "https://github.com/cms-l1t-offline/cms-l1t-analysis"
+
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+filterwarnings = ["error"]
+testpaths = ["tests"]
+
+
+[tool.pycln]
+all = true
+
+[tool.isort]
+profile = "black"
+known_third_party = ["typer", "click"]
