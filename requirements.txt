@@ -8,7 +8,7 @@ click==6.7
 click-log==0.2.0
 sphinx<2.0.0
 pyfakefs==3.2
-htcondor
+htcondor==9.3.2
 pyaml
 rootpy
 dill
