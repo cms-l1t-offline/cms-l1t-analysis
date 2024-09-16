@@ -1,3 +1,4 @@
+"""CMS L1 Trigger analysis tools"""
 from __future__ import absolute_import
 import os
 from os import path

@@ -101,16 +101,11 @@ else
     rm -f miniconda.sh
     echo "Finished conda installation, creating new conda environment"
     conda config --set show_channel_urls yes
-    conda create -n cms python=2.7 -yq
+    conda create --file environment.yml -yq --name cms
+    echo "Created conda environment, next: updating pip and installing package"
     source activate cms
-    conda install -y -q -c conda-forge \
-      matplotlib \
-      numpy \
-      "root>=6.04"
-    python -m pip install -U rootpy
-    echo "Created conda environment, installing basic dependencies"
     python -m pip install -U pip
-    python -m pip install -r requirements.txt
+    python -m pip install -e .[dev]
     conda clean -t -y
   fi
   source activate cms
